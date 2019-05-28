@@ -15,10 +15,37 @@ from two1.bitcoin.utils import rand_bytes
 from ecdsa.ecdsa import int_to_string, string_to_int
 
 
+def get_bytes(string):
+    if isinstance(string, bytes):
+        byte = string
+    elif isinstance(string, str):
+        byte = bytes.fromhex(string)
+    else:
+        raise TypeError("Agreement must be either 'bytes' or 'string'!")
+    return byte
+
+
+# s_str must be >= 32 bytes long and gets rewritten in place.
+# This is NOT the same pruning as in Ed25519: it additionally clears the third
+# highest bit to ensure subkeys do not overflow passphrasethe second highest bit.
+def prune_root_scalar(string):
+    s = bytearray(get_bytes(string=string))
+    s[0] = s[0] & 248
+    # clear top 3 bits
+    s[31] = s[31] & 31
+    # set second highest bit
+    s[31] = s[31] | 64
+    return s
+
+
 class BytomHDWallet:
 
-    def __init__(self, seed=None):
+    def __init__(self, secret=None, seed=None, chain=None, depth=None, index=None):
+        self.secret = secret
         self.seed = seed
+        self.chain = chain
+        self.depth = depth
+        self.index = index
 
     @staticmethod
     def fromMnemonic(mnemonic, passphrase=''):
@@ -52,11 +79,9 @@ class BytomHDWallet:
 
     @staticmethod
     def fromSeed(seed):
-        salt_str = "mnemonic"
-        seed = pbkdf2.PBKDF2(seed, salt_str,
-                             iterations=2048,
-                             digestmodule=hashlib.sha512,
-                             macmodule=hmac).hexread(64)
+        hc_hexstr = hmac.HMAC(b'Root', get_bytes(seed), digestmod=hashlib.sha512).hexdigest()
+        root_xprv_hexstr = prune_root_scalar(hc_hexstr[:64]).hex() + hc_hexstr[64:]
+        return root_xprv_hexstr
         return BytomHDWallet(seed=seed)
 
 
