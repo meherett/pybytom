@@ -40,18 +40,19 @@ def prune_root_scalar(string):
 
 class BytomHDWallet:
 
-    def __init__(self, secret=None, seed=None, chain=None, depth=None, index=None):
+    def __init__(self, secret=None, seed=None, chain=None, depth=None, index=None, fingerprint=None):
         self.secret = secret
         self.seed = seed
         self.chain = chain
         self.depth = depth
         self.index = index
+        self.fingerprint = fingerprint
 
     @staticmethod
-    def fromMnemonic(mnemonic, passphrase=''):
+    def masterKeyFromMnemonic(mnemonic, passphrase=''):
 
         seed = Mnemonic.to_seed(mnemonic, passphrase)
-        return BytomHDWallet.fromSeed(seed=seed)
+        return BytomHDWallet.masterKeyFromSeed(seed=seed)
 
     @staticmethod
     def checkMnemonic(mnemonic, language='english'):
@@ -63,7 +64,7 @@ class BytomHDWallet:
                 return False
 
     @staticmethod
-    def fromEntropy(passphrase=str(), language='english', strength=128):
+    def masterKeyFromEntropy(passphrase=str(), language='english', strength=128):
 
         if strength % 32 != 0:
             raise ValueError("strength must be a multiple of 32")
@@ -75,14 +76,22 @@ class BytomHDWallet:
             .to_mnemonic(entropy)
         seed = Mnemonic.to_seed(mnemonic, passphrase)
 
-        return BytomHDWallet.fromSeed(seed=seed), mnemonic
+        return BytomHDWallet.masterKeyFromSeed(seed=seed), mnemonic
 
     @staticmethod
-    def fromSeed(seed):
-        hc_hexstr = hmac.HMAC(b'Root', get_bytes(seed), digestmod=hashlib.sha512).hexdigest()
-        root_xprv_hexstr = prune_root_scalar(hc_hexstr[:64]).hex() + hc_hexstr[64:]
-        return root_xprv_hexstr
-        return BytomHDWallet(seed=seed)
+    def masterKeyFromSeed(seed):
+
+        I = hmac.HMAC(b'Root', get_bytes(seed), digestmod=hashlib.sha512).hexdigest()
+        Il, Ir = I[:64], I[64:]
+
+        parse_Il = int.from_bytes(Il, 'big')
+        if parse_Il == 0:
+            raise ValueError("Bad seed, resulting in invalid key!")
+        # get root xprivate key
+        secret = prune_root_scalar(Il).hex() + Ir
+
+        return BytomHDWallet(secret=secret, chain=Ir,
+                             seed=seed, depth=0, index=0, fingerprint=b'\0\0\0\0')
 
 
 class BTMHDW:
@@ -98,9 +107,9 @@ class BTMHDW:
 
     @staticmethod
     def generateMnemonic(passphrase=str(), language='english', strength=128):
-        _, mnemonic = BytomHDWallet.fromEntropy(passphrase=passphrase,
-                                                language=language,
-                                                strength=strength)
+        _, mnemonic = BytomHDWallet.masterKeyFromEntropy(passphrase=passphrase,
+                                                         language=language,
+                                                         strength=strength)
         return mnemonic
 
     @staticmethod
