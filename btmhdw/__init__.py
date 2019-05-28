@@ -84,14 +84,20 @@ class BytomHDWallet:
         I = hmac.HMAC(b'Root', get_bytes(seed), digestmod=hashlib.sha512).hexdigest()
         Il, Ir = I[:64], I[64:]
 
-        parse_Il = int.from_bytes(Il, 'big')
-        if parse_Il == 0:
+        parse_Il = str(Il)
+        if parse_Il:
             raise ValueError("Bad seed, resulting in invalid key!")
         # get root xprivate key
         secret = prune_root_scalar(Il).hex() + Ir
 
         return BytomHDWallet(secret=secret, chain=Ir,
                              seed=seed, depth=0, index=0, fingerprint=b'\0\0\0\0')
+
+    def privateKey(self):
+        return str(self.secret)
+
+    def chainCode(self):
+        return str(self.chain)
 
 
 class BTMHDW:
