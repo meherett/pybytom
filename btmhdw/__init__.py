@@ -8,6 +8,8 @@ import binascii
 
 import pbkdf2
 
+from .ed25519 import *
+
 from hashlib import sha256
 from ecdsa.curves import SECP256k1
 from mnemonic.mnemonic import Mnemonic
@@ -40,8 +42,8 @@ def prune_root_scalar(string):
 
 class BytomHDWallet:
 
-    def __init__(self, secret=None, seed=None, chain=None, depth=None, index=None, fingerprint=None):
-        self.secret = secret
+    def __init__(self, xprivate=None, seed=None, chain=None, depth=None, index=None, fingerprint=None):
+        self.xprivate = xprivate
         self.seed = seed
         self.chain = chain
         self.depth = depth
@@ -85,19 +87,51 @@ class BytomHDWallet:
         Il, Ir = I[:64], I[64:]
 
         parse_Il = str(Il)
-        if parse_Il:
+        if not parse_Il:
             raise ValueError("Bad seed, resulting in invalid key!")
         # get root xprivate key
-        secret = prune_root_scalar(Il).hex() + Ir
+        xprivate = prune_root_scalar(Il).hex() + Ir
 
-        return BytomHDWallet(secret=secret, chain=Ir,
+        return BytomHDWallet(xprivate=xprivate, chain=Ir,
                              seed=seed, depth=0, index=0, fingerprint=b'\0\0\0\0')
 
-    def privateKey(self):
-        return str(self.secret)
+    def xprivateKey(self):
+        return str(self.xprivate)
 
-    def chainCode(self):
-        return str(self.chain)
+    def xpublicKey(self, xprivate=None):
+        if xprivate:
+            xprivate_bytes = get_bytes(xprivate)
+            scalar = decodeint(xprivate_bytes[:len(xprivate_bytes) // 2])
+            buf = encodepoint(scalarmultbase(scalar))
+            xpublic = buf + xprivate_bytes[len(xprivate_bytes) // 2:]
+            return xpublic.hex()
+        xprivate_bytes = get_bytes(self.xprivate)
+        scalar = decodeint(xprivate_bytes[:len(xprivate_bytes) // 2])
+        buf = encodepoint(scalarmultbase(scalar))
+        xpublic = buf + xprivate_bytes[len(xprivate_bytes) // 2:]
+        return xpublic.hex()
+
+    def privateKey(self, xprivate=None):
+        if xprivate:
+            I = hmac.HMAC(b'Expand', get_bytes(xprivate), digestmod=hashlib.sha512).hexdigest()
+            Il, Ir = I[:64], I[64:]
+            parse_Ir = str(Ir)
+            if not parse_Ir:
+                raise ValueError("Bad seed, resulting in invalid key!")
+            private = xprivate[:64] + Ir
+            return private
+        I = hmac.HMAC(b'Expand', get_bytes(self.xprivate), digestmod=hashlib.sha512).hexdigest()
+        Il, Ir = I[:64], I[64:]
+        parse_Ir = str(Ir)
+        if not parse_Ir:
+            raise ValueError("Bad seed, resulting in invalid key!")
+        private = self.xprivate[:64] + Ir
+        return private
+
+    def publicKey(self, xpublic=None):
+        if xpublic:
+            return xpublic[:64]
+        return self.xpublicKey()[:64]
 
 
 class BTMHDW:
