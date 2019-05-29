@@ -93,7 +93,7 @@ class BytomHDWallet:
         xprivate = prune_root_scalar(Il).hex() + Ir
 
         return BytomHDWallet(xprivate=xprivate, seed=seed, xpublic=None)
-    
+
     @staticmethod
     def masterKeyFromXPrivate(xprivate):
         return BytomHDWallet(xprivate=xprivate, seed=None, xpublic=None)
@@ -379,6 +379,32 @@ class BTMHDW:
             mnemonic=mnemonic,
             address=bytomHDWallet.address(network=network),
             seed=bytomHDWallet.seed.hex(),
+            xprivate=bytomHDWallet.xprivate,
+            xpublic=bytomHDWallet.xpublic.hex(),
+            program=bytomHDWallet.program(),
+            path=bytomHDWallet.getPath()
+        )
+
+    @staticmethod
+    def walletFromXPrivate(xprivate, network='sm', account=1,
+                           change=0, address=1, path=None, indexes=None):
+        bytomHDWallet = BytomHDWallet.masterKeyFromXPrivate(xprivate=xprivate)
+
+        if indexes is not None \
+                and path is None:
+            bytomHDWallet.fromIndexes(indexes=indexes)
+        elif path is not None \
+                and indexes is None:
+            bytomHDWallet.fromPath(path=path)
+        else:
+            bytomHDWallet.fromIndex(44)
+            bytomHDWallet.fromIndex(153)
+            bytomHDWallet.fromIndex(account)
+            bytomHDWallet.fromIndex(change)
+            bytomHDWallet.fromIndex(address)
+
+        return dict(
+            address=bytomHDWallet.address(network=network),
             xprivate=bytomHDWallet.xprivate,
             xpublic=bytomHDWallet.xpublic.hex(),
             program=bytomHDWallet.program(),
