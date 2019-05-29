@@ -52,7 +52,7 @@ class BytomHDWallet:
         self.depth = depth
         self.index = index
         self.fingerprint = fingerprint
-        self.path = []
+        self.paths = []
 
     @staticmethod
     def masterKeyFromMnemonic(mnemonic, passphrase=''):
@@ -139,7 +139,7 @@ class BytomHDWallet:
 
     def derivePrivateKey(self, index):
         index = int(index).to_bytes(4, byteorder='little').hex()
-        self.path.append(index)
+        self.paths.append(index)
 
         return BytomHDWallet()
 
@@ -161,8 +161,10 @@ class BytomHDWallet:
                 self.derivePrivateKey(int(index))
         return BytomHDWallet()
 
-    def getPath(self):
-        return self.path
+    def getPaths(self):
+        return self.paths
+
+
 
 
 class BTMHDW:
