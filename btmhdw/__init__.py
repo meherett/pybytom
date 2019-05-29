@@ -1,21 +1,9 @@
-import sha3
-import hmac
-import ecdsa
-import struct
-import codecs
-import hashlib
-import binascii
-
-import pbkdf2
-
 from .ed25519 import *
 from .segwit import *
-
-from hashlib import sha256
-from ecdsa.curves import SECP256k1
 from mnemonic.mnemonic import Mnemonic
 from two1.bitcoin.utils import rand_bytes
-from ecdsa.ecdsa import int_to_string, string_to_int
+
+import hmac
 
 BTMHDW_HARDEN = 0x80000000
 
@@ -59,12 +47,12 @@ def prune_intermediate_scalar(f):
 class BytomHDWallet:
 
     def __init__(self, xprivate=None, seed=None,
-                 depth=None, index=None, fingerprint=None):
+                 program=None, index=None, xpublic=None):
         self.xprivate = xprivate
         self.seed = seed
-        self.depth = depth
+        self.program = program
         self.index = index
-        self.fingerprint = fingerprint
+        self.xpublic = xpublic
         self.indexes = []
 
     @staticmethod
@@ -110,7 +98,7 @@ class BytomHDWallet:
         xprivate = prune_root_scalar(Il).hex() + Ir
 
         return BytomHDWallet(xprivate=xprivate, seed=seed,
-                             depth=0, index=0, fingerprint=b'\0\0\0\0')
+                             program=None, index=0, xpublic=None)
 
     def xprivateKey(self):
         return str(self.xprivate)
@@ -125,8 +113,8 @@ class BytomHDWallet:
         xprivate_bytes = get_bytes(self.xprivate)
         scalar = decodeint(xprivate_bytes[:len(xprivate_bytes) // 2])
         buf = encodepoint(scalarmultbase(scalar))
-        xpublic = buf + xprivate_bytes[len(xprivate_bytes) // 2:]
-        return xpublic.hex()
+        self.xpublic = buf + xprivate_bytes[len(xprivate_bytes) // 2:]
+        return self.xpublic.hex()
 
     def privateKey(self, xprivate=None):
         if xprivate:
@@ -295,7 +283,7 @@ class BytomHDWallet:
         child_xpublic = xpublic
         return child_xpublic
 
-    def controlProgram(self, xpublic=None, indexes=None, path=None):
+    def program(self, xpublic=None, indexes=None, path=None):
         if indexes is None:
             if path is not None:
                 self.fromPath(path)
@@ -313,7 +301,7 @@ class BytomHDWallet:
             public_hash = ripemd160.hexdigest()
             control_program = '0014' + public_hash
             return control_program
-        child_xpublic = self.childXPublicKey(xpublic=self.publicKey(),
+        child_xpublic = self.childXPublicKey(xpublic=self.xpublic,
                                              indexes=indexes)
         child_public = self.publicKey(xpublic=child_xpublic)
         child_public_byte = get_bytes(child_public)
@@ -321,8 +309,8 @@ class BytomHDWallet:
         ripemd160 = hashlib.new('ripemd160')
         ripemd160.update(child_public_byte)
         public_hash = ripemd160.hexdigest()
-        control_program = '0014' + public_hash
-        return control_program
+        self.program = '0014' + public_hash
+        return self.program
 
     def address(self, control_program=None, network='sm'):
         if network == 'mainnet' or network == 'bm':
@@ -334,7 +322,7 @@ class BytomHDWallet:
         if control_program:
             address_str = encode(hrp, 0, get_bytes(control_program[4:]))
             return address_str
-        address_str = encode(hrp, 0, get_bytes(self.controlProgram()[4:]))
+        address_str = encode(hrp, 0, get_bytes(self.program()[4:]))
         return address_str
 
 
