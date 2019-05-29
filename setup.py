@@ -12,7 +12,7 @@ setup(
     license='MIT',
     author='Meheret Tesfaye',
     author_email='meherett@zoho.com',
-    url='https://github.com/mehetett/bytom-hdwallet',
+    url='https://github.com/mehetett/btmhdw',
     python_requires='>=3.5,<3.7',
     packages=['btmhdw'],
     install_requires=[
