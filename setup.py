@@ -16,16 +16,13 @@ setup(
     python_requires='>=3.5,<3.7',
     packages=['btmhdw'],
     install_requires=[
-        "ed25519>=1.4",
-        "pbkdf2>=1.3",
-        "pybase64>=0.5.0",
-        "qrcode>=6.1",
-        "sha3>=0.2.1",
-        "six>=1.12.0"
+        "mnemonic==0.13",
+        "two1==3.10.9"
     ],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7"
