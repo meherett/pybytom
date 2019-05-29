@@ -363,11 +363,12 @@ class BTMHDW:
             bytomHDWallet.fromIndex(change)
             bytomHDWallet.fromIndex(address)
 
-        BTMWallet = dict(
+        return dict(
             mnemonic=mnemonic,
-            seed=str(),
-            xprivate=str(),
-            xpublic=str(),
-            program=str()
+            address=bytomHDWallet.address(),
+            seed=bytomHDWallet.seed.hex(),
+            xprivate=bytomHDWallet.xprivate,
+            xpublic=bytomHDWallet.xpublic,
+            program=bytomHDWallet.program()
         )
 
