@@ -46,11 +46,10 @@ def prune_intermediate_scalar(f):
 
 class BytomHDWallet:
 
-    def __init__(self, xprivate=None, seed=None,
-                 index=None, xpublic=None):
+    def __init__(self, xprivate=None,
+                 seed=None, xpublic=None):
         self.xprivate = xprivate
         self.seed = seed
-        self.index = index
         self.xpublic = xpublic
         self.indexes = []
 
@@ -96,8 +95,7 @@ class BytomHDWallet:
         # get root xprivate key
         xprivate = prune_root_scalar(Il).hex() + Ir
 
-        return BytomHDWallet(xprivate=xprivate, seed=seed,
-                             index=0, xpublic=None)
+        return BytomHDWallet(xprivate=xprivate, seed=seed, xpublic=None)
 
     def xprivateKey(self):
         return str(self.xprivate)
@@ -331,13 +329,7 @@ class BytomHDWallet:
 class BTMHDW:
 
     def __init__(self):
-        self.wallet = dict(
-            mnemonic=str(),
-            seed=str(),
-            xprivate=str(),
-            xpublic=str(),
-            program=str()
-        )
+        pass
 
     @staticmethod
     def generateMnemonic(passphrase=str(), language='english', strength=128):
@@ -358,9 +350,11 @@ class BTMHDW:
 
         bytomHDWallet = BytomHDWallet.masterKeyFromMnemonic(mnemonic=mnemonic,
                                                             passphrase=passphrase)
-        if indexes is not None:
+        if indexes is not None \
+                and path is None:
             bytomHDWallet.fromIndexes(indexes=indexes)
-        elif path is not None:
+        elif path is not None \
+                and indexes is None:
             bytomHDWallet.fromPath(path=path)
         else:
             bytomHDWallet.fromIndex(44)
@@ -368,4 +362,12 @@ class BTMHDW:
             bytomHDWallet.fromIndex(account)
             bytomHDWallet.fromIndex(change)
             bytomHDWallet.fromIndex(address)
+
+        BTMWallet = dict(
+            mnemonic=mnemonic,
+            seed=str(),
+            xprivate=str(),
+            xpublic=str(),
+            program=str()
+        )
 
