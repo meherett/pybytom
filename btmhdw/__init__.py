@@ -351,8 +351,21 @@ class BTMHDW:
         boolean = BytomHDWallet.checkMnemonic(mnemonic, language)
         return boolean
     
-    def create(self, mnemonic=None, passphrase=None,
+    def create(self, mnemonic=None, passphrase=str(),
                account=1, change=0, address=1, path=None, indexes=None):
         if mnemonic is None:
             mnemonic = self.generateMnemonic()
+
+        bytomHDWallet = BytomHDWallet.masterKeyFromMnemonic(mnemonic=mnemonic,
+                                                            passphrase=passphrase)
+        if indexes is not None:
+            bytomHDWallet.fromIndexes(indexes=indexes)
+        elif path is not None:
+            bytomHDWallet.fromPath(path=path)
+        else:
+            bytomHDWallet.fromIndex(44)
+            bytomHDWallet.fromIndex(153)
+            bytomHDWallet.fromIndex(account)
+            bytomHDWallet.fromIndex(change)
+            bytomHDWallet.fromIndex(address)
 
