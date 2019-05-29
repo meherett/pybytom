@@ -93,6 +93,10 @@ class BytomHDWallet:
         xprivate = prune_root_scalar(Il).hex() + Ir
 
         return BytomHDWallet(xprivate=xprivate, seed=seed, xpublic=None)
+    
+    @staticmethod
+    def masterKeyFromXPrivate(xprivate):
+        return BytomHDWallet(xprivate=xprivate, seed=None, xpublic=None)
 
     def xprivateKey(self):
         return str(self.xprivate)
