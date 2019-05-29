@@ -206,6 +206,34 @@ class BytomHDWallet:
         child_xprivate = xprivate
         return child_xprivate
 
+    def childXPublicKey(self, xpublic, indexes):
+        for index in range(len(indexes)):
+            index_bytes = get_bytes(indexes[index])
+            xpublic_bytes = get_bytes(xpublic)
+            I = bytearray(hmac.HMAC(xpublic_bytes[32:],
+                                    b'N' + xpublic_bytes[:32] + index_bytes,
+                                    digestmod=hashlib.sha512).digest())
+
+            Il, Ir = I[:32], I[32:]
+
+            parse_Il = int.from_bytes(Il, 'big')
+            if parse_Il == 0:
+                raise ValueError("Bad seed, resulting in invalid key!")
+
+            f = bytes(prune_intermediate_scalar(Il))
+            scalar = decodeint(f)
+            F = scalarmultbase(scalar)
+
+            P = decodepoint(xpublic_bytes[:32])
+            P = edwards_add(P, F)
+            public_key = encodepoint(P)
+
+            xpublic_bytes = public_key[:32] + Ir
+            xpublic = xpublic_bytes.hex()
+
+        child_xpublic = xpublic
+        return child_xpublic
+
     def controlProgram(self, xpublic=None, indexes=None, path=None):
         if path:
             self.fromPath(path)
