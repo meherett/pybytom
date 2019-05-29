@@ -1,7 +1,17 @@
-from .ed25519 import *
-from .segwit import *
+#!/usr/bin/env python3
+"""
+Author: Meheret Tesfaye
+Email: meherett@zoho.com
+Github: https://github.com/meherett
+CEO & CO-Founder of Cobra-Framework
+LinkedIn: https://linkedin.com/in/meherett
+"""
+
 from mnemonic.mnemonic import Mnemonic
 from two1.bitcoin.utils import rand_bytes
+
+from .segwit import *
+from .ed25519 import *
 
 import hmac
 
