@@ -110,7 +110,7 @@ class BytomHDWallet:
         self.xpublic = buf + xprivate_bytes[len(xprivate_bytes) // 2:]
         return self.xpublic.hex()
 
-    def privateKey(self, xprivate=None):
+    def expandPrivateKey(self, xprivate=None):
         if xprivate:
             I = hmac.HMAC(b'Expand', get_bytes(xprivate), digestmod=hashlib.sha512).hexdigest()
             Il, Ir = I[:64], I[64:]
@@ -350,9 +350,9 @@ class BTMHDW:
     def checkMnemonic(mnemonic, language='english'):
         boolean = BytomHDWallet.checkMnemonic(mnemonic, language)
         return boolean
-    
-    def create(self, mnemonic=None, passphrase=str(), network='sm',
-               account=1, change=0, address=1, path=None, indexes=None):
+
+    def createWallet(self, mnemonic=None, passphrase=str(), network='sm',
+                     account=1, change=0, address=1, path=None, indexes=None):
         if mnemonic is None:
             mnemonic = self.generateMnemonic()
 
@@ -380,4 +380,3 @@ class BTMHDW:
             program=bytomHDWallet.program(),
             path=bytomHDWallet.getPath()
         )
-
