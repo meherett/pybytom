@@ -176,12 +176,43 @@ class BytomHDWallet:
     def getIndexes(self):
         return self.indexes
 
-    def childXPrivateKey(self, xprivate, indexes):
+    def childXPrivateKey(self, xprivate=None, indexes=None):
+        if indexes is None:
+            indexes = self.indexes
+        if xprivate:
+            for index in range(len(indexes)):
+                index_bytes = get_bytes(indexes[index])
+                xpublic = self.xpublicKey(xprivate)
+                xpublic_bytes = get_bytes(xpublic)
+                xprivate_bytes = get_bytes(xprivate)
+                I = bytearray(hmac.HMAC(xpublic_bytes[32:],
+                                        b'N' + xpublic_bytes[:32] + index_bytes,
+                                        digestmod=hashlib.sha512).digest())
+                Il, Ir = I[:32], I[32:]
+
+                parse_Il = int.from_bytes(Il, 'big')
+                if parse_Il == 0:
+                    raise ValueError("Bad seed, resulting in invalid key!")
+
+                I = prune_intermediate_scalar(Il)[:32] + Ir
+
+                carry = 0
+                total = 0
+                for i in range(32):
+                    total = xprivate_bytes[i] + I[i] + carry
+                    I[i] = total & 0xff
+                    carry = total >> 8
+                if (total >> 8) != 0:
+                    print("sum does not fit in 256-bit int")
+                xprivate = I.hex()
+
+            child_xprivate = xprivate
+            return child_xprivate
         for index in range(len(indexes)):
             index_bytes = get_bytes(indexes[index])
-            xpublic = self.xpublicKey(xprivate)
+            xpublic = self.xpublicKey(self.xprivate)
             xpublic_bytes = get_bytes(xpublic)
-            xprivate_bytes = get_bytes(xprivate)
+            xprivate_bytes = get_bytes(self.xprivate)
             I = bytearray(hmac.HMAC(xpublic_bytes[32:],
                                     b'N' + xpublic_bytes[:32] + index_bytes,
                                     digestmod=hashlib.sha512).digest())
