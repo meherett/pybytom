@@ -17,6 +17,9 @@ from two1.bitcoin.utils import rand_bytes
 from ecdsa.ecdsa import int_to_string, string_to_int
 
 
+BTMHDW_HARDEN = 0x80000000
+
+
 def get_bytes(string):
     if isinstance(string, bytes):
         byte = string
@@ -42,13 +45,14 @@ def prune_root_scalar(string):
 
 class BytomHDWallet:
 
-    def __init__(self, xprivate=None, seed=None, chain=None, depth=None, index=None, fingerprint=None):
+    def __init__(self, xprivate=None, seed=None,
+                 depth=None, index=None, fingerprint=None):
         self.xprivate = xprivate
         self.seed = seed
-        self.chain = chain
         self.depth = depth
         self.index = index
         self.fingerprint = fingerprint
+        self.path = []
 
     @staticmethod
     def masterKeyFromMnemonic(mnemonic, passphrase=''):
@@ -92,8 +96,8 @@ class BytomHDWallet:
         # get root xprivate key
         xprivate = prune_root_scalar(Il).hex() + Ir
 
-        return BytomHDWallet(xprivate=xprivate, chain=Ir,
-                             seed=seed, depth=0, index=0, fingerprint=b'\0\0\0\0')
+        return BytomHDWallet(xprivate=xprivate, seed=seed,
+                             depth=0, index=0, fingerprint=b'\0\0\0\0')
 
     def xprivateKey(self):
         return str(self.xprivate)
@@ -132,6 +136,33 @@ class BytomHDWallet:
         if xpublic:
             return xpublic[:64]
         return self.xpublicKey()[:64]
+
+    def derivePrivateKey(self, index):
+        index = int(index).to_bytes(4, byteorder='little').hex()
+        self.path.append(index)
+
+        return BytomHDWallet()
+
+    def fromIndex(self, index):
+        if not str(index)[0:2] != "m/":
+            raise ValueError("Bad Index, Please use fromPath not fromIndex for this %s" % index)
+        if not isinstance(index, int):
+            raise ValueError("Bad Index, Please import only integer number!")
+        return self.derivePrivateKey(index)
+
+    def fromPath(self, path):
+        if str(path)[0:2] != 'm/':
+            raise ValueError("Bad path, please insert like this type of path \"m/0'/0\"! ")
+
+        for index in path.lstrip('m/').split('/'):
+            if "'" in index:
+                self.derivePrivateKey(int(index[:-1]) + BTMHDW_HARDEN)
+            else:
+                self.derivePrivateKey(int(index))
+        return BytomHDWallet()
+
+    def getPath(self):
+        return self.path
 
 
 class BTMHDW:
