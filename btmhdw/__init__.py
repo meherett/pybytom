@@ -235,12 +235,33 @@ class BytomHDWallet:
         return child_xpublic
 
     def controlProgram(self, xpublic=None, indexes=None, path=None):
-        if path:
-            self.fromPath(path)
-        elif indexes:
-            pass
+        if indexes is None:
+            if path is not None:
+                self.fromPath(path)
+                indexes = self.indexes
+            else:
+                indexes = self.indexes
         if xpublic:
-            pass
+            child_xpublic = self.childXPublicKey(xpublic=xpublic,
+                                                 indexes=indexes)
+            child_public = self.publicKey(xpublic=child_xpublic)
+            child_public_byte = get_bytes(child_public)
+
+            ripemd160 = hashlib.new('ripemd160')
+            ripemd160.update(child_public_byte)
+            public_hash = ripemd160.hexdigest()
+            control_program = '0014' + public_hash
+            return control_program
+        child_xpublic = self.childXPublicKey(xpublic=self.publicKey(),
+                                             indexes=indexes)
+        child_public = self.publicKey(xpublic=child_xpublic)
+        child_public_byte = get_bytes(child_public)
+
+        ripemd160 = hashlib.new('ripemd160')
+        ripemd160.update(child_public_byte)
+        public_hash = ripemd160.hexdigest()
+        control_program = '0014' + public_hash
+        return control_program
 
 
 class BTMHDW:
