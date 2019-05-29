@@ -43,6 +43,19 @@ def prune_root_scalar(string):
     return s
 
 
+def prune_intermediate_scalar(f):
+    f = bytearray(f)
+    # clear bottom 3 bits
+    f[0] = f[0] & 248
+    # clear 7 high bits
+    f[29] = f[29] & 1
+    # clear 8 bits
+    f[30] = 0
+    # clear 8 bits
+    f[31] = 0
+    return f
+
+
 class BytomHDWallet:
 
     def __init__(self, xprivate=None, seed=None,
@@ -52,7 +65,7 @@ class BytomHDWallet:
         self.depth = depth
         self.index = index
         self.fingerprint = fingerprint
-        self.paths = []
+        self.indexes = []
 
     @staticmethod
     def masterKeyFromMnemonic(mnemonic, passphrase=''):
@@ -139,7 +152,7 @@ class BytomHDWallet:
 
     def derivePrivateKey(self, index):
         index = int(index).to_bytes(4, byteorder='little').hex()
-        self.paths.append(index)
+        self.indexes.append(index)
 
         return BytomHDWallet()
 
@@ -161,11 +174,16 @@ class BytomHDWallet:
                 self.derivePrivateKey(int(index))
         return BytomHDWallet()
 
-    def getPaths(self):
-        return self.paths
+    def getIndexes(self):
+        return self.indexes
 
-
-
+    def controlProgram(self, xpublic=None, indexes=None, path=None):
+        if path:
+            self.fromPath(path)
+        elif indexes:
+            pass
+        if xpublic:
+            pass
 
 class BTMHDW:
 
