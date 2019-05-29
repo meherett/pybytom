@@ -9,6 +9,7 @@ import binascii
 import pbkdf2
 
 from .ed25519 import *
+from .segwit import *
 
 from hashlib import sha256
 from ecdsa.curves import SECP256k1
@@ -323,6 +324,18 @@ class BytomHDWallet:
         control_program = '0014' + public_hash
         return control_program
 
+    def address(self, control_program=None, network=None):
+        if network == 'mainnet' or network == 'bm':
+            hrp = 'bm'
+        elif network == 'testnet' or network == 'tm':
+            hrp = 'tm'
+        else:
+            hrp = 'sm'
+        if control_program:
+            address_str = encode(hrp, 0, get_bytes(control_program[4:]))
+            return address_str
+        address_str = encode(hrp, 0, get_bytes(self.controlProgram()[4:]))
+        return address_str
 
 class BTMHDW:
 
