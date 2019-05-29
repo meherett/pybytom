@@ -47,10 +47,9 @@ def prune_intermediate_scalar(f):
 class BytomHDWallet:
 
     def __init__(self, xprivate=None, seed=None,
-                 program=None, index=None, xpublic=None):
+                 index=None, xpublic=None):
         self.xprivate = xprivate
         self.seed = seed
-        self.program = program
         self.index = index
         self.xpublic = xpublic
         self.indexes = []
@@ -98,7 +97,7 @@ class BytomHDWallet:
         xprivate = prune_root_scalar(Il).hex() + Ir
 
         return BytomHDWallet(xprivate=xprivate, seed=seed,
-                             program=None, index=0, xpublic=None)
+                             index=0, xpublic=None)
 
     def xprivateKey(self):
         return str(self.xprivate)
@@ -143,6 +142,9 @@ class BytomHDWallet:
         self.indexes.append(index)
 
         return BytomHDWallet()
+
+    def fromIndexes(self, indexes):
+        self.indexes = indexes
 
     def fromIndex(self, index):
         if not str(index)[0:2] != "m/":
@@ -309,8 +311,8 @@ class BytomHDWallet:
         ripemd160 = hashlib.new('ripemd160')
         ripemd160.update(child_public_byte)
         public_hash = ripemd160.hexdigest()
-        self.program = '0014' + public_hash
-        return self.program
+        program = '0014' + public_hash
+        return program
 
     def address(self, control_program=None, network='sm'):
         if network == 'mainnet' or network == 'bm':
@@ -329,12 +331,12 @@ class BytomHDWallet:
 class BTMHDW:
 
     def __init__(self):
-        self.hdwallet = dict(
-            mnmonic=str(),
+        self.wallet = dict(
+            mnemonic=str(),
             seed=str(),
-            root_xprv=str(),
-            xpub=str(),
-            xprv=str()
+            xprivate=str(),
+            xpublic=str(),
+            program=str()
         )
 
     @staticmethod
@@ -348,3 +350,9 @@ class BTMHDW:
     def checkMnemonic(mnemonic, language='english'):
         boolean = BytomHDWallet.checkMnemonic(mnemonic, language)
         return boolean
+    
+    def create(self, mnemonic=None, passphrase=None,
+               account=1, change=0, address=1, path=None, indexes=None):
+        if mnemonic is None:
+            mnemonic = self.generateMnemonic()
+
