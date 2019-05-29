@@ -163,11 +163,13 @@ class BytomHDWallet:
         return self.indexes
 
     def getPath(self):
-        path = 'm'
-        for i in self.getIndexes():
-            index = bytes.fromhex(i)
-            number = int.from_bytes(index, byteorder='little')
-            path = '/' + path + str(number)
+        path = 'm/'
+        for i, index in enumerate(self.getIndexes(), 1):
+            number = int.from_bytes(bytes.fromhex(index), byteorder='little')
+            if i == len(self.getIndexes()):
+                path = path + str(number)
+            else:
+                path = path + str(number) + '/'
         return path
 
     def childXPrivateKey(self, xprivate=None, indexes=None):
