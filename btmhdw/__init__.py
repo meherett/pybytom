@@ -18,9 +18,6 @@ def get_bytes(string):
     return byte
 
 
-# s_str must be >= 32 bytes long and gets rewritten in place.
-# This is NOT the same pruning as in Ed25519: it additionally clears the third
-# highest bit to ensure subkeys do not overflow passphrasethe second highest bit.
 def prune_root_scalar(string):
     s = bytearray(get_bytes(string=string))
     s[0] = s[0] & 248
@@ -164,6 +161,14 @@ class BytomHDWallet:
 
     def getIndexes(self):
         return self.indexes
+
+    def getPath(self):
+        path = 'm'
+        for i in self.getIndexes():
+            index = bytes.fromhex(i)
+            number = int.from_bytes(index, byteorder='little')
+            path = '/' + path + str(number)
+        return path
 
     def childXPrivateKey(self, xprivate=None, indexes=None):
         if indexes is None:
@@ -313,6 +318,7 @@ class BytomHDWallet:
         return program
 
     def address(self, control_program=None, network='sm'):
+        hrp = None
         if network == 'mainnet' or network == 'bm':
             hrp = 'bm'
         elif network == 'testnet' or network == 'tm':
@@ -343,7 +349,7 @@ class BTMHDW:
         boolean = BytomHDWallet.checkMnemonic(mnemonic, language)
         return boolean
     
-    def create(self, mnemonic=None, passphrase=str(),
+    def create(self, mnemonic=None, passphrase=str(), network='sm',
                account=1, change=0, address=1, path=None, indexes=None):
         if mnemonic is None:
             mnemonic = self.generateMnemonic()
@@ -365,10 +371,11 @@ class BTMHDW:
 
         return dict(
             mnemonic=mnemonic,
-            address=bytomHDWallet.address(),
+            address=bytomHDWallet.address(network=network),
             seed=bytomHDWallet.seed.hex(),
             xprivate=bytomHDWallet.xprivate,
-            xpublic=bytomHDWallet.xpublic,
-            program=bytomHDWallet.program()
+            xpublic=bytomHDWallet.xpublic.hex(),
+            program=bytomHDWallet.program(),
+            path=bytomHDWallet.getPath()
         )
 
