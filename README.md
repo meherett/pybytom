@@ -119,9 +119,9 @@ print(btmhdw.generateMnemonic(language="japanese", passphrase="meherett"))
 <details>
 <summary>Output</summary>
 
-```python
-"spare uniform possible grief attitude machine peace update tornado area evolve spread"
-"あけがたãひていãぎじかがくãくうきãどうぐãだじゃれãおおうãりねんãこんだてãてわたしãはぶらしãちいき"
+```json5
+spare uniform possible grief attitude machine peace update tornado area evolve spread
+あけがたãひていãぎじかがくãくうきãどうぐãだじゃれãおおうãりねんãこんだてãてわたしãはぶらしãちいき
 ```
 </details>
 
@@ -186,7 +186,6 @@ False
 mnemonic = btmhdw.generateMnemonic("english")
 createdWallet = btmhdw.createWallet(mnemonic=mnemonic, 
                                     network="mainnet")
-
 print(createdWallet['address'])
 print(createdWallet['xprivate'], '\n')
 print(createdWallet)
@@ -195,11 +194,10 @@ print(createdWallet)
 <summary>Output</summary>
 
 ```json5
-"bm1q6quqkfry04q2vt52qgccrrv03e7y0atassqwy8"
-"b07512cd57be8e53ae5e564282b6c080ca32388a0d6f891f47397b8e795afc5f9e16030b0999058b562cf5727e29f7eb4ca04691a4d64d2167f16ed3eb82f5a7"
+bm1qsv6u5z2uxtefnehkyuetyx4llu27umqscu8vtk
+983fc70dc7c4a26ff9af39af4c0cc3057565b8f70a31158a6f37e1804ae6414ea6cade89861c53fafa461e5f0e116f47a816b11ba05585b79c577531c6000ffe 
 
-{'mnemonic': 'model file denial frost story acquire guard quote pill game asthma level', 'address': 'bm1q8jgkl7ajj87qtyeav2uerjkzl0nfyqxqrjf7nw', 'seed': '50dcaed855bad335400dd9b133403c2994a4e3f9e10100862dd8201dee0e67865fe0d5e27c1dc90cc37c5b8eb57f40cbe5f9abafa290c014625b6786b49f6142', 'xprivate': 'f8724b6d3aa39c5647505821dcd31ef7f11c93e376462430af5a2985b8047048b73ab254dd6bd81bf86f086d20f3a231be779f27d544206bc0fafff36492d810', 'xpublic': '12469fbd095ea79e9e08ffa4c2059f9567316e4ec1790621f83f4c78488a0d90b73ab254dd6bd81bf86f086d20f3a231be779f27d544206bc0fafff36492d810', 'program': '0014bdf741d1fe8225c67faa7247f6915c0d776100df', 'path': 'm/44/153/1/0/1'}
-
+{'mnemonic': 'alarm fix day evoke void hawk pistol pulp impact farm average mask', 'address': 'bm1qsv6u5z2uxtefnehkyuetyx4llu27umqscu8vtk', 'seed': '6e269a33fb2c65b9a1966bc9579628869630d7d647792eaa3692fdae1db1a719ff4dfef17acf6027fb20ba7ce04e4715460ea2d280f69f646df1f2a6ef6ffea1', 'xprivate': '983fc70dc7c4a26ff9af39af4c0cc3057565b8f70a31158a6f37e1804ae6414ea6cade89861c53fafa461e5f0e116f47a816b11ba05585b79c577531c6000ffe', 'xpublic': '4a7bfcbccbe97aa3f92795c761697f98b6b2350597ab73c85109b025301db1aaa6cade89861c53fafa461e5f0e116f47a816b11ba05585b79c577531c6000ffe', 'program': '0014312b5e9ee3625a50847ffd5244dbc0d8f01b8566', 'path': 'm/44/153/1/0/1'}
 ```
 </details>
 
@@ -225,6 +223,27 @@ print(createdWallet)
 `Object`:
 - `Object` - *object*, keys are entropy, mnemonic, address, seed, xprivate, xpublic, program and path
 
+##### Example
+
+```python
+XPRIVATE = "c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759d513bc370335cac51d77f0be5dfe84de024cfee562530b4d873b5f5e2ff4f57c"
+walletFromXPrivate = btmhdw.walletFromXPrivate(xprivate=XPRIVATE,
+                                               network="mainnet")
+print(walletFromXPrivate['address'])
+print(walletFromXPrivate['xprivate'], '\n')
+print(walletFromXPrivate)
+```
+<details>
+<summary>Output</summary>
+
+```json5
+bm1qtzg058tt5eyf2qqfy2650erxqxhfkt4p236708
+c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759d513bc370335cac51d77f0be5dfe84de024cfee562530b4d873b5f5e2ff4f57c 
+
+{'address': 'bm1qtzg058tt5eyf2qqfy2650erxqxhfkt4p236708', 'xprivate': 'c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759d513bc370335cac51d77f0be5dfe84de024cfee562530b4d873b5f5e2ff4f57c', 'xpublic': '1b0541a7664cee929edb54d9ef21996b90546918a920a77e1cd6015d97c56563d513bc370335cac51d77f0be5dfe84de024cfee562530b4d873b5f5e2ff4f57c', 'program': '0014dcf6b21d83c978d3125d1330c928c38fee315200', 'path': 'm/44/153/1/0/1'}
+```
+</details>
+
 ----
 
 #### BytomHDWallet()
@@ -244,6 +263,15 @@ print(createdWallet)
 `Object`:
 - `Object` - *BytomHDWallet()*, class.
 
+##### Example
+
+```python
+MNEMONIC = "ancient young hurt bone shuffle deposit congress normal crack six boost despair"
+
+bytomHDWallet = BytomHDWallet.masterKeyFromMnemonic(mnemonic=MNEMONIC,
+                                                    passphrase="Meheret Tesfaye")
+```
+
 ----
 
 **`generateEntropy()`**: It is to generate new entropy.
@@ -252,6 +280,19 @@ print(createdWallet)
 
 `Object`:
 - `String` - *entropy*, entropy hex.
+
+##### Example
+
+```python
+print(bytomHDWallet.generateEntropy().hex())
+```
+<details>
+<summary>Output</summary>
+
+```json
+7184af4506fb1b51c52d2e73251cc3a7
+```
+</details>
 
 ----
 
@@ -270,6 +311,26 @@ print(createdWallet)
 `Object`:
 - `Object` - *BytomHDWallet()*, class.
 - `String` - *mnemonic*, mnemonic 12 words.
+
+##### Example
+
+```python
+entropy = bytomHDWallet.generateEntropy()
+
+bytomHDWallet, mnemonic = bytomHDWallet.masterKeyFromEntropy(entropy=entropy,
+                                                             passphrase="meherett",
+                                                             language="japanese")
+print(mnemonic)
+print(bytomHDWallet)
+```
+<details>
+<summary>Output</summary>
+
+```json5
+たいむãおまいりãたんめいãきちょうãろんぶんãいなかãしなぎれãほえるãいもうとãひしょãじゆうãにんむ
+<btmhdw.BytomHDWallet object at 0x7f3374618cf8>
+```
+</details>
 
 ----
 
