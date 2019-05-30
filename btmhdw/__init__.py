@@ -79,15 +79,21 @@ class BytomHDWallet:
                 return False
 
     @staticmethod
-    def masterKeyFromEntropy(passphrase=str(), language='english', strength=128):
+    def generateEntropy():
+        return random.randint(0, 2 ** 128 - 1) \
+            .to_bytes(16, byteorder='big')
+
+    @staticmethod
+    def masterKeyFromEntropy(entropy=None,
+                             passphrase=str(), language='english', strength=128):
 
         if strength % 32 != 0:
             raise ValueError("strength must be a multiple of 32")
         if strength < 128 or strength > 256:
             raise ValueError("strength should be >= 128 and <= 256")
 
-        entropy = random.randint(0, 2 ** 128 - 1) \
-            .to_bytes(16, byteorder='big')
+        if not entropy:
+            entropy = BytomHDWallet.generateEntropy()
         mnemonic = Mnemonic(language=language) \
             .to_mnemonic(entropy)
         seed = Mnemonic.to_seed(mnemonic, passphrase)
