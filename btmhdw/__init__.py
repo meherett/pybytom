@@ -8,11 +8,11 @@ LinkedIn: https://linkedin.com/in/meherett
 """
 
 from mnemonic.mnemonic import Mnemonic
-from two1.bitcoin.utils import rand_bytes
 
 from .segwit import *
 from .ed25519 import *
 
+import random
 import hmac
 
 BTMHDW_HARDEN = 0x80000000
@@ -53,8 +53,9 @@ def prune_intermediate_scalar(f):
 
 class BytomHDWallet:
 
-    def __init__(self, xprivate=None,
-                 seed=None, xpublic=None):
+    def __init__(self, entropy=str(),
+                 xprivate=None, seed=None, xpublic=None):
+        self.entropy = entropy
         self.xprivate = xprivate
         self.seed = seed
         self.xpublic = xpublic
@@ -64,7 +65,7 @@ class BytomHDWallet:
     def masterKeyFromMnemonic(mnemonic, passphrase=''):
 
         seed = Mnemonic.to_seed(mnemonic, passphrase)
-        return BytomHDWallet.masterKeyFromSeed(seed=seed)
+        return BytomHDWallet.masterKeyFromSeed(seed=seed, entropy=str())
 
     @staticmethod
     def checkMnemonic(mnemonic, language='english'):
@@ -83,15 +84,17 @@ class BytomHDWallet:
         if strength < 128 or strength > 256:
             raise ValueError("strength should be >= 128 and <= 256")
 
-        entropy = rand_bytes(strength // 8)
+        entropy = random.randint(0, 2 ** 128 - 1) \
+            .to_bytes(16, byteorder='big')
         mnemonic = Mnemonic(language=language) \
             .to_mnemonic(entropy)
         seed = Mnemonic.to_seed(mnemonic, passphrase)
 
-        return BytomHDWallet.masterKeyFromSeed(seed=seed), mnemonic
+        return BytomHDWallet.masterKeyFromSeed(seed=seed,
+                                               entropy=entropy), mnemonic
 
     @staticmethod
-    def masterKeyFromSeed(seed):
+    def masterKeyFromSeed(seed, entropy=str()):
 
         I = hmac.HMAC(b'Root', get_bytes(seed), digestmod=hashlib.sha512).hexdigest()
         Il, Ir = I[:64], I[64:]
@@ -102,7 +105,8 @@ class BytomHDWallet:
         # get root xprivate key
         xprivate = prune_root_scalar(Il).hex() + Ir
 
-        return BytomHDWallet(xprivate=xprivate, seed=seed, xpublic=None)
+        return BytomHDWallet(entropy=entropy,
+                             xprivate=xprivate, seed=seed, xpublic=None)
 
     @staticmethod
     def masterKeyFromXPrivate(xprivate):
@@ -365,13 +369,18 @@ class BTMHDW:
         boolean = BytomHDWallet.checkMnemonic(mnemonic, language)
         return boolean
 
-    def createWallet(self, mnemonic=None, passphrase=str(), network='sm',
+    @staticmethod
+    def createWallet(mnemonic=None, passphrase=str(), network='sm',
                      account=1, change=0, address=1, path=None, indexes=None):
         if mnemonic is None:
-            mnemonic = self.generateMnemonic()
-
-        bytomHDWallet = BytomHDWallet.masterKeyFromMnemonic(mnemonic=mnemonic,
-                                                            passphrase=passphrase)
+            bytomHDWallet, mnemonic = BytomHDWallet \
+                .masterKeyFromEntropy(passphrase=passphrase,
+                                      language='english',
+                                      strength=128)
+        else:
+            bytomHDWallet = BytomHDWallet \
+                .masterKeyFromMnemonic(mnemonic=mnemonic,
+                                       passphrase=passphrase)
         if indexes is not None \
                 and path is None:
             bytomHDWallet.fromIndexes(indexes=indexes)
@@ -386,6 +395,7 @@ class BTMHDW:
             bytomHDWallet.fromIndex(address)
 
         return dict(
+            entropy=bytomHDWallet.entropy.hex(),
             mnemonic=mnemonic,
             address=bytomHDWallet.address(network=network),
             seed=bytomHDWallet.seed.hex(),
