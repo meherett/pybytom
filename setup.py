@@ -6,7 +6,7 @@ with open("README.md", "r") as readme:
 setup(
     name="btmhdw",
     version='0.1.0',
-    description='The implementation of Hierarchical Deterministic (HD) wallets generator for Bytom protocol',
+    description='The implementation of Hierarchical Deterministic (HD) wallets generator for Bytom blockchain',
     long_description=long_description,
     long_description_content_type="text/markdown",
     license='MIT',
