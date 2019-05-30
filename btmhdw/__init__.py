@@ -143,15 +143,15 @@ class BytomHDWallet:
             parse_Ir = str(Ir)
             if not parse_Ir:
                 raise ValueError("Bad seed, resulting in invalid key!")
-            private = xprivate[:64] + Ir
-            return private
+            expandPrivate = xprivate[:64] + Ir
+            return expandPrivate
         I = hmac.HMAC(b'Expand', get_bytes(self.xprivate), digestmod=hashlib.sha512).hexdigest()
         Il, Ir = I[:64], I[64:]
         parse_Ir = str(Ir)
         if not parse_Ir:
             raise ValueError("Bad seed, resulting in invalid key!")
-        private = self.xprivate[:64] + Ir
-        return private
+        expandPrivate = self.xprivate[:64] + Ir
+        return expandPrivate
 
     def publicKey(self, xpublic=None):
         if xpublic:
