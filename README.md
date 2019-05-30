@@ -110,6 +110,23 @@ Here are more [btmhdw/example](https://github.com/meherett/btmhdw/example/master
 `Object`:
 - `String` - *mnemonic*, new mnemonic mnemonic 12 words.
 
+##### Example
+
+```python
+print(btmhdw.generateMnemonic(language="english", passphrase="meherett"))
+print(btmhdw.generateMnemonic(language="japanese", passphrase="meherett"))
+```
+<details>
+<summary>Output</summary>
+
+```python
+"spare uniform possible grief attitude machine peace update tornado area evolve spread"
+"あけがたãひていãぎじかがくãくうきãどうぐãだじゃれãおおうãりねんãこんだてãてわたしãはぶらしãちいき"
+```
+</details>
+
+----
+
 **`checkMnemonic()`**: It is to check mnemonic language.
 
 **Parameters**
@@ -124,6 +141,25 @@ Here are more [btmhdw/example](https://github.com/meherett/btmhdw/example/master
 
 `Object`:
 - `Boolean` - *boolean*, True/False.
+
+##### Example
+
+```python
+MNEMONIC = "ancient young hurt bone shuffle deposit congress normal crack six boost despair"
+
+print(btmhdw.checkMnemonic(MNEMONIC, "english"))
+print(btmhdw.checkMnemonic(MNEMONIC, "japanese"))
+```
+<details>
+<summary>Output</summary>
+
+```python
+True
+False
+```
+</details>
+
+----
 
 **`createWallet()`**: It is to create new Bytom wallet.
 
@@ -143,6 +179,31 @@ Here are more [btmhdw/example](https://github.com/meherett/btmhdw/example/master
 
 `Object`:
 - `Object` - *object*, keys are _entropy_, _mnemonic_, _address_, _seed_, _xprivate_, _xpublic_, _program_ and _path_
+
+##### Example
+
+```python
+mnemonic = btmhdw.generateMnemonic("english")
+createdWallet = btmhdw.createWallet(mnemonic=mnemonic, 
+                                    network="mainnet")
+
+print(createdWallet['address'])
+print(createdWallet['xprivate'], '\n')
+print(createdWallet)
+```
+<details>
+<summary>Output</summary>
+
+```json5
+"bm1q6quqkfry04q2vt52qgccrrv03e7y0atassqwy8"
+"b07512cd57be8e53ae5e564282b6c080ca32388a0d6f891f47397b8e795afc5f9e16030b0999058b562cf5727e29f7eb4ca04691a4d64d2167f16ed3eb82f5a7"
+
+{'mnemonic': 'model file denial frost story acquire guard quote pill game asthma level', 'address': 'bm1q8jgkl7ajj87qtyeav2uerjkzl0nfyqxqrjf7nw', 'seed': '50dcaed855bad335400dd9b133403c2994a4e3f9e10100862dd8201dee0e67865fe0d5e27c1dc90cc37c5b8eb57f40cbe5f9abafa290c014625b6786b49f6142', 'xprivate': 'f8724b6d3aa39c5647505821dcd31ef7f11c93e376462430af5a2985b8047048b73ab254dd6bd81bf86f086d20f3a231be779f27d544206bc0fafff36492d810', 'xpublic': '12469fbd095ea79e9e08ffa4c2059f9567316e4ec1790621f83f4c78488a0d90b73ab254dd6bd81bf86f086d20f3a231be779f27d544206bc0fafff36492d810', 'program': '0014bdf741d1fe8225c67faa7247f6915c0d776100df', 'path': 'm/44/153/1/0/1'}
+
+```
+</details>
+
+----
 
 **`walletFromXPrivate()`**: It is to get wallet from XPrivate
 
@@ -164,6 +225,8 @@ Here are more [btmhdw/example](https://github.com/meherett/btmhdw/example/master
 `Object`:
 - `Object` - *object*, keys are entropy, mnemonic, address, seed, xprivate, xpublic, program and path
 
+----
+
 #### BytomHDWallet()
 
 **`masterKeyFromMnemonic()`**: It is to get master key from mnemonic.
@@ -179,7 +242,9 @@ Here are more [btmhdw/example](https://github.com/meherett/btmhdw/example/master
 **Returns**
 
 `Object`:
-- `Object` - *BytomHDWallet()*, BytomHDWallet class.
+- `Object` - *BytomHDWallet()*, class.
+
+----
 
 **`generateEntropy()`**: It is to generate new entropy.
 
@@ -187,6 +252,8 @@ Here are more [btmhdw/example](https://github.com/meherett/btmhdw/example/master
 
 `Object`:
 - `String` - *entropy*, entropy hex.
+
+----
 
 **`masterKeyFromEntropy()`**: It is to get master key from mnemonic.
 
@@ -201,8 +268,10 @@ Here are more [btmhdw/example](https://github.com/meherett/btmhdw/example/master
 **Returns**
 
 `Object`:
-- `Object` - *BytomHDWallet()*, BytomHDWallet class.
+- `Object` - *BytomHDWallet()*, class.
 - `String` - *mnemonic*, mnemonic 12 words.
+
+----
 
 **`masterKeyFromXPrivate()`**: It is to get master key from XPrivate.
 
@@ -216,12 +285,16 @@ Here are more [btmhdw/example](https://github.com/meherett/btmhdw/example/master
 `Object`:
 - `Object` - *BytomHDWallet()*, BytomHDWallet class.
 
+----
+
 **`xprivateKey()`**: It is to get XPrivate key.
 
 **Returns**
 
 `Object`:
 - `String` - *xprivate*, btm wallet xprivate key.
+
+----
 
 **`xpublicKey()`**: It is to get XPublic key.
 
@@ -235,6 +308,8 @@ Here are more [btmhdw/example](https://github.com/meherett/btmhdw/example/master
 `Object`:
 - `String` - *xpublic*, btm wallet xpublic key.
 
+----
+
 **`expandPrivateKey()`**: It is to get Expand XPrivate key.
 
 **Parameters**
@@ -246,6 +321,8 @@ Here are more [btmhdw/example](https://github.com/meherett/btmhdw/example/master
 
 `Object`:
 - `String` - *expandPrivate*, btm wallet expand private key.
+
+----
 
 **`publicKey()`**: It is to get public key(length 64).
 
@@ -259,12 +336,16 @@ Here are more [btmhdw/example](https://github.com/meherett/btmhdw/example/master
 `Object`:
 - `String` - *public*, btm wallet public key(length 64).
 
+----
+
 **`fromIndexes()`**: It is to set collection of index.
 
 **Parameters**
 
 `Object`:
 - `Array` - *indexes*, array of index.
+
+----
 
 **`fromIndex()`**: It is to set index.
 
@@ -276,7 +357,9 @@ Here are more [btmhdw/example](https://github.com/meherett/btmhdw/example/master
 **Returns**
 
 `Object`:
-- `Object` - *BytomHDWallet()*, BytomHDWallet class.
+- `Object` - *BytomHDWallet()*, class.
+
+----
 
 **`fromPath()`**: It is to set index from path.
 
@@ -288,7 +371,9 @@ Here are more [btmhdw/example](https://github.com/meherett/btmhdw/example/master
 **Returns**
 
 `Object`:
-- `Object` - *BytomHDWallet()*, BytomHDWallet class.
+- `Object` - *BytomHDWallet()*, class.
+
+----
 
 **`getIndexes()`**: It is to get collection of index.
 
@@ -297,12 +382,16 @@ Here are more [btmhdw/example](https://github.com/meherett/btmhdw/example/master
 `Object`:
 - `Array` - *indexes*, collection of index.
 
+----
+
 **`getPath()`**: It is to get path of indexes.
 
 **Returns**
 
 `Object`:
 - `String` - *path*, path indexes.
+
+----
 
 **`childXPrivateKey()`**: It is to get child of XPrivate key.
 
@@ -317,6 +406,8 @@ Here are more [btmhdw/example](https://github.com/meherett/btmhdw/example/master
 `Object`:
 - `String` - *childXPrivate*, btm child xprivate key.
 
+----
+
 **`childXPublicKey()`**: It is to get child of XPublic key.
 
 **Parameters**
@@ -329,6 +420,8 @@ Here are more [btmhdw/example](https://github.com/meherett/btmhdw/example/master
 
 `Object`:
 - `String` - *childXPublic*, btm child xpublic key.
+
+----
 
 **`program()`**: It is to get control program.
 
@@ -343,6 +436,8 @@ Here are more [btmhdw/example](https://github.com/meherett/btmhdw/example/master
 
 `Object`:
 - `String` - *program*, control program.
+
+----
 
 **`address()`**: It is to get address.
 
