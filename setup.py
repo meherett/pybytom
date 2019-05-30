@@ -15,8 +15,7 @@ setup(
     url='https://github.com/mehetett/btmhdw',
     packages=['btmhdw'],
     install_requires=[
-        "mnemonic==0.13",
-        "two1==3.10.9"
+        "mnemonic==0.13"
     ],
     classifiers=[
         "Development Status :: 3 - Alpha",
