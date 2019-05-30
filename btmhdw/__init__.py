@@ -16,6 +16,8 @@ import random
 import hmac
 
 BTMHDW_HARDEN = 0x80000000
+PATH = "m/44/153/1/0/1"
+INDEXES = ['2c000000', '99000000', '01000000', '00000000', '01000000']
 
 
 def get_bytes(string):
