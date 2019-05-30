@@ -181,30 +181,128 @@ Here are more [btmhdw/example](https://github.com/meherett/btmhdw/example/master
 `Object`:
 - `Object` - *BytomHDWallet()*, BytomHDWallet class.
 
+**`generateEntropy()`**: It is to generate new entropy.
+
+**Returns**
+
+`Object`:
+- `String` - *entropy*, entropy hex.
+
 **`masterKeyFromEntropy()`**: It is to get master key from mnemonic.
 
 **Parameters**
 
+`Optional`:
+- `String` - *entropy*, new entropy.
+- `String` - *strength*, 128.
+- `String` - *passphrase*, password of the key.
+- `String` - *language*, mnemonic language of the key.
+
+**Returns**
+
 `Object`:
+- `Object` - *BytomHDWallet()*, BytomHDWallet class.
 - `String` - *mnemonic*, mnemonic 12 words.
 
-`Optional`:
-- `String` - *passphrase*, password of the key.
+**`masterKeyFromXPrivate()`**: It is to get master key from XPrivate.
+
+**Parameters**
+
+`Object`:
+- `String` - *xprivate*, BTM xprivate key.
 
 **Returns**
 
 `Object`:
 - `Object` - *BytomHDWallet()*, BytomHDWallet class.
 
+**`xprivateKey()`**: It is to get XPrivate key.
 
+**Returns**
 
+`Object`:
+- `String` - *xprivate*, btm wallet xprivate key.
 
+**`xpublicKey()`**: It is to get XPublic key.
 
+**Parameters**
 
+`Optional`:
+- `String` - *xprivate*, BTM xprivate key.
 
+**Returns**
 
+`Object`:
+- `String` - *xpublic*, btm wallet xpublic key.
 
+**`expandPrivateKey()`**: It is to get Expand XPrivate key.
 
+**Parameters**
+
+`Optional`:
+- `String` - *xprivate*, BTM xprivate key.
+
+**Returns**
+
+`Object`:
+- `String` - *expandPrivate*, btm wallet expand private key.
+
+**`publicKey()`**: It is to get public key(length 64).
+
+**Parameters**
+
+`Optional`:
+- `String` - *xpublic*, BTM xpublic key.
+
+**Returns**
+
+`Object`:
+- `String` - *public*, btm wallet public key(length 64).
+
+**`fromIndexes()`**: It is to set collection of index.
+
+**Parameters**
+
+`Object`:
+- `Array` - *indexes*, array of index.
+
+**`fromIndex()`**: It is to set index.
+
+**Parameters**
+
+`Object`:
+- `Number` - *index*, number.
+
+**Returns**
+
+`Object`:
+- `Object` - *BytomHDWallet()*, BytomHDWallet class.
+
+**`fromPath()`**: It is to set index from path.
+
+**Parameters**
+
+`Object`:
+- `String` - *path*, path of index.
+
+**Returns**
+
+`Object`:
+- `Object` - *BytomHDWallet()*, BytomHDWallet class.
+
+**`getIndexes()`**: It is to get collection of index.
+
+**Returns**
+
+`Object`:
+- `Array` - *indexes*, collection of index.
+
+**`getPath()`**: It is to get path of indexes.
+
+**Returns**
+
+`Object`:
+- `String` - *path*, path indexes.
 
 
 
