@@ -394,6 +394,17 @@ class BTMHDW:
             bytomHDWallet.fromIndex(change)
             bytomHDWallet.fromIndex(address)
 
+        if not bytomHDWallet.entropy:
+            return dict(
+                mnemonic=mnemonic,
+                address=bytomHDWallet.address(network=network),
+                seed=bytomHDWallet.seed.hex(),
+                xprivate=bytomHDWallet.xprivate,
+                xpublic=bytomHDWallet.xpublic.hex(),
+                program=bytomHDWallet.program(),
+                path=bytomHDWallet.getPath()
+            )
+
         return dict(
             entropy=bytomHDWallet.entropy.hex(),
             mnemonic=mnemonic,
