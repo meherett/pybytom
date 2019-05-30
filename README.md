@@ -304,12 +304,58 @@ Here are more [btmhdw/example](https://github.com/meherett/btmhdw/example/master
 `Object`:
 - `String` - *path*, path indexes.
 
+**`childXPrivateKey()`**: It is to get child of XPrivate key.
 
+**Parameters**
 
+`Optional`:
+- `String` - *xprivate*, BTM xprivate key.
+- `String` - *indexes*, collection of index.
 
+**Returns**
 
+`Object`:
+- `String` - *childXPrivate*, btm child xprivate key.
 
+**`childXPublicKey()`**: It is to get child of XPublic key.
 
+**Parameters**
+
+`Optional`:
+- `String` - *xpublic*, BTM xpublic key.
+- `String` - *indexes*, collection of index.
+
+**Returns**
+
+`Object`:
+- `String` - *childXPublic*, btm child xpublic key.
+
+**`program()`**: It is to get control program.
+
+**Parameters**
+
+`Optional`:
+- `String` - *xpublic*, BTM xpublic key.
+- `String` - *path*, path of index.
+- `String` - *indexes*, collection of index.
+
+**Returns**
+
+`Object`:
+- `String` - *program*, control program.
+
+**`address()`**: It is to get address.
+
+**Parameters**
+
+`Optional`:
+- `String` - *program*, control program.
+- `String` - *network*, mainnet(bm)/testnet(tm)/solonet(sm) by default sm.
+
+**Returns**
+
+`Object`:
+- `String` - *address*, address from control program.
 
 
 ## Author ✒️
