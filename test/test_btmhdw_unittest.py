@@ -11,7 +11,7 @@
 #         enCheck = self.checkMnemonic(enMnemonic, 'english')
 #
 #         self.assertTrue(enCheck)
-# 
+#
 #         jpMnemonic = self.generateMnemonic('japanese')
 #
 #         jpCheck = self.checkMnemonic(jpMnemonic, 'japanese')
