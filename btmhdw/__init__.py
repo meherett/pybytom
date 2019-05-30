@@ -339,7 +339,7 @@ class BytomHDWallet:
         program = '0014' + public_hash
         return program
 
-    def address(self, control_program=None, network='sm'):
+    def address(self, program=None, network='sm'):
         hrp = None
         if network == 'mainnet' or network == 'bm':
             hrp = 'bm'
@@ -347,8 +347,8 @@ class BytomHDWallet:
             hrp = 'tm'
         elif network == 'solonet' or network == 'sm':
             hrp = 'sm'
-        if control_program:
-            address_str = encode(hrp, 0, get_bytes(control_program[4:]))
+        if program:
+            address_str = encode(hrp, 0, get_bytes(program[4:]))
             return address_str
         address_str = encode(hrp, 0, get_bytes(self.program()[4:]))
         return address_str
