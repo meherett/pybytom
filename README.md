@@ -93,6 +93,14 @@ walletFromXPrivate = btmhdw.walletFromXPrivate(xprivate=XPRIVATE,
 ## Example
 Here are more [btmhdw/example](https://github.com/meherett/btmhdw/example/master/example.py)
 
+## Author ✒️
+
+* ***Meheret Tesfaye*** - *Initial work* - [Cobra](https://github.com/cobraframework)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+
 ## API
 
 #### BTMHDW()
@@ -119,7 +127,7 @@ print(btmhdw.generateMnemonic(language="japanese", passphrase="meherett"))
 <details>
 <summary>Output</summary>
 
-```json5
+```pythonstub
 spare uniform possible grief attitude machine peace update tornado area evolve spread
 あけがたãひていãぎじかがくãくうきãどうぐãだじゃれãおおうãりねんãこんだてãてわたしãはぶらしãちいき
 ```
@@ -274,6 +282,28 @@ bytomHDWallet = BytomHDWallet.masterKeyFromMnemonic(mnemonic=MNEMONIC,
 
 ----
 
+**`masterKeyFromXPrivate()`**: It is to get master key from XPrivate.
+
+**Parameters**
+
+`Object`:
+- `String` - *xprivate*, BTM xprivate key.
+
+**Returns**
+
+`Object`:
+- `Object` - *BytomHDWallet()*, BytomHDWallet class.
+
+##### Example
+
+```python
+XPRIVATE = "c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759d513bc370335cac51d77f0be5dfe84de024cfee562530b4d873b5f5e2ff4f57c"
+
+bytomHDWallet = BytomHDWallet.masterKeyFromXPrivate(xprivate=XPRIVATE)
+```
+
+----
+
 **`generateEntropy()`**: It is to generate new entropy.
 
 **Returns**
@@ -289,7 +319,7 @@ print(bytomHDWallet.generateEntropy().hex())
 <details>
 <summary>Output</summary>
 
-```json
+```pythonstub
 7184af4506fb1b51c52d2e73251cc3a7
 ```
 </details>
@@ -326,25 +356,11 @@ print(bytomHDWallet)
 <details>
 <summary>Output</summary>
 
-```json5
+```pythonstub
 たいむãおまいりãたんめいãきちょうãろんぶんãいなかãしなぎれãほえるãいもうとãひしょãじゆうãにんむ
 <btmhdw.BytomHDWallet object at 0x7f3374618cf8>
 ```
 </details>
-
-----
-
-**`masterKeyFromXPrivate()`**: It is to get master key from XPrivate.
-
-**Parameters**
-
-`Object`:
-- `String` - *xprivate*, BTM xprivate key.
-
-**Returns**
-
-`Object`:
-- `Object` - *BytomHDWallet()*, BytomHDWallet class.
 
 ----
 
@@ -354,6 +370,25 @@ print(bytomHDWallet)
 
 `Object`:
 - `String` - *xprivate*, btm wallet xprivate key.
+
+##### Example
+
+```python
+MNEMONIC = "ancient young hurt bone shuffle deposit congress normal crack six boost despair"
+
+bytomHDWallet = BytomHDWallet()
+bytomHDWallet = bytomHDWallet.masterKeyFromMnemonic(mnemonic=MNEMONIC)
+bytomHDWallet.fromPath("m/44/153/1/0/1")
+
+print(bytomHDWallet.xprivateKey())
+```
+<details>
+<summary>Output</summary>
+
+```pythonstub
+302a25c7c0a68a83fa043f594a2db8b44bc871fced553a8a33144b31bc7fb84887c9e75915bb6ba3fd0b9f94a60b7a5897ab9db6a48f888c2559132dba9152b0
+```
+</details>
 
 ----
 
@@ -369,6 +404,21 @@ print(bytomHDWallet)
 `Object`:
 - `String` - *xpublic*, btm wallet xpublic key.
 
+##### Example
+
+```python
+XPRIVATE = "c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759d513bc370335cac51d77f0be5dfe84de024cfee562530b4d873b5f5e2ff4f57c"
+
+print(bytomHDWallet.xpublicKey(xprivate=XPRIVATE))
+```
+<details>
+<summary>Output</summary>
+
+```pythonstub
+302a25c7c0a68a83fa043f594a2db8b44bc871fced553a8a33144b31bc7fb84887c9e75915bb6ba3fd0b9f94a60b7a5897ab9db6a48f888c2559132dba9152b0
+```
+</details>
+
 ----
 
 **`expandPrivateKey()`**: It is to get Expand XPrivate key.
@@ -382,6 +432,21 @@ print(bytomHDWallet)
 
 `Object`:
 - `String` - *expandPrivate*, btm wallet expand private key.
+
+##### Example
+
+```python
+XPRIVATE = "c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759d513bc370335cac51d77f0be5dfe84de024cfee562530b4d873b5f5e2ff4f57c"
+
+print(bytomHDWallet.expandPrivateKey(xprivate=XPRIVATE))
+```
+<details>
+<summary>Output</summary>
+
+```pythonstub
+c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759b47fcbbf006db960004839862e694fb3647fdc081ae109bbfe3b07de83e39807
+```
+</details>
 
 ----
 
@@ -397,6 +462,21 @@ print(bytomHDWallet)
 `Object`:
 - `String` - *public*, btm wallet public key(length 64).
 
+##### Example
+
+```python
+XPUBLIC = "3c6664244d2d57168d173c4691dbf8741a67d972b2d3e1b0067eb825e2005d20c5eebd1c26ccad4de5142d7c339bf62cc1fb79a8b3e42a708cd521368dbc9286"
+
+print(bytomHDWallet.publicKey(xpublic=XPUBLIC))
+```
+<details>
+<summary>Output</summary>
+
+```pythonstub
+3c6664244d2d57168d173c4691dbf8741a67d972b2d3e1b0067eb825e2005d20
+```
+</details>
+
 ----
 
 **`fromIndexes()`**: It is to set collection of index.
@@ -405,6 +485,19 @@ print(bytomHDWallet)
 
 `Object`:
 - `Array` - *indexes*, array of index.
+
+**Returns**
+
+`Object`:
+- `Object` - *BytomHDWallet()*, class.
+
+##### Example
+
+```python
+INDEXES = ['2c000000', '99000000', '01000000', '01000000', '99000000']
+
+bytomHDWallet = bytomHDWallet.fromIndexes(indexes=INDEXES)
+```
 
 ----
 
@@ -420,6 +513,26 @@ print(bytomHDWallet)
 `Object`:
 - `Object` - *BytomHDWallet()*, class.
 
+##### Example
+
+```python
+bytomHDWallet = BytomHDWallet()
+
+bytomHDWallet.fromIndex(44)
+bytomHDWallet.fromIndex(153)
+bytomHDWallet.fromIndex(1)  # account
+bytomHDWallet.fromIndex(0)  # change 0 or 1
+bytomHDWallet.fromIndex(1)  # address
+
+# Advanced BTMHDW_HARDEN
+
+bytomHDWallet.fromIndex(44)
+bytomHDWallet.fromIndex(153 + BTMHDW_HARDEN)
+bytomHDWallet.fromIndex(1 + BTMHDW_HARDEN)
+bytomHDWallet.fromIndex(0)
+bytomHDWallet.fromIndex(1)
+```
+
 ----
 
 **`fromPath()`**: It is to set index from path.
@@ -434,6 +547,18 @@ print(bytomHDWallet)
 `Object`:
 - `Object` - *BytomHDWallet()*, class.
 
+##### Example
+
+```python
+bytomHDWallet = BytomHDWallet()
+
+bytomHDWallet.fromPath("m/44/153/1/0/1")
+
+# Advanced BTMHDW_HARDEN using "'"
+
+bytomHDWallet.fromPath("m/44/153'/1'/0/1")
+```
+
 ----
 
 **`getIndexes()`**: It is to get collection of index.
@@ -443,6 +568,19 @@ print(bytomHDWallet)
 `Object`:
 - `Array` - *indexes*, collection of index.
 
+##### Example
+
+```python
+print(bytomHDWallet.getIndexes())
+```
+<details>
+<summary>Output</summary>
+
+```json5
+['2c000000', '99000000', '01000000', '01000000', '99000000']
+```
+</details>
+
 ----
 
 **`getPath()`**: It is to get path of indexes.
@@ -451,6 +589,19 @@ print(bytomHDWallet)
 
 `Object`:
 - `String` - *path*, path indexes.
+
+##### Example
+
+```python
+print(bytomHDWallet.getPath())
+```
+<details>
+<summary>Output</summary>
+
+```json5
+"m/44/153/1/0/1"
+```
+</details>
 
 ----
 
@@ -467,6 +618,25 @@ print(bytomHDWallet)
 `Object`:
 - `String` - *childXPrivate*, btm child xprivate key.
 
+##### Example
+
+```python
+from btmhdw import INDEXES
+
+XPRIVATE = "c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759d513bc370335cac51d77f0be5dfe84de024cfee562530b4d873b5f5e2ff4f57c"
+
+childXPrivateKey = bytomHDWallet.childXPrivateKey(xprivate=XPRIVATE,
+                                                  indexes=INDEXES)
+print(childXPrivateKey)
+```
+<details>
+<summary>Output</summary>
+
+```pythonstub
+d01acc504811886d732ea6ea19c066b0f1fb4d0b2a0b97414d1d3916c70c47596aca269da2343d4d7588ffa3c8b9244a156748276114e5f2b86fa69ec241b62a
+```
+</details>
+
 ----
 
 **`childXPublicKey()`**: It is to get child of XPublic key.
@@ -480,7 +650,26 @@ print(bytomHDWallet)
 **Returns**
 
 `Object`:
-- `String` - *childXPublic*, btm child xpublic key.
+- `String` - *childXPublicKey*, btm child xpublic key.
+
+##### Example
+
+```python
+from btmhdw import INDEXES
+
+XPUBLIC = "3c6664244d2d57168d173c4691dbf8741a67d972b2d3e1b0067eb825e2005d20c5eebd1c26ccad4de5142d7c339bf62cc1fb79a8b3e42a708cd521368dbc9286"
+
+childXPublicKey = bytomHDWallet.childXPublicKey(xpublic=XPUBLIC,
+                                                indexes=INDEXES)
+print(childXPublicKey)
+```
+<details>
+<summary>Output</summary>
+
+```json5
+"e87ca3acdebdcad9a1d0f2caecf8ce0dbfc73d060807a210c6f2254883479614bcde9cf9e8ee322097d639b33b398c2e419de4092409bf43b3632ddefc4beae9"
+```
+</details>
 
 ----
 
@@ -498,6 +687,27 @@ print(bytomHDWallet)
 `Object`:
 - `String` - *program*, control program.
 
+##### Example
+```python
+from btmhdw import INDEXES, PATH
+
+# Getting contract Program from xpublic and path or indexes
+print(BytomHDWallet().program(xpublic=XPUBLIC, path="m/44/153/2/0/8"))
+print(BytomHDWallet().program(xpublic=XPUBLIC, path=PATH))
+print(BytomHDWallet().program(xpublic=XPUBLIC, indexes=INDEXES))
+print(BytomHDWallet().program(xpublic=XPUBLIC, indexes=['2c000000', '99000000', '01000000', '01000000', '01000000']))
+```
+<details>
+<summary>Output</summary>
+
+```json5
+"00140afb404c13a122306ee86f5ff9b177334d8e23b7"
+"0014052620b86a6d5e07311d5019dffa3864ccc8a6bd"
+"0014052620b86a6d5e07311d5019dffa3864ccc8a6bd"
+"001478c3aa31753389fcde04d33d0779bdc2840f0ad4"
+```
+</details>
+
 ----
 
 **`address()`**: It is to get address.
@@ -513,11 +723,25 @@ print(bytomHDWallet)
 `Object`:
 - `String` - *address*, address from control program.
 
+##### Example
 
-## Author ✒️
+```python
+XPUBLIC = "3c6664244d2d57168d173c4691dbf8741a67d972b2d3e1b0067eb825e2005d20c5eebd1c26ccad4de5142d7c339bf62cc1fb79a8b3e42a708cd521368dbc9286"
 
-* ***Meheret Tesfaye*** - *Initial work* - [Cobra](https://github.com/cobraframework)
+program = BytomHDWallet().program(xpublic=XPUBLIC, path="m/44/153/2/0/8")
+print(bytomHDWallet.address(program=program,
+                            network='mainnet'))  # or network bm
+print(bytomHDWallet.address(program=program,
+                            network='testnet'))  # or network tm
+print(bytomHDWallet.address(program=program,
+                            network='solonet'))  # or network sm
+```
+<details>
+<summary>Output</summary>
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+```json5
+"bm1qpta5qnqn5y3rqmhgda0lnvthxdxcugahcpaum5"
+"tm1qpta5qnqn5y3rqmhgda0lnvthxdxcugahuhucm9"
+"sm1qpta5qnqn5y3rqmhgda0lnvthxdxcugahesham6"
+```
+</details>
