@@ -189,7 +189,16 @@ class BytomHDWallet:
     def getIndexes(self):
         return self.indexes
 
-    def getPath(self):
+    def getPath(self, indexes=None):
+        if indexes:
+            path = 'm/'
+            for i, index in enumerate(indexes, 1):
+                number = int.from_bytes(bytes.fromhex(index), byteorder='little')
+                if i == len(indexes):
+                    path = path + str(number)
+                else:
+                    path = path + str(number) + '/'
+            return path
         path = 'm/'
         for i, index in enumerate(self.getIndexes(), 1):
             number = int.from_bytes(bytes.fromhex(index), byteorder='little')
