@@ -14,10 +14,10 @@ XPUBLIC = "3c6664244d2d57168d173c4691dbf8741a67d972b2d3e1b0067eb825e2005d20c5eeb
 btmhdw = BTMHDW()
 
 # Generate mnemonic english/japanese
-mnemonic = btmhdw.generateMnemonic("english")
+mnemonic = btmhdw.generateMnemonic("japanese")
 
 # Checking mnemonic language
-if not btmhdw.checkMnemonic(mnemonic, "english"):
+if not btmhdw.checkMnemonic(mnemonic, "japanese"):
     exit()
 
 # Create a new wallet
@@ -102,6 +102,12 @@ bytomHDWallet.fromIndex(153)
 bytomHDWallet.fromIndex(1)  # account
 bytomHDWallet.fromIndex(0)  # change 0 or 1
 bytomHDWallet.fromIndex(1)  # address
+# Advanced BTMHDW_HARDEN
+# bytomHDWallet.fromIndex(44 + BTMHDW_HARDEN)
+# bytomHDWallet.fromIndex(153)
+# bytomHDWallet.fromIndex(1 + BTMHDW_HARDEN)
+# bytomHDWallet.fromIndex(0)
+# bytomHDWallet.fromIndex(1)
 
 # Getting entropy
 print(bytomHDWallet.entropy.hex())
