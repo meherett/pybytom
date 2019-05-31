@@ -127,9 +127,9 @@ print(btmhdw.generateMnemonic(language="japanese", passphrase="meherett"))
 <details>
 <summary>Output</summary>
 
-```pythonstub
-spare uniform possible grief attitude machine peace update tornado area evolve spread
-あけがたãひていãぎじかがくãくうきãどうぐãだじゃれãおおうãりねんãこんだてãてわたしãはぶらしãちいき
+```json5
+"spare uniform possible grief attitude machine peace update tornado area evolve spread"
+"あけがたãひていãぎじかがくãくうきãどうぐãだじゃれãおおうãりねんãこんだてãてわたしãはぶらしãちいき"
 ```
 </details>
 
@@ -192,6 +192,7 @@ False
 
 ```python
 mnemonic = btmhdw.generateMnemonic("english")
+
 createdWallet = btmhdw.createWallet(mnemonic=mnemonic, 
                                     network="mainnet")
 print(createdWallet['address'])
@@ -202,8 +203,8 @@ print(createdWallet)
 <summary>Output</summary>
 
 ```json5
-bm1qsv6u5z2uxtefnehkyuetyx4llu27umqscu8vtk
-983fc70dc7c4a26ff9af39af4c0cc3057565b8f70a31158a6f37e1804ae6414ea6cade89861c53fafa461e5f0e116f47a816b11ba05585b79c577531c6000ffe 
+"bm1qsv6u5z2uxtefnehkyuetyx4llu27umqscu8vtk"
+"983fc70dc7c4a26ff9af39af4c0cc3057565b8f70a31158a6f37e1804ae6414ea6cade89861c53fafa461e5f0e116f47a816b11ba05585b79c577531c6000ffe" 
 
 {'mnemonic': 'alarm fix day evoke void hawk pistol pulp impact farm average mask', 'address': 'bm1qsv6u5z2uxtefnehkyuetyx4llu27umqscu8vtk', 'seed': '6e269a33fb2c65b9a1966bc9579628869630d7d647792eaa3692fdae1db1a719ff4dfef17acf6027fb20ba7ce04e4715460ea2d280f69f646df1f2a6ef6ffea1', 'xprivate': '983fc70dc7c4a26ff9af39af4c0cc3057565b8f70a31158a6f37e1804ae6414ea6cade89861c53fafa461e5f0e116f47a816b11ba05585b79c577531c6000ffe', 'xpublic': '4a7bfcbccbe97aa3f92795c761697f98b6b2350597ab73c85109b025301db1aaa6cade89861c53fafa461e5f0e116f47a816b11ba05585b79c577531c6000ffe', 'program': '0014312b5e9ee3625a50847ffd5244dbc0d8f01b8566', 'path': 'm/44/153/1/0/1'}
 ```
@@ -235,6 +236,7 @@ bm1qsv6u5z2uxtefnehkyuetyx4llu27umqscu8vtk
 
 ```python
 XPRIVATE = "c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759d513bc370335cac51d77f0be5dfe84de024cfee562530b4d873b5f5e2ff4f57c"
+
 walletFromXPrivate = btmhdw.walletFromXPrivate(xprivate=XPRIVATE,
                                                network="mainnet")
 print(walletFromXPrivate['address'])
@@ -245,8 +247,8 @@ print(walletFromXPrivate)
 <summary>Output</summary>
 
 ```json5
-bm1qtzg058tt5eyf2qqfy2650erxqxhfkt4p236708
-c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759d513bc370335cac51d77f0be5dfe84de024cfee562530b4d873b5f5e2ff4f57c 
+"bm1qtzg058tt5eyf2qqfy2650erxqxhfkt4p236708"
+"c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759d513bc370335cac51d77f0be5dfe84de024cfee562530b4d873b5f5e2ff4f57c" 
 
 {'address': 'bm1qtzg058tt5eyf2qqfy2650erxqxhfkt4p236708', 'xprivate': 'c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759d513bc370335cac51d77f0be5dfe84de024cfee562530b4d873b5f5e2ff4f57c', 'xpublic': '1b0541a7664cee929edb54d9ef21996b90546918a920a77e1cd6015d97c56563d513bc370335cac51d77f0be5dfe84de024cfee562530b4d873b5f5e2ff4f57c', 'program': '0014dcf6b21d83c978d3125d1330c928c38fee315200', 'path': 'm/44/153/1/0/1'}
 ```
@@ -269,7 +271,7 @@ c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759d513bc370335cac5
 **Returns**
 
 `Object`:
-- `Object` - *BytomHDWallet()*, class.
+- `Object` - *BytomHDWallet*, class.
 
 ##### Example
 
@@ -292,7 +294,7 @@ bytomHDWallet = BytomHDWallet.masterKeyFromMnemonic(mnemonic=MNEMONIC,
 **Returns**
 
 `Object`:
-- `Object` - *BytomHDWallet()*, BytomHDWallet class.
+- `Object` - *BytomHDWallet*, BytomHDWallet class.
 
 ##### Example
 
@@ -319,8 +321,8 @@ print(bytomHDWallet.generateEntropy().hex())
 <details>
 <summary>Output</summary>
 
-```pythonstub
-7184af4506fb1b51c52d2e73251cc3a7
+```json5
+"7184af4506fb1b51c52d2e73251cc3a7"
 ```
 </details>
 
@@ -339,7 +341,7 @@ print(bytomHDWallet.generateEntropy().hex())
 **Returns**
 
 `Object`:
-- `Object` - *BytomHDWallet()*, class.
+- `Object` - *BytomHDWallet*, class.
 - `String` - *mnemonic*, mnemonic 12 words.
 
 ##### Example
@@ -356,8 +358,8 @@ print(bytomHDWallet)
 <details>
 <summary>Output</summary>
 
-```pythonstub
-たいむãおまいりãたんめいãきちょうãろんぶんãいなかãしなぎれãほえるãいもうとãひしょãじゆうãにんむ
+```json5
+"たいむãおまいりãたんめいãきちょうãろんぶんãいなかãしなぎれãほえるãいもうとãひしょãじゆうãにんむ"
 <btmhdw.BytomHDWallet object at 0x7f3374618cf8>
 ```
 </details>
@@ -385,8 +387,8 @@ print(bytomHDWallet.xprivateKey())
 <details>
 <summary>Output</summary>
 
-```pythonstub
-302a25c7c0a68a83fa043f594a2db8b44bc871fced553a8a33144b31bc7fb84887c9e75915bb6ba3fd0b9f94a60b7a5897ab9db6a48f888c2559132dba9152b0
+```json5
+"302a25c7c0a68a83fa043f594a2db8b44bc871fced553a8a33144b31bc7fb84887c9e75915bb6ba3fd0b9f94a60b7a5897ab9db6a48f888c2559132dba9152b0"
 ```
 </details>
 
@@ -414,8 +416,8 @@ print(bytomHDWallet.xpublicKey(xprivate=XPRIVATE))
 <details>
 <summary>Output</summary>
 
-```pythonstub
-302a25c7c0a68a83fa043f594a2db8b44bc871fced553a8a33144b31bc7fb84887c9e75915bb6ba3fd0b9f94a60b7a5897ab9db6a48f888c2559132dba9152b0
+```json5
+"302a25c7c0a68a83fa043f594a2db8b44bc871fced553a8a33144b31bc7fb84887c9e75915bb6ba3fd0b9f94a60b7a5897ab9db6a48f888c2559132dba9152b0"
 ```
 </details>
 
@@ -443,8 +445,8 @@ print(bytomHDWallet.expandPrivateKey(xprivate=XPRIVATE))
 <details>
 <summary>Output</summary>
 
-```pythonstub
-c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759b47fcbbf006db960004839862e694fb3647fdc081ae109bbfe3b07de83e39807
+```json5
+"c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759b47fcbbf006db960004839862e694fb3647fdc081ae109bbfe3b07de83e39807"
 ```
 </details>
 
@@ -472,8 +474,8 @@ print(bytomHDWallet.publicKey(xpublic=XPUBLIC))
 <details>
 <summary>Output</summary>
 
-```pythonstub
-3c6664244d2d57168d173c4691dbf8741a67d972b2d3e1b0067eb825e2005d20
+```json5
+"3c6664244d2d57168d173c4691dbf8741a67d972b2d3e1b0067eb825e2005d20"
 ```
 </details>
 
@@ -489,7 +491,7 @@ print(bytomHDWallet.publicKey(xpublic=XPUBLIC))
 **Returns**
 
 `Object`:
-- `Object` - *BytomHDWallet()*, class.
+- `Object` - *BytomHDWallet*, class.
 
 ##### Example
 
@@ -511,7 +513,7 @@ bytomHDWallet = bytomHDWallet.fromIndexes(indexes=INDEXES)
 **Returns**
 
 `Object`:
-- `Object` - *BytomHDWallet()*, class.
+- `Object` - *BytomHDWallet*, class.
 
 ##### Example
 
@@ -545,7 +547,7 @@ bytomHDWallet.fromIndex(1)
 **Returns**
 
 `Object`:
-- `Object` - *BytomHDWallet()*, class.
+- `Object` - *BytomHDWallet*, class.
 
 ##### Example
 
@@ -585,6 +587,11 @@ print(bytomHDWallet.getIndexes())
 
 **`getPath()`**: It is to get path of indexes.
 
+**Parameters**
+
+`Optional`:
+- `String` - *indexes*, array of index.
+
 **Returns**
 
 `Object`:
@@ -593,7 +600,9 @@ print(bytomHDWallet.getIndexes())
 ##### Example
 
 ```python
-print(bytomHDWallet.getPath())
+from btmhdw import INDEXES
+
+print(bytomHDWallet.getPath(indexes=INDEXES))
 ```
 <details>
 <summary>Output</summary>
@@ -632,8 +641,8 @@ print(childXPrivateKey)
 <details>
 <summary>Output</summary>
 
-```pythonstub
-d01acc504811886d732ea6ea19c066b0f1fb4d0b2a0b97414d1d3916c70c47596aca269da2343d4d7588ffa3c8b9244a156748276114e5f2b86fa69ec241b62a
+```json5
+"d01acc504811886d732ea6ea19c066b0f1fb4d0b2a0b97414d1d3916c70c47596aca269da2343d4d7588ffa3c8b9244a156748276114e5f2b86fa69ec241b62a"
 ```
 </details>
 
