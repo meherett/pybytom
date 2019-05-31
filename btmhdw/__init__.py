@@ -166,6 +166,7 @@ class BytomHDWallet:
 
     def fromIndexes(self, indexes):
         self.indexes = indexes
+        return BytomHDWallet()
 
     def fromIndex(self, index):
         if not str(index)[0:2] != "m/":
