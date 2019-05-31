@@ -116,7 +116,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Returns**
 
 `Object`:
-- `String` - *mnemonic*, new mnemonic mnemonic 12 words.
+- `String` - *mnemonic*, newly created of mnemonic 12 words.
 
 ##### Example
 
@@ -179,14 +179,14 @@ False
 - `String` - *account*, account path index by default 1.
 - `String` - *change*, change path index 0 or 1 by default 0.
 - `String` - *address*, address path index by default 1.
-- `String` - *path*, indexes string of index to create wallet address.
-- `Array` - *indexes*, indexes array of index to create wallet address.
+- `String` - *path*, string of index.
+- `Array` - *indexes*, array of index.
 - `String` - *network*, mainnet(bm)/testnet(tm)/solonet(sm) by default sm.
 
 **Returns**
 
 `Object`:
-- `Object` - *object*, keys are _entropy_, _mnemonic_, _address_, _seed_, _xprivate_, _xpublic_, _program_ and _path_
+- `Object` - *object*, keys are `entropy`, `mnemonic`, `address`, `seed`, `xprivate`, `xpublic`, `program` and `path`
 
 ##### Example
 
@@ -206,7 +206,15 @@ print(createdWallet)
 "bm1qsv6u5z2uxtefnehkyuetyx4llu27umqscu8vtk"
 "983fc70dc7c4a26ff9af39af4c0cc3057565b8f70a31158a6f37e1804ae6414ea6cade89861c53fafa461e5f0e116f47a816b11ba05585b79c577531c6000ffe" 
 
-{'mnemonic': 'alarm fix day evoke void hawk pistol pulp impact farm average mask', 'address': 'bm1qsv6u5z2uxtefnehkyuetyx4llu27umqscu8vtk', 'seed': '6e269a33fb2c65b9a1966bc9579628869630d7d647792eaa3692fdae1db1a719ff4dfef17acf6027fb20ba7ce04e4715460ea2d280f69f646df1f2a6ef6ffea1', 'xprivate': '983fc70dc7c4a26ff9af39af4c0cc3057565b8f70a31158a6f37e1804ae6414ea6cade89861c53fafa461e5f0e116f47a816b11ba05585b79c577531c6000ffe', 'xpublic': '4a7bfcbccbe97aa3f92795c761697f98b6b2350597ab73c85109b025301db1aaa6cade89861c53fafa461e5f0e116f47a816b11ba05585b79c577531c6000ffe', 'program': '0014312b5e9ee3625a50847ffd5244dbc0d8f01b8566', 'path': 'm/44/153/1/0/1'}
+{
+  'mnemonic': 'alarm fix day evoke void hawk pistol pulp impact farm average mask',
+  'address': 'bm1qsv6u5z2uxtefnehkyuetyx4llu27umqscu8vtk',
+  'seed': '6e269a33fb2c65b9a1966bc9579628869630d7d647792eaa3692fdae1db1a719ff4dfef17acf6027fb20ba7ce04e4715460ea2d280f69f646df1f2a6ef6ffea1',
+  'xprivate': '983fc70dc7c4a26ff9af39af4c0cc3057565b8f70a31158a6f37e1804ae6414ea6cade89861c53fafa461e5f0e116f47a816b11ba05585b79c577531c6000ffe',
+  'xpublic': '4a7bfcbccbe97aa3f92795c761697f98b6b2350597ab73c85109b025301db1aaa6cade89861c53fafa461e5f0e116f47a816b11ba05585b79c577531c6000ffe',
+  'program': '0014312b5e9ee3625a50847ffd5244dbc0d8f01b8566',
+  'path': 'm/44/153/1/0/1',
+}
 ```
 </details>
 
@@ -223,14 +231,14 @@ print(createdWallet)
 - `String` - *account*, account path index by default 1.
 - `String` - *change*, change path index 0 or 1 by default 0.
 - `String` - *address*, address path index by default 1.
-- `String` - *path*, indexes string of index to create wallet address.
-- `Array` - *indexes*, indexes array of index to create wallet address.
+- `String` - *path*, string of index.
+- `Array` - *indexes*, array of index.
 - `String` - *network*, mainnet(bm)/testnet(tm)/solonet(sm) by default sm.
 
 **Returns**
 
 `Object`:
-- `Object` - *object*, keys are entropy, mnemonic, address, seed, xprivate, xpublic, program and path
+- `Object` - *object*, keys are `address`, `xprivate`, `xpublic`, `program` and `path`
 
 ##### Example
 
@@ -250,7 +258,13 @@ print(walletFromXPrivate)
 "bm1qtzg058tt5eyf2qqfy2650erxqxhfkt4p236708"
 "c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759d513bc370335cac51d77f0be5dfe84de024cfee562530b4d873b5f5e2ff4f57c" 
 
-{'address': 'bm1qtzg058tt5eyf2qqfy2650erxqxhfkt4p236708', 'xprivate': 'c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759d513bc370335cac51d77f0be5dfe84de024cfee562530b4d873b5f5e2ff4f57c', 'xpublic': '1b0541a7664cee929edb54d9ef21996b90546918a920a77e1cd6015d97c56563d513bc370335cac51d77f0be5dfe84de024cfee562530b4d873b5f5e2ff4f57c', 'program': '0014dcf6b21d83c978d3125d1330c928c38fee315200', 'path': 'm/44/153/1/0/1'}
+{
+  'address': 'bm1qtzg058tt5eyf2qqfy2650erxqxhfkt4p236708', 
+  'xprivate': 'c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759d513bc370335cac51d77f0be5dfe84de024cfee562530b4d873b5f5e2ff4f57c',
+  'xpublic': '1b0541a7664cee929edb54d9ef21996b90546918a920a77e1cd6015d97c56563d513bc370335cac51d77f0be5dfe84de024cfee562530b4d873b5f5e2ff4f57c',
+  'program': '0014dcf6b21d83c978d3125d1330c928c38fee315200',
+  'path': 'm/44/153/1/0/1',
+}
 ```
 </details>
 
