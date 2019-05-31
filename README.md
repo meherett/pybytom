@@ -6,13 +6,10 @@
 
 *The implementation of Hierarchical Deterministic (HD) wallets generator for Bytom blockchain.*
 
-![GitHub License](https://img.shields.io/github/license/cobraframework/pytest-cobra.svg)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/bip32key.svg)
-![PyPI Version](https://img.shields.io/pypi/v/pytest-cobra.svg?color=red)
-![PyPI Wheel](https://img.shields.io/pypi/wheel/pytest-cobra.svg?color=black)
-[![Donate with Bitcoin](https://en.cryptobadges.io/badge/micro/3JiPsp6bT6PkXF3f9yZsL5hrdQwtVuXXAk)](https://en.cryptobadges.io/donate/3JiPsp6bT6PkXF3f9yZsL5hrdQwtVuXXAk)
-
-
+![GitHub License](https://img.shields.io/github/license/meherett/btmhdw.svg)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/btmhdw.svg)
+![PyPI Version](https://img.shields.io/pypi/v/btmhdw.svg?color=black)
+![PyPI Wheel](https://img.shields.io/pypi/wheel/btmhdw.svg?color=purple)
 
 ## Installation
 Install btmhdw
@@ -54,23 +51,22 @@ print(createdWallet)
 ```
 `OUTPUT`
 ```json5
-  {
-     entropy: "...",
-     mnemonic: "...",
-     address: "...",
-     seed: "...",
-     xprivate: "...",
-     xpublic: "...",
-     program: "...",
-     path: "..."
-  }
+{
+  'mnemonic': 'gauge base climb fit output toast brave crush vacant predict hire remind',
+  'address': 'bm1qn6g0tky8lx44j2ccz8cu88ngn4snfqr74d9ndw',
+  'seed': 'b699dee73ef9be58fbf3490dab6e49071f96df97c5d2614a465b1fd3b76373f56edbac4e24b137f6226402e59902f0eaa882603f94b83618384500db1e30585b',
+  'xprivate': '8007196f3e0841bbdf90d97df172a19cb18edda007466d362fa2d5ff23822a40189b8b295cc023e0b2c78f79725f859ac512afdfebc0b94cfd83faa59e42d82e',
+  'xpublic': 'd47ece6097f93b5d19259886d210dab017f5b37520b4dad8160712fd5b1065e7189b8b295cc023e0b2c78f79725f859ac512afdfebc0b94cfd83faa59e42d82e',
+  'program': '001468029bfd7635cec9100ed21ab6aee3a41986db71',
+  'path': 'm/44/153/1/0/1',
+}
 ```
 
 #### Get wallet from XPrivate key
 ```python
 from btmhdw import BTMHDW
 
-XPRIVATE = "c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759d513bc370335cac51d77f0be5dfe84de024cfee562530b4d873b5f5e2ff4f57c"
+XPRIVATE = "8007196f3e0841bbdf90d97df172a19cb18edda007466d362fa2d5ff23822a40189b8b295cc023e0b2c78f79725f859ac512afdfebc0b94cfd83faa59e42d82e"
 
 # init BTMHDW
 btmhdw = BTMHDW()
@@ -81,13 +77,13 @@ walletFromXPrivate = btmhdw.walletFromXPrivate(xprivate=XPRIVATE,
 ```
 `OUTPUT`
 ```json5
-  {
-     address: "...",
-     xprivate: "...",
-     xpublic: "...",
-     program: "...",
-     path: "..."
-  }
+{
+  'address': 'bm1qn6g0tky8lx44j2ccz8cu88ngn4snfqr74d9ndw',
+  'xprivate': '8007196f3e0841bbdf90d97df172a19cb18edda007466d362fa2d5ff23822a40189b8b295cc023e0b2c78f79725f859ac512afdfebc0b94cfd83faa59e42d82e',
+  'xpublic': 'd47ece6097f93b5d19259886d210dab017f5b37520b4dad8160712fd5b1065e7189b8b295cc023e0b2c78f79725f859ac512afdfebc0b94cfd83faa59e42d82e', 
+  'program': '001468029bfd7635cec9100ed21ab6aee3a41986db71',
+  'path': 'm/44/153/1/0/1'
+}
 ```
 
 ## Example
@@ -103,7 +99,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## API
 
-#### BTMHDW()
+### Class BTMHDW()
 **`generateMnemonic()`**: It is to generate new mnemonic.
 
 **Parameters**
@@ -116,9 +112,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Returns**
 
 `Object`:
-- `String` - *mnemonic*, newly created of mnemonic 12 words.
+- `String` - *mnemonic*, generated mnemonic 12 words.
 
-##### Example
+**Example**
 
 ```python
 print(btmhdw.generateMnemonic(language="english", passphrase="meherett"))
@@ -150,7 +146,7 @@ print(btmhdw.generateMnemonic(language="japanese", passphrase="meherett"))
 `Object`:
 - `Boolean` - *boolean*, True/False.
 
-##### Example
+**Example**
 
 ```python
 MNEMONIC = "ancient young hurt bone shuffle deposit congress normal crack six boost despair"
@@ -174,7 +170,7 @@ False
 **Parameters**
 
 `Optional`:
-- `String` - *mnemonic*, mnemonic 12 words.
+- `String` - *mnemonic*, from mnemonic 12 words.
 - `String` - *passphrase*, password of the key.
 - `String` - *account*, account path index by default 1.
 - `String` - *change*, change path index 0 or 1 by default 0.
@@ -188,7 +184,7 @@ False
 `Object`:
 - `Object` - *object*, keys are `entropy`, `mnemonic`, `address`, `seed`, `xprivate`, `xpublic`, `program` and `path`
 
-##### Example
+**Example**
 
 ```python
 mnemonic = btmhdw.generateMnemonic("english")
@@ -240,7 +236,7 @@ print(createdWallet)
 `Object`:
 - `Object` - *object*, keys are `address`, `xprivate`, `xpublic`, `program` and `path`
 
-##### Example
+**Example**
 
 ```python
 XPRIVATE = "c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759d513bc370335cac51d77f0be5dfe84de024cfee562530b4d873b5f5e2ff4f57c"
@@ -270,7 +266,7 @@ print(walletFromXPrivate)
 
 ----
 
-#### BytomHDWallet()
+### Class BytomHDWallet()
 
 **`masterKeyFromMnemonic()`**: It is to get master key from mnemonic.
 
@@ -287,7 +283,7 @@ print(walletFromXPrivate)
 `Object`:
 - `Object` - *BytomHDWallet*, class.
 
-##### Example
+**Example**
 
 ```python
 MNEMONIC = "ancient young hurt bone shuffle deposit congress normal crack six boost despair"
@@ -303,14 +299,14 @@ bytomHDWallet = BytomHDWallet.masterKeyFromMnemonic(mnemonic=MNEMONIC,
 **Parameters**
 
 `Object`:
-- `String` - *xprivate*, BTM xprivate key.
+- `String` - *xprivate*, xprivate key.
 
 **Returns**
 
 `Object`:
-- `Object` - *BytomHDWallet*, BytomHDWallet class.
+- `Object` - *BytomHDWallet*, class.
 
-##### Example
+**Example**
 
 ```python
 XPRIVATE = "c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759d513bc370335cac51d77f0be5dfe84de024cfee562530b4d873b5f5e2ff4f57c"
@@ -325,9 +321,9 @@ bytomHDWallet = BytomHDWallet.masterKeyFromXPrivate(xprivate=XPRIVATE)
 **Returns**
 
 `Object`:
-- `String` - *entropy*, entropy hex.
+- `String` - *entropy*, generated entropy.
 
-##### Example
+**Example**
 
 ```python
 print(bytomHDWallet.generateEntropy().hex())
@@ -347,7 +343,7 @@ print(bytomHDWallet.generateEntropy().hex())
 **Parameters**
 
 `Optional`:
-- `String` - *entropy*, new entropy.
+- `String` - *entropy*, from entropy.
 - `String` - *strength*, 128.
 - `String` - *passphrase*, password of the key.
 - `String` - *language*, mnemonic language of the key.
@@ -356,9 +352,9 @@ print(bytomHDWallet.generateEntropy().hex())
 
 `Object`:
 - `Object` - *BytomHDWallet*, class.
-- `String` - *mnemonic*, mnemonic 12 words.
+- `String` - *mnemonic*, generated mnemonic 12 words.
 
-##### Example
+**Example**
 
 ```python
 entropy = bytomHDWallet.generateEntropy()
@@ -385,9 +381,9 @@ print(bytomHDWallet)
 **Returns**
 
 `Object`:
-- `String` - *xprivate*, btm wallet xprivate key.
+- `String` - *xprivate*, xprivate from master key.
 
-##### Example
+**Example**
 
 ```python
 MNEMONIC = "ancient young hurt bone shuffle deposit congress normal crack six boost despair"
@@ -413,14 +409,14 @@ print(bytomHDWallet.xprivateKey())
 **Parameters**
 
 `Optional`:
-- `String` - *xprivate*, BTM xprivate key.
+- `String` - *xprivate*, from xprivate key.
 
 **Returns**
 
 `Object`:
-- `String` - *xpublic*, btm wallet xpublic key.
+- `String` - *xpublic*, xpublic from xprivate/master key.
 
-##### Example
+**Example**
 
 ```python
 XPRIVATE = "c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759d513bc370335cac51d77f0be5dfe84de024cfee562530b4d873b5f5e2ff4f57c"
@@ -442,14 +438,14 @@ print(bytomHDWallet.xpublicKey(xprivate=XPRIVATE))
 **Parameters**
 
 `Optional`:
-- `String` - *xprivate*, BTM xprivate key.
+- `String` - *xprivate*, from xprivate key.
 
 **Returns**
 
 `Object`:
-- `String` - *expandPrivate*, btm wallet expand private key.
+- `String` - *expandPrivate*, expand private key from xprivate/master key.
 
-##### Example
+**Example**
 
 ```python
 XPRIVATE = "c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759d513bc370335cac51d77f0be5dfe84de024cfee562530b4d873b5f5e2ff4f57c"
@@ -471,14 +467,14 @@ print(bytomHDWallet.expandPrivateKey(xprivate=XPRIVATE))
 **Parameters**
 
 `Optional`:
-- `String` - *xpublic*, BTM xpublic key.
+- `String` - *xpublic*, from xpublic key.
 
 **Returns**
 
 `Object`:
-- `String` - *public*, btm wallet public key(length 64).
+- `String` - *public*, public key(length 64) from xpublic/master key.
 
-##### Example
+**Example**
 
 ```python
 XPUBLIC = "3c6664244d2d57168d173c4691dbf8741a67d972b2d3e1b0067eb825e2005d20c5eebd1c26ccad4de5142d7c339bf62cc1fb79a8b3e42a708cd521368dbc9286"
@@ -507,7 +503,7 @@ print(bytomHDWallet.publicKey(xpublic=XPUBLIC))
 `Object`:
 - `Object` - *BytomHDWallet*, class.
 
-##### Example
+**Example**
 
 ```python
 INDEXES = ['2c000000', '99000000', '01000000', '01000000', '99000000']
@@ -529,7 +525,7 @@ bytomHDWallet = bytomHDWallet.fromIndexes(indexes=INDEXES)
 `Object`:
 - `Object` - *BytomHDWallet*, class.
 
-##### Example
+**Example**
 
 ```python
 bytomHDWallet = BytomHDWallet()
@@ -556,14 +552,14 @@ bytomHDWallet.fromIndex(1)
 **Parameters**
 
 `Object`:
-- `String` - *path*, path of index.
+- `String` - *path*, string of index.
 
 **Returns**
 
 `Object`:
 - `Object` - *BytomHDWallet*, class.
 
-##### Example
+**Example**
 
 ```python
 bytomHDWallet = BytomHDWallet()
@@ -584,7 +580,7 @@ bytomHDWallet.fromPath("m/44/153'/1'/0/1")
 `Object`:
 - `Array` - *indexes*, collection of index.
 
-##### Example
+**Example**
 
 ```python
 print(bytomHDWallet.getIndexes())
@@ -604,14 +600,14 @@ print(bytomHDWallet.getIndexes())
 **Parameters**
 
 `Optional`:
-- `String` - *indexes*, array of index.
+- `String` - *indexes*, from array of index.
 
 **Returns**
 
 `Object`:
-- `String` - *path*, path indexes.
+- `String` - *path*, string of index from indexes/master key.
 
-##### Example
+**Example**
 
 ```python
 from btmhdw import INDEXES
@@ -633,15 +629,15 @@ print(bytomHDWallet.getPath(indexes=INDEXES))
 **Parameters**
 
 `Optional`:
-- `String` - *xprivate*, BTM xprivate key.
+- `String` - *xprivate*, from xprivate key.
 - `String` - *indexes*, collection of index.
 
 **Returns**
 
 `Object`:
-- `String` - *childXPrivate*, btm child xprivate key.
+- `String` - *childXPrivate*, child xprivate key from xprivate/indexes/master key.
 
-##### Example
+**Example**
 
 ```python
 from btmhdw import INDEXES
@@ -667,15 +663,15 @@ print(childXPrivateKey)
 **Parameters**
 
 `Optional`:
-- `String` - *xpublic*, BTM xpublic key.
+- `String` - *xpublic*, from xpublic key.
 - `String` - *indexes*, collection of index.
 
 **Returns**
 
 `Object`:
-- `String` - *childXPublicKey*, btm child xpublic key.
+- `String` - *childXPublicKey*, child xpublic key from xpublic/indexes/master key.
 
-##### Example
+**Example**
 
 ```python
 from btmhdw import INDEXES
@@ -701,16 +697,16 @@ print(childXPublicKey)
 **Parameters**
 
 `Optional`:
-- `String` - *xpublic*, BTM xpublic key.
+- `String` - *xpublic*, from xpublic key.
 - `String` - *path*, path of index.
 - `String` - *indexes*, collection of index.
 
 **Returns**
 
 `Object`:
-- `String` - *program*, control program.
+- `String` - *program*, control program from xpublic/master key.
 
-##### Example
+**Example**
 ```python
 from btmhdw import INDEXES, PATH
 
@@ -738,15 +734,15 @@ print(BytomHDWallet().program(xpublic=XPUBLIC, indexes=['2c000000', '99000000', 
 **Parameters**
 
 `Optional`:
-- `String` - *program*, control program.
+- `String` - *program*, from control program.
 - `String` - *network*, mainnet(bm)/testnet(tm)/solonet(sm) by default sm.
 
 **Returns**
 
 `Object`:
-- `String` - *address*, address from control program.
+- `String` - *address*, address from control program/master key.
 
-##### Example
+**Example**
 
 ```python
 XPUBLIC = "3c6664244d2d57168d173c4691dbf8741a67d972b2d3e1b0067eb825e2005d20c5eebd1c26ccad4de5142d7c339bf62cc1fb79a8b3e42a708cd521368dbc9286"
