@@ -6,7 +6,7 @@
 
 *The implementation of Hierarchical Deterministic (HD) wallets generator for Bytom blockchain.*
 
-![GitHub License](https://img.shields.io/github/license/meherett/btmhdw.svg)
+![PyPI License](https://img.shields.io/pypi/l/btmhdw.svg)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/btmhdw.svg)
 ![PyPI Version](https://img.shields.io/pypi/v/btmhdw.svg?color=black)
 ![PyPI Wheel](https://img.shields.io/pypi/wheel/btmhdw.svg?color=purple)
