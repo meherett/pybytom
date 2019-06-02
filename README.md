@@ -87,7 +87,7 @@ walletFromXPrivate = btmhdw.walletFromXPrivate(xprivate=XPRIVATE,
 ```
 
 ## Example
-Here are more [btmhdw/example](https://github.com/meherett/btmhdw/example/master/example.py)
+Here are more [btmhdw/example](https://github.com/meherett/btmhdw/blob/master/examples/example.py)
 
 ## Author ✒️
 
