@@ -388,6 +388,10 @@ class BTMHDW:
         return boolean
 
     @staticmethod
+    def generateEntropy():
+        return BytomHDWallet.generateEntropy()
+
+    @staticmethod
     def createWallet(mnemonic=None, passphrase=str(), network='sm',
                      account=1, change=0, address=1, path=None, indexes=None):
         if mnemonic is None:

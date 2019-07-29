@@ -129,3 +129,4 @@ print(bytomHDWallet.program())
 print(bytomHDWallet.address())
 # Getting seed
 print(bytomHDWallet.seed.hex())
+
