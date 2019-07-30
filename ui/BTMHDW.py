@@ -7,6 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 from btmhdw import BTMHDW, BytomHDWallet, BTMHDW_HARDEN, PATH, INDEXES
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QFileDialog
 import qdarkstyle
 
 
@@ -16,8 +17,12 @@ class Ui_btmhdw(object):
         self.language = "english"
         self.network = "mainnet"
         self.consoleMessage = str()
+        self.path = "m/44/153/1/0/1"
+        self.hideHome = False
+        self.saveHDWallet = str()
 
     def setupUi(self, btmhdw):
+        self.window = btmhdw
         btmhdw.setObjectName("btmhdw")
         btmhdw.resize(731, 642)
         btmhdw.setMinimumSize(QtCore.QSize(731, 642))
@@ -35,15 +40,15 @@ class Ui_btmhdw(object):
         self.pushButtonGetHDWalletFromMnemonic = QtWidgets.QPushButton(self.widgetMain)
         self.pushButtonGetHDWalletFromMnemonic.setGeometry(QtCore.QRect(180, 50, 241, 41))
         self.pushButtonGetHDWalletFromMnemonic.setObjectName("pushButtonGetHDWalletFromMnemonic")
-        self.pushButtonGetAddressFromXPublicKey_2 = QtWidgets.QPushButton(self.widgetMain)
-        self.pushButtonGetAddressFromXPublicKey_2.setGeometry(QtCore.QRect(430, 100, 281, 41))
-        self.pushButtonGetAddressFromXPublicKey_2.setObjectName("pushButtonGetAddressFromXPublicKey_2")
+        self.pushButtonGetAddressFromContractProgram = QtWidgets.QPushButton(self.widgetMain)
+        self.pushButtonGetAddressFromContractProgram.setGeometry(QtCore.QRect(430, 100, 281, 41))
+        self.pushButtonGetAddressFromContractProgram.setObjectName("pushButtonGetAddressFromContractProgram")
         self.pushButtonGenerateMnemonic = QtWidgets.QPushButton(self.widgetMain)
         self.pushButtonGenerateMnemonic.setGeometry(QtCore.QRect(0, 100, 171, 41))
         self.pushButtonGenerateMnemonic.setObjectName("pushButtonGenerateMnemonic")
-        self.pushButtonGenerateEnteropy = QtWidgets.QPushButton(self.widgetMain)
-        self.pushButtonGenerateEnteropy.setGeometry(QtCore.QRect(0, 150, 171, 41))
-        self.pushButtonGenerateEnteropy.setObjectName("pushButtonGenerateEnteropy")
+        self.pushButtonGenerateEntropy = QtWidgets.QPushButton(self.widgetMain)
+        self.pushButtonGenerateEntropy.setGeometry(QtCore.QRect(0, 150, 171, 41))
+        self.pushButtonGenerateEntropy.setObjectName("pushButtonGenerateEntropy")
         self.radioButtonEnglish = QtWidgets.QRadioButton(self.widgetMain)
         self.radioButtonEnglish.setGeometry(QtCore.QRect(0, 50, 81, 41))
         self.radioButtonEnglish.setStyleSheet("QRadioButton::indicator {\n"
@@ -71,9 +76,9 @@ class Ui_btmhdw(object):
 "    image: url(/root/PycharmProjects/btmhdw/ui/icons/radio_unchecked.svg);\n"
 "}")
         self.radioButtonJapanese.setObjectName("radioButtonJapanese")
-        self.pushButtonGetInformationFromXPrivateKey_2 = QtWidgets.QPushButton(self.widgetMain)
-        self.pushButtonGetInformationFromXPrivateKey_2.setGeometry(QtCore.QRect(180, 100, 241, 41))
-        self.pushButtonGetInformationFromXPrivateKey_2.setObjectName("pushButtonGetInformationFromXPrivateKey_2")
+        self.pushButtonGetHDWalletFromEntropy = QtWidgets.QPushButton(self.widgetMain)
+        self.pushButtonGetHDWalletFromEntropy.setGeometry(QtCore.QRect(180, 100, 241, 41))
+        self.pushButtonGetHDWalletFromEntropy.setObjectName("pushButtonGetHDWalletFromEntropy")
         self.pushButtonGetAddressFromXPublicKey = QtWidgets.QPushButton(self.widgetMain)
         self.pushButtonGetAddressFromXPublicKey.setGeometry(QtCore.QRect(180, 150, 241, 41))
         self.pushButtonGetAddressFromXPublicKey.setObjectName("pushButtonGetAddressFromXPublicKey")
@@ -101,6 +106,7 @@ class Ui_btmhdw(object):
         self.lineEditPassword = QtWidgets.QLineEdit(self.widgetMain)
         self.lineEditPassword.setGeometry(QtCore.QRect(550, 0, 161, 41))
         self.lineEditPassword.setStyleSheet("padding: 0 10px;")
+        self.lineEditPassword.setEchoMode(QtWidgets.QLineEdit.Password)
         self.lineEditPassword.setObjectName("lineEditPassword")
         self.widgetNet = QtWidgets.QWidget(btmhdw)
         self.widgetNet.setGeometry(QtCore.QRect(490, 10, 81, 111))
@@ -190,9 +196,9 @@ class Ui_btmhdw(object):
         self.textEditLine.setGeometry(QtCore.QRect(579, 21, 2, 89))
         self.textEditLine.setStyleSheet("background: rgb(161, 161, 176);")
         self.textEditLine.setObjectName("textEditLine")
-        self.checkBoxConsole = QtWidgets.QCheckBox(btmhdw)
-        self.checkBoxConsole.setGeometry(QtCore.QRect(10, 600, 121, 31))
-        self.checkBoxConsole.setStyleSheet("QCheckBox::indicator {\n"
+        self.checkBoxLog = QtWidgets.QCheckBox(btmhdw)
+        self.checkBoxLog.setGeometry(QtCore.QRect(10, 600, 111, 31))
+        self.checkBoxLog.setStyleSheet("QCheckBox::indicator {\n"
 "    width: 16px;\n"
 "    height: 16px;\n"
 "}\n"
@@ -202,10 +208,10 @@ class Ui_btmhdw(object):
 "QCheckBox::indicator:unchecked {\n"
 "    image: url(/root/PycharmProjects/btmhdw/ui/icons/checkbox_unchecked.svg);\n"
 "}")
-        self.checkBoxConsole.setTristate(False)
-        self.checkBoxConsole.setObjectName("checkBoxConsole")
+        self.checkBoxLog.setTristate(False)
+        self.checkBoxLog.setObjectName("checkBoxLog")
         self.checkBoxNightMode = QtWidgets.QCheckBox(btmhdw)
-        self.checkBoxNightMode.setGeometry(QtCore.QRect(140, 600, 111, 31))
+        self.checkBoxNightMode.setGeometry(QtCore.QRect(110, 600, 111, 31))
         self.checkBoxNightMode.setStyleSheet("QCheckBox::indicator {\n"
 "    width: 16px;\n"
 "    height: 16px;\n"
@@ -230,7 +236,7 @@ class Ui_btmhdw(object):
         self.textEditHome.setReadOnly(True)
         self.textEditHome.setObjectName("textEditHome")
         self.labelCopyright = QtWidgets.QLabel(btmhdw)
-        self.labelCopyright.setGeometry(QtCore.QRect(280, 600, 201, 31))
+        self.labelCopyright.setGeometry(QtCore.QRect(230, 600, 261, 31))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setItalic(False)
@@ -238,21 +244,41 @@ class Ui_btmhdw(object):
         self.labelCopyright.setStyleSheet("color: rgb(121, 121, 121);")
         self.labelCopyright.setAlignment(QtCore.Qt.AlignCenter)
         self.labelCopyright.setObjectName("labelCopyright")
-        self.widgetConsole = QtWidgets.QWidget(btmhdw)
-        self.widgetConsole.setGeometry(QtCore.QRect(10, 330, 711, 261))
-        self.widgetConsole.setObjectName("widgetConsole")
-        self.textEditConsole = QtWidgets.QTextEdit(self.widgetConsole)
-        self.textEditConsole.setGeometry(QtCore.QRect(0, 20, 711, 241))
-        self.textEditConsole.setStyleSheet("background: transparent;\n"
+        self.widgetLog = QtWidgets.QWidget(btmhdw)
+        self.widgetLog.setGeometry(QtCore.QRect(10, 330, 711, 261))
+        self.widgetLog.setObjectName("widgetLog")
+        self.textEditLog = QtWidgets.QTextEdit(self.widgetLog)
+        self.textEditLog.setGeometry(QtCore.QRect(0, 25, 711, 231))
+        self.textEditLog.setStyleSheet("background: transparent;\n"
 "border: none;")
-        self.textEditConsole.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.textEditConsole.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.textEditConsole.setObjectName("textEditConsole")
-        self.textEditConsoleLabel = QtWidgets.QTextEdit(self.widgetConsole)
-        self.textEditConsoleLabel.setGeometry(QtCore.QRect(0, 0, 711, 31))
-        self.textEditConsoleLabel.setStyleSheet("background: transparent;\n"
+        self.textEditLog.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.textEditLog.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.textEditLog.setReadOnly(True)
+        self.textEditLog.setObjectName("textEditLog")
+        self.textEditLogLabel = QtWidgets.QTextEdit(self.widgetLog)
+        self.textEditLogLabel.setGeometry(QtCore.QRect(0, 0, 611, 31))
+        self.textEditLogLabel.setStyleSheet("background: transparent;\n"
 "border: none;")
-        self.textEditConsoleLabel.setObjectName("textEditConsoleLabel")
+        self.textEditLogLabel.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.textEditLogLabel.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.textEditLogLabel.setReadOnly(True)
+        self.textEditLogLabel.setObjectName("textEditLogLabel")
+        self.pushButton = QtWidgets.QPushButton(self.widgetLog)
+        self.pushButton.setGeometry(QtCore.QRect(622, 0, 88, 31))
+        self.pushButton.setObjectName("pushButton")
+        self.textEditStatus = QtWidgets.QTextEdit(btmhdw)
+        self.textEditStatus.setGeometry(QtCore.QRect(112, 100, 171, 31))
+        font = QtGui.QFont()
+        font.setFamily("Droid Sans Fallback")
+        font.setBold(True)
+        font.setWeight(75)
+        self.textEditStatus.setFont(font)
+        self.textEditStatus.setStyleSheet("background: transparent;\n"
+"border: none;")
+        self.textEditStatus.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.textEditStatus.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.textEditStatus.setReadOnly(True)
+        self.textEditStatus.setObjectName("textEditStatus")
         self.widgetHDWallet = QtWidgets.QWidget(btmhdw)
         self.widgetHDWallet.setGeometry(QtCore.QRect(10, 330, 711, 268))
         self.widgetHDWallet.setObjectName("widgetHDWallet")
@@ -428,15 +454,15 @@ class Ui_btmhdw(object):
         btmhdw.setWindowTitle(_translate("btmhdw", "BTMHDW"))
         self.lineEditBtmhdw.setPlaceholderText(_translate("btmhdw", "Mnemonic/Enteropy/XPrivate Key/XPublic Key/Contract Program"))
         self.pushButtonGetHDWalletFromMnemonic.setText(_translate("btmhdw", "Get HDWallet from Mnemonic"))
-        self.pushButtonGetAddressFromXPublicKey_2.setText(_translate("btmhdw", "Get Address form Contract Program"))
+        self.pushButtonGetAddressFromContractProgram.setText(_translate("btmhdw", "Get Address form Contract Program"))
         self.pushButtonGenerateMnemonic.setText(_translate("btmhdw", "Generate Mnemonic"))
-        self.pushButtonGenerateEnteropy.setText(_translate("btmhdw", "Generate Enteropy"))
+        self.pushButtonGenerateEntropy.setText(_translate("btmhdw", "Generate Entropy"))
         self.radioButtonEnglish.setText(_translate("btmhdw", "English"))
         self.radioButtonJapanese.setText(_translate("btmhdw", "Japanese"))
-        self.pushButtonGetInformationFromXPrivateKey_2.setText(_translate("btmhdw", "Get HDWallet form Enteropy"))
+        self.pushButtonGetHDWalletFromEntropy.setText(_translate("btmhdw", "Get HDWallet form Entropy"))
         self.pushButtonGetAddressFromXPublicKey.setText(_translate("btmhdw", "Get Address form XPublic Key"))
         self.checkBoxPath.setText(_translate("btmhdw", "Path"))
-        self.lineEditPath.setPlaceholderText(_translate("btmhdw", "m/44/153/1/0/1"))
+        self.lineEditPath.setPlaceholderText(_translate("btmhdw", self.path))
         self.pushButtonGetInformationFromXPrivateKey.setText(_translate("btmhdw", "Get HDWallet form XPrivate Key"))
         self.lineEditPassword.setPlaceholderText(_translate("btmhdw", "Password"))
         self.radioButtonSolonet.setText(_translate("btmhdw", "Solonet"))
@@ -447,7 +473,7 @@ class Ui_btmhdw(object):
         self.labelPathAddress.setText(_translate("btmhdw", "Address"))
         self.labelPathChange.setText(_translate("btmhdw", "Change"))
         self.labelPathAccount.setText(_translate("btmhdw", "Account"))
-        self.checkBoxConsole.setText(_translate("btmhdw", "View Console"))
+        self.checkBoxLog.setText(_translate("btmhdw", "View Log"))
         self.checkBoxNightMode.setText(_translate("btmhdw", "Night Mode"))
         self.textEditHome.setHtml(_translate("btmhdw", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
@@ -464,18 +490,22 @@ class Ui_btmhdw(object):
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-style:italic; color:#747474;\">Auther </span><span style=\" font-family:\'Ubuntu\'; font-size:10pt; color:#747474;\">Meheret Tesfaye</span></p>\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-style:italic; color:#747474;\">Email meherett@zoho.com</span></p></body></html>"))
         self.labelCopyright.setText(_translate("btmhdw", "Copyright © 2019 BTMHDW"))
-        self.textEditConsole.setHtml(_translate("btmhdw", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.textEditLog.setHtml(_translate("btmhdw", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Cantarell\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; color:#ff0000;\">[ERROR]</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">: </span><span style=\" font-family:\'Ubuntu\'; font-size:10pt; color:#999999;\">Get HDWallet from Mnemonic</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">                Please insert mnemonic, It\'s Empty!</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">                Exit done!</span></p></body></html>"))
-        self.textEditConsoleLabel.setHtml(_translate("btmhdw", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
+        self.textEditLogLabel.setHtml(_translate("btmhdw", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Cantarell\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-weight:600; color:#909090;\">BTMHDW Console</span></p></body></html>"))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:12pt; font-weight:600; color:#909090;\">BTMHDW Log</span></p></body></html>"))
+        self.pushButton.setText(_translate("btmhdw", "Clear Log"))
+        self.textEditStatus.setHtml(_translate("btmhdw", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'Droid Sans Fallback\'; font-size:11pt; font-weight:600; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#555555;\">STATUS</span></p></body></html>"))
         self.textEditMnemonicLabel.setHtml(_translate("btmhdw", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -549,21 +579,90 @@ class Ui_btmhdw(object):
 
         # Button
         self.pushButtonGenerateMnemonic.clicked.connect(self.generateMnemonic)
-        self.pushButtonGenerateEnteropy.clicked.connect(self.generateEntropy)
+        self.pushButtonGenerateEntropy.clicked.connect(self.generateEntropy)
         self.pushButtonGetHDWalletFromMnemonic.clicked.connect(self.getHDWalletFromMnemonic)
+        self.pushButtonGetHDWalletFromEntropy.clicked.connect(self.getHDWalletFromEntropy)
+        self.pushButton.clicked.connect(self.clearLog)
+        self.pushButtonSave.clicked.connect(self.saveFileDialog)
         # CheckBox Button
+        self.checkBoxLog.clicked.connect(self.viewLog)
         self.checkBoxNightMode.clicked.connect(lambda: self.nightMode(btmhdw))
+        self.checkBoxPath.clicked.connect(self.onPath)
         # Radio Button
-        self.radioButtonEnglish.setChecked(True)
         self.radioButtonEnglish.toggled.connect(lambda: self.checkLanguage(self.radioButtonEnglish))
         self.radioButtonJapanese.toggled.connect(lambda: self.checkLanguage(self.radioButtonJapanese))
-        # TextEditor
-        # self.textEditConsole.verticalScrollBar().setValue(self.textEditConsole.verticalScrollBar().maximum())
+        self.radioButtonMainnet.toggled.connect(lambda: self.checkNetwork(self.radioButtonMainnet))
+        self.radioButtonTestnet.toggled.connect(lambda: self.checkNetwork(self.radioButtonTestnet))
+        self.radioButtonSolonet.toggled.connect(lambda: self.checkNetwork(self.radioButtonSolonet))
+        # SpinBox Button
+        self.spinBoxPathAccount.valueChanged.connect(self.getPath)
+        self.spinBoxPathChange.valueChanged.connect(self.getPath)
+        self.spinBoxPathAddress.valueChanged.connect(self.getPath)
 
-        self.widgetHome.setHidden(True)
-        self.widgetConsole.setHidden(True)
-        # self.widgetHDWallet.setHidden(True)
+        # self.widgetHome.setHidden(True)
+        self.widgetLog.setHidden(True)
+        self.widgetHDWallet.setHidden(True)
 
+    def onPath(self):
+        if self.checkBoxPath.isChecked():
+            self.lineEditPath.setEnabled(True)
+            self.spinBoxPathAccount.setEnabled(False)
+            self.spinBoxPathChange.setEnabled(False)
+            self.spinBoxPathAddress.setEnabled(False)
+        else:
+            self.lineEditPath.setEnabled(False)
+            self.spinBoxPathAccount.setEnabled(True)
+            self.spinBoxPathChange.setEnabled(True)
+            self.spinBoxPathAddress.setEnabled(True)
+
+    def getPath(self):
+        _translate = QtCore.QCoreApplication.translate
+        if self.checkBoxPath.isChecked():
+            if str(self.lineEditPath.text())[0:2] != 'm/':
+                self.hideHome = False
+                self.setStatus("WARNING")
+                self.widgetHome.setHidden(True)
+                self.widgetLog.setHidden(False)
+                self.widgetHDWallet.setHidden(True)
+                self.console("WARNING", "Path", "Bad path, please insert like this type of path \"m/0'/0\"! ")
+                return True
+            else:
+                self.path = self.lineEditPath.text()
+                self.lineEditPath.setPlaceholderText(_translate("btmhdw", self.path))
+                return False
+        else:
+            self.path = str("m/44/153/%s/%s/%s" % (
+                str(self.spinBoxPathAccount.value()),
+                str(self.spinBoxPathChange.value()),
+                str(self.spinBoxPathAddress.value())
+            ))
+            self.lineEditPath.setPlaceholderText(_translate("btmhdw", self.path))
+            return False
+
+    def setStatus(self, status):
+        _translate = QtCore.QCoreApplication.translate
+        if status == "SUCCESS":
+            self.textEditStatus.setHtml(_translate("btmhdw",
+                                                   "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+                                                   "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+                                                   "p, li { white-space: pre-wrap; }\n"
+                                                   "</style></head><body style=\" font-family:\'Droid Sans Fallback\'; font-size:11pt; font-weight:600; font-style:normal;\">\n"
+                                                   "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color: green;\">SUCCESS</span></p></body></html>"))
+
+        elif status == "WARNING":
+            self.textEditStatus.setHtml(_translate("btmhdw",
+                                                   "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+                                                   "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+                                                   "p, li { white-space: pre-wrap; }\n"
+                                                   "</style></head><body style=\" font-family:\'Droid Sans Fallback\'; font-size:11pt; font-weight:600; font-style:normal;\">\n"
+                                                   "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color: rgb(237, 212, 0);\">WARNING</span></p></body></html>"))
+        elif status == "ERROR":
+            self.textEditStatus.setHtml(_translate("btmhdw",
+                                                   "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+                                                   "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+                                                   "p, li { white-space: pre-wrap; }\n"
+                                                   "</style></head><body style=\" font-family:\'Droid Sans Fallback\'; font-size:11pt; font-weight:600; font-style:normal;\">\n"
+                                                   "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color: red;\">ERROR</span></p></body></html>"))
     def consConsole(self):
         return str("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
@@ -573,20 +672,20 @@ class Ui_btmhdw(object):
     def console(self, _type, title, text):
         _translate = QtCore.QCoreApplication.translate
         if _type == "SUCCESS":
-            newMessahe = str(
+            newMessage = str(
                 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; color: green; font-weight:600;\">[" + _type + "]</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">: </span><span style=\" font-family:\'Ubuntu\'; font-size:10pt; color:#999999;\">" + title + "</span></p>\n"
                                                                                                                                                                                                                                                                                                                                                                                               "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">                     " + text + "</span></p>\n")
         elif _type == "ERROR":
-            newMessahe = str(
+            newMessage = str(
                 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; color: red; font-weight:600;\">[" + _type + "]</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">: </span><span style=\" font-family:\'Ubuntu\'; font-size:10pt; color:#999999;\">" + title + "</span></p>\n"
-                                                                                                                                                                                                                                                                                                                                                                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">                " + text + "</span></p>\n")
+                                                                                                                                                                                                                                                                                                                                                                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">                 " + text + "</span></p>\n")
         elif _type == "WARNING":
-            newMessahe = str(
-                "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; color: yello; font-weight:600;\">[" + _type + "]</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">: </span><span style=\" font-family:\'Ubuntu\'; font-size:10pt; color:#999999;\">" + title + "</span></p>\n"
-                                                                                                                                                                                                                                                                                                                                                                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">                     " + text + "</span></p>\n")
-        self.consoleMessage = self.consoleMessage + newMessahe
-        self.textEditConsole.setHtml(_translate("btmhdw", self.consConsole()))
-        self.textEditConsole.verticalScrollBar().setValue(self.textEditConsole.verticalScrollBar().maximum())
+            newMessage = str(
+                "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; color: rgb(237, 212, 0); font-weight:600;\">[" + _type + "]</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">: </span><span style=\" font-family:\'Ubuntu\'; font-size:10pt; color:#999999;\">" + title + "</span></p>\n"
+                                                                                                                                                                                                                                                                                                                                                                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">                      " + text + "</span></p>\n")
+        self.consoleMessage = self.consoleMessage + newMessage
+        self.textEditLog.setHtml(_translate("btmhdw", self.consConsole()))
+        self.textEditLog.verticalScrollBar().setValue(self.textEditLog.verticalScrollBar().maximum())
 
     def checkLanguage(self, language):
         if language.text() == "English":
@@ -600,12 +699,50 @@ class Ui_btmhdw(object):
             else:
                 self.language = "english"
 
+    def checkNetwork(self, network):
+        if network.text() == "Mainnet":
+            if network.isChecked():
+                self.network = "mainnet"
+        if network.text() == "Testnet":
+            if network.isChecked():
+                self.network = "testnet"
+        if network.text() == "Solonet":
+            if network.isChecked():
+                self.network = "solonet"
+
     def nightMode(self, btmhdw):
         if self.checkBoxNightMode.isChecked():
             btmhdw.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
             self.textEditXPrivateKey.setGeometry(QtCore.QRect(116, 1.5, 591, 51))
         else:
             btmhdw.setStyleSheet(str())
+
+    def viewLog(self):
+        if self.checkBoxLog.isChecked():
+            self.widgetHome.setHidden(True)
+            self.widgetLog.setHidden(False)
+            self.widgetHDWallet.setHidden(True)
+        else:
+            if self.hideHome:
+                self.widgetHome.setHidden(True)
+                self.widgetLog.setHidden(True)
+                self.widgetHDWallet.setHidden(False)
+            else:
+                self.widgetHome.setHidden(False)
+                self.widgetLog.setHidden(True)
+                self.widgetHDWallet.setHidden(True)
+
+    def clearLog(self):
+        self.consoleMessage = str()
+        self.textEditLog.setHtml(self.consoleMessage)
+
+    def saveFileDialog(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName, _ = QFileDialog.getSaveFileName(self.window, "QFileDialog.getSaveFileName()", "",
+                                                  "All Files (*);;Text Files (*.txt)", options=options)
+        if fileName:
+            print(fileName)
 
     def generateMnemonic(self):
         self.lineEditBtmhdw.setText(str(BTMHDW().generateMnemonic(language=self.language)))
@@ -619,24 +756,66 @@ class Ui_btmhdw(object):
         if not lineEditPassword:
             lineEditPassword = str()
         if BytomHDWallet().checkMnemonic(lineEditBtmhdw, language=self.language):
-            newHDWallet = BTMHDW().createWallet(mnemonic=lineEditBtmhdw,
-                                                network=self.network,
-                                                passphrase=lineEditPassword)
-            self.textEditMnemonic.setText(newHDWallet['mnemonic'])
-            self.textEditAddress.setText(newHDWallet['address'])
-            self.textEditSeed.setText(newHDWallet['seed'])
-            self.textEditXPublicKey.setText(newHDWallet['xpublic'])
-            self.textEditXPrivateKey.setText(newHDWallet['xprivate'])
-            self.textEditContractProgram.setText(newHDWallet['program'])
-            self.textEditPath.setText(newHDWallet['path'])
-            self.console('SUCCESS', 'GetHDWalletFromPrivate', 'Successfully generated new HDWallet!')
-            self.widgetHome.setHidden(True)
-            self.widgetConsole.setHidden(True)
-            self.widgetHDWallet.setHidden(False)
+            if not self.getPath():
+                self.hideHome = True
+                newHDWalletFromMnemonic = BTMHDW().createWallet(mnemonic=lineEditBtmhdw,
+                                                    network=self.network,
+                                                    passphrase=lineEditPassword,
+                                                    path=self.path)
+                self.textEditMnemonic.setText(newHDWalletFromMnemonic['mnemonic'])
+                self.textEditAddress.setText(newHDWalletFromMnemonic['address'])
+                self.textEditSeed.setText(newHDWalletFromMnemonic['seed'])
+                self.textEditXPublicKey.setText(newHDWalletFromMnemonic['xpublic'])
+                self.textEditXPrivateKey.setText(newHDWalletFromMnemonic['xprivate'])
+                self.textEditContractProgram.setText(newHDWalletFromMnemonic['program'])
+                self.textEditPath.setText(newHDWalletFromMnemonic['path'])
+                self.setStatus('SUCCESS')
+                self.console('SUCCESS', 'GetHDWalletFromMnemonic', 'Successfully generated new HDWallet from Mnemonic!')
+                self.widgetHome.setHidden(True)
+                self.widgetLog.setHidden(True)
+                self.checkBoxLog.setChecked(False)
+                self.widgetHDWallet.setHidden(False)
         else:
+            self.hideHome = False
+            self.setStatus('ERROR')
             self.console('ERROR', 'GetHDWalletFromPrivate', 'Please check you mnemonic, insert mnemonic!')
             self.widgetHome.setHidden(True)
-            self.widgetConsole.setHidden(False)
+            self.widgetLog.setHidden(False)
+            self.checkBoxLog.setChecked(True)
+            self.widgetHDWallet.setHidden(True)
+
+    def getHDWalletFromEntropy(self):
+        lineEditBtmhdw = self.lineEditBtmhdw.text()
+        lineEditPassword = self.lineEditPassword.text()
+        if not lineEditPassword:
+            lineEditPassword = str()
+        if lineEditBtmhdw and len(str(lineEditBtmhdw)) == 32:
+            if not self.getPath():
+                self.hideHome = True
+                newHDWalletFromEntropy = BTMHDW().createWallet(entropy=lineEditBtmhdw.encode(),
+                                                    network=self.network,
+                                                    passphrase=lineEditPassword,
+                                                    path=self.path)
+                self.textEditMnemonic.setText(newHDWalletFromEntropy['mnemonic'])
+                self.textEditAddress.setText(newHDWalletFromEntropy['address'])
+                self.textEditSeed.setText(newHDWalletFromEntropy['seed'])
+                self.textEditXPublicKey.setText(newHDWalletFromEntropy['xpublic'])
+                self.textEditXPrivateKey.setText(newHDWalletFromEntropy['xprivate'])
+                self.textEditContractProgram.setText(newHDWalletFromEntropy['program'])
+                self.textEditPath.setText(newHDWalletFromEntropy['path'])
+                self.setStatus('SUCCESS')
+                self.console('SUCCESS', 'GetHDWalletFromEntropy', 'Successfully generated new HDWallet from Entropy!')
+                self.widgetHome.setHidden(True)
+                self.widgetLog.setHidden(True)
+                self.checkBoxLog.setChecked(False)
+                self.widgetHDWallet.setHidden(False)
+        else:
+            self.hideHome = False
+            self.setStatus('ERROR')
+            self.console('ERROR', 'GetHDWalletFromEntropy', 'Please check you entropy, length must be 32, insert entropy!')
+            self.widgetHome.setHidden(True)
+            self.widgetLog.setHidden(False)
+            self.checkBoxLog.setChecked(True)
             self.widgetHDWallet.setHidden(True)
 
 

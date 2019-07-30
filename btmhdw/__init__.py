@@ -393,12 +393,17 @@ class BTMHDW:
 
     @staticmethod
     def createWallet(mnemonic=None, passphrase=str(), network='sm',
-                     account=1, change=0, address=1, path=None, indexes=None):
-        if mnemonic is None:
+                     account=1, change=0, address=1, path=None, indexes=None, entropy=None):
+        if mnemonic is None and entropy is None:
             bytomHDWallet, mnemonic = BytomHDWallet \
                 .masterKeyFromEntropy(passphrase=passphrase,
                                       language='english',
                                       strength=128)
+        elif mnemonic is None and entropy is not None:
+            bytomHDWallet, mnemonic = BytomHDWallet \
+                .masterKeyFromEntropy(passphrase=passphrase,
+                                      language='english',
+                                      strength=128, entropy=entropy)
         else:
             bytomHDWallet = BytomHDWallet \
                 .masterKeyFromMnemonic(mnemonic=mnemonic,
