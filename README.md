@@ -6,10 +6,12 @@
 
 *The implementation of Hierarchical Deterministic (HD) wallets generator for Bytom blockchain.*
 
-![PyPI License](https://img.shields.io/pypi/l/btmhdw.svg)
+[![Build Status](https://travis-ci.org/meherett/btmhdw.svg?branch=master)](https://travis-ci.org/meherett/btmhdw)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/btmhdw.svg)
+![PyPI License](https://img.shields.io/pypi/l/btmhdw.svg)
 ![PyPI Version](https://img.shields.io/pypi/v/btmhdw.svg?color=black)
 ![PyPI Wheel](https://img.shields.io/pypi/wheel/btmhdw.svg?color=purple)
+[![Coverage Status](https://coveralls.io/repos/github/meherett/btmhdw/badge.svg?branch=master)](https://coveralls.io/github/meherett/btmhdw?branch=master)
 
 ## Installation
 Install btmhdw
