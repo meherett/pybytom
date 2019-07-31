@@ -8,7 +8,19 @@
 from btmhdw import BTMHDW, BytomHDWallet, BTMHDW_HARDEN, PATH, INDEXES
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
+import sys
 import os
+
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 
 class Ui_btmhdw(object):
@@ -20,7 +32,6 @@ class Ui_btmhdw(object):
         self.path = "m/44/153/1/0/1"
         self.hideHome = False
         self.saveHDWallet = None
-        self.currentPath = os.getcwd()
 
     def setupUi(self, btmhdw):
         self.window = btmhdw
@@ -29,7 +40,7 @@ class Ui_btmhdw(object):
         btmhdw.setMinimumSize(QtCore.QSize(731, 642))
         btmhdw.setMaximumSize(QtCore.QSize(731, 642))
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(self.currentPath + "icons/btmhdw-logo.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(resource_path('icons/btmhdw-logo.svg')), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         btmhdw.setWindowIcon(icon)
         self.widgetMain = QtWidgets.QWidget(btmhdw)
         self.widgetMain.setGeometry(QtCore.QRect(10, 130, 711, 201))
@@ -54,10 +65,10 @@ class Ui_btmhdw(object):
                                               "    height: 16px;\n"
                                               "}\n"
                                               "QRadioButton::indicator:checked {\n"
-                                              "   image: url(" + self.currentPath + "/icons/radio_checked.svg);\n"
+                                              "   image: url(" + resource_path('icons/radio_checked.svg') + ");\n"
                                               "}\n"
                                               "QRadioButton::indicator:unchecked {\n"
-                                              "    image: url(" + self.currentPath + "/icons/radio_unchecked.svg);\n"
+                                              "    image: url(" + resource_path('icons/radio_unchecked.svg') + ");\n"
                                               "}")
         self.radioButtonEnglish.setChecked(True)
         self.radioButtonEnglish.setObjectName("radioButtonEnglish")
@@ -68,10 +79,10 @@ class Ui_btmhdw(object):
                                                "    height: 16px;\n"
                                                "}\n"
                                                "QRadioButton::indicator:checked {\n"
-                                               "   image: url(" + self.currentPath + "/icons/radio_checked.svg);\n"
+                                               "   image: url(" + resource_path('icons/radio_checked.svg') + ");\n"
                                                "}\n"
                                                "QRadioButton::indicator:unchecked {\n"
-                                               "    image: url(" + self.currentPath + "/icons/radio_unchecked.svg);\n"
+                                               "    image: url(" + resource_path('icons/radio_unchecked.svg') + ");\n"
                                                "}")
         self.radioButtonJapanese.setObjectName("radioButtonJapanese")
         self.pushButtonGetHDWalletFromEntropy = QtWidgets.QPushButton(self.widgetMain)
@@ -87,10 +98,10 @@ class Ui_btmhdw(object):
                                         "    height: 16px;\n"
                                         "}\n"
                                         "QCheckBox::indicator:checked {\n"
-                                        "    image: url(" + self.currentPath + "/icons/checkbox_checked.svg);\n"
+                                        "    image: url(" + resource_path('icons/checkbox_checked.svg') + ");\n"
                                         "}\n"
                                         "QCheckBox::indicator:unchecked {\n"
-                                        "    image: url(" + self.currentPath + "/icons/checkbox_unchecked.svg);\n"
+                                        "    image: url(" + resource_path('icons/checkbox_unchecked.svg') + ");\n"
                                         "}")
         self.checkBoxPath.setObjectName("checkBoxPath")
         self.lineEditPath = QtWidgets.QLineEdit(self.widgetMain)
@@ -116,10 +127,10 @@ class Ui_btmhdw(object):
                                               "    height: 16px;\n"
                                               "}\n"
                                               "QRadioButton::indicator:checked {\n"
-                                              "   image: url(" + self.currentPath + "/icons/radio_checked.svg);\n"
+                                              "   image: url(" + resource_path('icons/radio_checked.svg') + ");\n"
                                               "}\n"
                                               "QRadioButton::indicator:unchecked {\n"
-                                              "    image: url(" + self.currentPath + "/icons/radio_unchecked.svg);\n"
+                                              "    image: url(" + resource_path('icons/radio_unchecked.svg') + ");\n"
                                               "}")
         self.radioButtonSolonet.setObjectName("radioButtonSolonet")
         self.radioButtonMainnet = QtWidgets.QRadioButton(self.widgetNet)
@@ -129,10 +140,10 @@ class Ui_btmhdw(object):
                                               "    height: 16px;\n"
                                               "}\n"
                                               "QRadioButton::indicator:checked {\n"
-                                              "   image: url(" + self.currentPath + "/icons/radio_checked.svg);\n"
+                                              "   image: url(" + resource_path('icons/radio_checked.svg') + ");\n"
                                               "}\n"
                                               "QRadioButton::indicator:unchecked {\n"
-                                              "    image: url(" + self.currentPath + "/icons/radio_unchecked.svg);\n"
+                                              "    image: url(" + resource_path('icons/radio_unchecked.svg') + ");\n"
                                               "}")
         self.radioButtonMainnet.setChecked(True)
         self.radioButtonMainnet.setObjectName("radioButtonMainnet")
@@ -143,10 +154,10 @@ class Ui_btmhdw(object):
                                               "    height: 16px;\n"
                                               "}\n"
                                               "QRadioButton::indicator:checked {\n"
-                                              "   image: url(" + self.currentPath + "/icons/radio_checked.svg);\n"
+                                              "   image: url(" + resource_path('icons/radio_checked.svg') + ");\n"
                                               "}\n"
                                               "QRadioButton::indicator:unchecked {\n"
-                                              "    image: url(" + self.currentPath + "/icons/radio_unchecked.svg);\n"
+                                              "    image: url(" + resource_path('icons/radio_unchecked.svg') + ");\n"
                                               "}")
         self.radioButtonTestnet.setObjectName("radioButtonTestnet")
         self.widgetFooter = QtWidgets.QWidget(btmhdw)
@@ -188,7 +199,7 @@ class Ui_btmhdw(object):
         self.labelBtmhdwLogo = QtWidgets.QLabel(btmhdw)
         self.labelBtmhdwLogo.setGeometry(QtCore.QRect(10, 10, 471, 111))
         self.labelBtmhdwLogo.setText("")
-        self.labelBtmhdwLogo.setPixmap(QtGui.QPixmap("btmhdw.png"))
+        self.labelBtmhdwLogo.setPixmap(QtGui.QPixmap(resource_path('icons/btmhdw.png')))
         self.labelBtmhdwLogo.setObjectName("labelBtmhdwLogo")
         self.textEditLine = QtWidgets.QTextEdit(btmhdw)
         self.textEditLine.setEnabled(False)
@@ -202,10 +213,10 @@ class Ui_btmhdw(object):
                                        "    height: 16px;\n"
                                        "}\n"
                                        "QCheckBox::indicator:checked {\n"
-                                       "    image: url(" + self.currentPath + "/icons/checkbox_checked.svg);\n"
+                                       "    image: url(" + resource_path('icons/checkbox_checked.svg') + ");\n"
                                        "}\n"
                                        "QCheckBox::indicator:unchecked {\n"
-                                       "    image: url(" + self.currentPath + "/icons/checkbox_unchecked.svg);\n"
+                                       "    image: url(" + resource_path('icons/checkbox_unchecked.svg') + ");\n"
                                        "}")
         self.checkBoxLog.setTristate(False)
         self.checkBoxLog.setObjectName("checkBoxLog")
@@ -216,10 +227,10 @@ class Ui_btmhdw(object):
                                              "    height: 16px;\n"
                                              "}\n"
                                              "QCheckBox::indicator:checked {\n"
-                                             "    image: url(" + self.currentPath + "/icons/checkbox_checked.svg);\n"
+                                             "    image: url(" + resource_path('icons/checkbox_checked.svg') + ");\n"
                                              "}\n"
                                              "QCheckBox::indicator:unchecked {\n"
-                                             "    image: url(" + self.currentPath + "/icons/checkbox_unchecked.svg);\n"
+                                             "    image: url(" + resource_path('icons/checkbox_unchecked.svg') + ");\n"
                                              "}")
         self.checkBoxNightMode.setCheckable(True)
         self.checkBoxNightMode.setObjectName("checkBoxNightMode")
