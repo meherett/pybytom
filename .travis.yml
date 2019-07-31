@@ -5,7 +5,7 @@ install:
   - sudo apt-get update
   - sudo apt-get install -y python$TRAVIS_PYTHON_VERSION-dev
   - pip install -r requirements.txt
-  - pip install tox-travis
+  - pip install tox-travis coveralls
 matrix:
   include:
   - name: '3.5'
@@ -15,3 +15,4 @@ matrix:
   - name: '3.7'
     python: 3.7
 script: tox
+after_success: if [ "${TRAVIS_PYTHON_VERSION}" == "3.7" ]; then coveralls; fi;
