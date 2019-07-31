@@ -3,9 +3,9 @@
 block_cipher = None
 
 datas = [
-     ('/root/PycharmProjects/btmhdw/ui/icons/BTMHDW.ico', '.'),
-     ('/root/PycharmProjects/btmhdw/ui/icons/BTMHDW.png', '.'),
-     ('/root/PycharmProjects/btmhdw/ui/icons/BTMHDW.svg', '.'),
+     ('/root/PycharmProjects/btmhdw/ui/BTMHDW.ico', '.'),
+     ('/root/PycharmProjects/btmhdw/ui/BTMHDW.png', '.'),
+     ('/root/PycharmProjects/btmhdw/ui/BTMHDW.svg', '.'),
      ('/root/PycharmProjects/btmhdw/ui/icons/checkbox_checked.svg', 'icons'),
      ('/root/PycharmProjects/btmhdw/ui/icons/checkbox_unchecked.svg', 'icons'),
      ('/root/PycharmProjects/btmhdw/ui/icons/radio_checked.svg', 'icons'),
@@ -39,7 +39,7 @@ exe = EXE(pyz,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
-          icon='/root/PycharmProjects/btmhdw/ui/icons/btmhdw-logo.svg',
+          icon='/root/PycharmProjects/btmhdw/ui/BTMHDW.ico',
           upx_exclude=[],
           runtime_tmpdir=None,
           console=False )
