@@ -1,7 +1,10 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 with open("README.md", "r") as readme:
     long_description = readme.read()
+
+with open("requirements.txt", "r") as _requirements:
+    requirements = list(map(str.strip, _requirements.read().split("\n")))[:-1]
 
 setup(
     name="btmhdw",
@@ -13,10 +16,9 @@ setup(
     author='Meheret Tesfaye',
     author_email='meherett@zoho.com',
     url='https://github.com/mehetett/btmhdw',
-    packages=['btmhdw'],
-    install_requires=[
-        "mnemonic==0.13"
-    ],
+    packages=find_packages(),
+    python_requires=">=3.5,<4",
+    install_requires=requirements,
     classifiers=[
         "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: MIT License",
