@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/tmp/btmhdwzk3024.ui'
-#
-# Created by: PyQt5 UI code generator 5.12.2
-#
-# WARNING! All changes made in this file will be lost!
-from btmhdw import BTMHDW, BytomHDWallet, BTMHDW_HARDEN, PATH, INDEXES
+# Auth Meheret Tesfaye
+# CEO /Co-founder of Cobra Framework
+
+# BTMHDW UI
+from btmhdw import BTMHDW, BytomHDWallet
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
-import sys
 import os
 
 
@@ -40,7 +38,7 @@ class Ui_btmhdw(object):
         btmhdw.setMinimumSize(QtCore.QSize(731, 642))
         btmhdw.setMaximumSize(QtCore.QSize(731, 642))
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(resource_path('icons/btmhdw-logo.svg')), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(resource_path('BTMHDW.svg')), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         btmhdw.setWindowIcon(icon)
         self.widgetMain = QtWidgets.QWidget(btmhdw)
         self.widgetMain.setGeometry(QtCore.QRect(10, 130, 711, 201))
@@ -199,7 +197,7 @@ class Ui_btmhdw(object):
         self.labelBtmhdwLogo = QtWidgets.QLabel(btmhdw)
         self.labelBtmhdwLogo.setGeometry(QtCore.QRect(10, 10, 471, 111))
         self.labelBtmhdwLogo.setText("")
-        self.labelBtmhdwLogo.setPixmap(QtGui.QPixmap(resource_path('icons/btmhdw.png')))
+        self.labelBtmhdwLogo.setPixmap(QtGui.QPixmap(resource_path('BTMHDW.png')))
         self.labelBtmhdwLogo.setObjectName("labelBtmhdwLogo")
         self.textEditLine = QtWidgets.QTextEdit(btmhdw)
         self.textEditLine.setEnabled(False)
