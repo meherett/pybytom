@@ -43,7 +43,7 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>541</width>
+      <width>711</width>
       <height>41</height>
      </rect>
     </property>
@@ -51,7 +51,7 @@
      <string notr="true">padding: 0 10px;</string>
     </property>
     <property name="placeholderText">
-     <string>Mnemonic/Enteropy/XPrivate Key/XPublic Key/Contract Program</string>
+     <string>Mnemonic/Entropy/XPrivate Key/XPublic Key/Contract Program</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButtonGetHDWalletFromMnemonic">
@@ -65,19 +65,6 @@
     </property>
     <property name="text">
      <string>Get HDWallet from Mnemonic</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButtonGetAddressFromContractProgram">
-    <property name="geometry">
-     <rect>
-      <x>430</x>
-      <y>100</y>
-      <width>281</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Get Address form Contract Program</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButtonGenerateMnemonic">
@@ -172,17 +159,17 @@ QRadioButton::indicator:unchecked {
      <string>Get HDWallet form Entropy</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButtonGetAddressFromXPublicKey">
+   <widget class="QPushButton" name="pushButtonGetContractProgramFromXPublicKey">
     <property name="geometry">
      <rect>
-      <x>180</x>
-      <y>150</y>
-      <width>241</width>
+      <x>430</x>
+      <y>100</y>
+      <width>281</width>
       <height>41</height>
      </rect>
     </property>
     <property name="text">
-     <string>Get Address form XPublic Key</string>
+     <string>Get Contract Program form XPublic Key</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="checkBoxPath">
@@ -229,12 +216,12 @@ QCheckBox::indicator:unchecked {
      <string>m/44/153/1/0/1</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButtonGetInformationFromXPrivateKey">
+   <widget class="QPushButton" name="pushButtonGetHDWalletFromXPrivateKey">
     <property name="geometry">
      <rect>
-      <x>430</x>
-      <y>50</y>
-      <width>281</width>
+      <x>180</x>
+      <y>150</y>
+      <width>241</width>
       <height>41</height>
      </rect>
     </property>
@@ -245,9 +232,9 @@ QCheckBox::indicator:unchecked {
    <widget class="QLineEdit" name="lineEditPassword">
     <property name="geometry">
      <rect>
-      <x>550</x>
-      <y>0</y>
-      <width>161</width>
+      <x>430</x>
+      <y>50</y>
+      <width>281</width>
       <height>41</height>
      </rect>
     </property>
@@ -373,6 +360,9 @@ QRadioButton::indicator:unchecked {
     </property>
    </widget>
    <widget class="QPushButton" name="pushButtonSave">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -711,7 +701,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:12pt; font-weight:600; color:#909090;&quot;&gt;BTMHDW Log&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="pushButtonLog">
     <property name="geometry">
      <rect>
       <x>622</x>
