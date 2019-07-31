@@ -89,9 +89,13 @@ walletFromXPrivate = btmhdw.walletFromXPrivate(xprivate=XPRIVATE,
 ## Example
 Here are more [btmhdw/example](https://github.com/meherett/btmhdw/blob/master/examples/example.py)
 
-## Author ✒️
+## Meta
 
-* ***Meheret Tesfaye*** - *Initial work* - [Cobra](https://github.com/cobraframework)
+Meheret Tesfaye – [@meherett](https://github.com/meherett) – meherett@zoho.com
+
+Distributed under the MIT license. See ``LICENSE`` for more information.
+
+[https://github.com/meherett](https://github.com/meherett) - *Initial work* - [Cobra](https://github.com/cobraframework)
 
 ## License
 
@@ -164,6 +168,26 @@ False
 </details>
 
 ----
+
+**`generateEntropy()`**: It is to generate new entropy.
+
+**Returns**
+
+`Object`:
+- `String` - *entropy*, generated entropy 32 length.
+
+**Example**
+
+```python
+print(btmhdw.generateEntropy())
+```
+<details>
+<summary>Output</summary>
+
+```json5
+"fbb9d20ec1fb94762b56dbc9cd184e23"
+```
+</details>
 
 **`createWallet()`**: It is to create new Bytom wallet.
 
