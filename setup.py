@@ -8,7 +8,7 @@ with open("requirements.txt", "r") as _requirements:
 
 setup(
     name="btmhdw",
-    version='1.0.0',
+    version='1.0.1',
     description='The implementation of Hierarchical Deterministic (HD) wallets generator for Bytom blockchain',
     long_description=long_description,
     long_description_content_type="text/markdown",
