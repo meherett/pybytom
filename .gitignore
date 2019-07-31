@@ -11,3 +11,5 @@ __pycache__/
 
 # py.test stuff
 .pytest_cache/
+
+ui/btmhdw.ui
