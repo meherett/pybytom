@@ -461,7 +461,7 @@ class Ui_btmhdw(object):
         _translate = QtCore.QCoreApplication.translate
         btmhdw.setWindowTitle(_translate("btmhdw", "BTMHDW"))
         self.lineEditBtmhdw.setPlaceholderText(
-            _translate("btmhdw", "Mnemonic/Entropy/XPrivate Key/XPublic Key/Contract Program"))
+            _translate("btmhdw", "Mnemonic/Entropy/XPrivate Key/XPublic Key"))
         self.pushButtonGetHDWalletFromMnemonic.setText(_translate("btmhdw", "Get HDWallet from Mnemonic"))
         self.pushButtonGenerateMnemonic.setText(_translate("btmhdw", "Generate Mnemonic"))
         self.pushButtonGenerateEntropy.setText(_translate("btmhdw", "Generate Entropy"))
