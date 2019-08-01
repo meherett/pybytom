@@ -51,7 +51,7 @@
      <string notr="true">padding: 0 10px;</string>
     </property>
     <property name="placeholderText">
-     <string>Mnemonic/Entropy/XPrivate Key/XPublic Key/Contract Program</string>
+     <string>Mnemonic/Entropy/XPrivate Key/XPublic Key</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButtonGetHDWalletFromMnemonic">
