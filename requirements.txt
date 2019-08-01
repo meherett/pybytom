@@ -1,3 +1,4 @@
 mnemonic==0.13
 pytest==5.0.1
 pytest-cov==2.7.1
+qdarkstyle==2.7
