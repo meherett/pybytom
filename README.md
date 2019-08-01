@@ -8,9 +8,8 @@
 
 [![Build Status](https://travis-ci.org/meherett/btmhdw.svg?branch=master)](https://travis-ci.org/meherett/btmhdw)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/btmhdw.svg)
-![PyPI License](https://img.shields.io/pypi/l/btmhdw.svg)
-![PyPI Version](https://img.shields.io/pypi/v/btmhdw.svg?color=black)
-![PyPI Wheel](https://img.shields.io/pypi/wheel/btmhdw.svg?color=purple)
+![PyPI License](https://img.shields.io/pypi/l/btmhdw.svg?color=black)
+![PyPI Version](https://img.shields.io/pypi/v/btmhdw.svg?color=blue)
 [![Coverage Status](https://coveralls.io/repos/github/meherett/btmhdw/badge.svg?branch=master)](https://coveralls.io/github/meherett/btmhdw?branch=master)
 
 ## Installation
@@ -102,6 +101,14 @@ Distributed under the MIT license. See ``LICENSE`` for more information.
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+
+## Screenshot
+
+Desktop application of BTMHDW. Here are more [screenshots](https://github.com/meherett/btmhdw/blob/master/ui/screenshot).
+
+<p align="start">		
+  <img src="https://raw.githubusercontent.com/meherett/btmhdw/master/ui/screenshot/DARK%20GENERATED%20BTMHDW.png">
+</p>
 
 ## API
 
