@@ -27,8 +27,10 @@ pip install -e . -r requirements.txt
 ## Running the test
 You can run the tests with:
 ```
-py.test tests
+pytest tests
 ```
+Or use `tox` to run the complete suite against the full set of build targets, or pytest to run specific 
+tests against a specific version of Python.
 
 ## Usage
 #### Create a new Bytom wallet
@@ -89,6 +91,15 @@ walletFromXPrivate = btmhdw.walletFromXPrivate(xprivate=XPRIVATE,
 
 ## Example
 Here are more [btmhdw/example](https://github.com/meherett/btmhdw/blob/master/examples/example.py)
+
+# Running UI
+Install PyQt5 and clone the repository and then run
+```
+cd ui
+
+# Run BTMHDW
+python BTMHDW.py
+```
 
 ## Meta
 
