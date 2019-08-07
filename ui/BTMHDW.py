@@ -9,7 +9,6 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
 import os
 
-
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
     try:
@@ -18,7 +17,36 @@ def resource_path(relative_path):
     except Exception:
         base_path = os.path.abspath(".")
 
-    return os.path.join(base_path, relative_path)
+    if os.name == 'nt':
+        return os.path.normpath(os.path.join(base_path, relative_path))
+    else:
+        return os.path.join(base_path, relative_path)
+
+def btmhdwLight():
+    # Smart import of the rc file
+    import qdarkstyle.pyqt5_style_rc
+
+    # Load the stylesheet content from resources
+    from PyQt5.QtCore import QCoreApplication, QFile, QTextStream
+    from PyQt5.QtGui import QColor, QPalette
+    from qdarkstyle import _apply_palette_fix, _logger
+
+    # Apply palette fix. See issue #139
+    _apply_palette_fix(QCoreApplication, QPalette, QColor)
+
+    f = QFile(resource_path("BTMHDW-LIGHT.qss"))
+    if not f.exists():
+        _logger().error("Unable to load stylesheet, file not found in "
+                        "resources")
+        return ""
+    else:
+        f.open(QFile.ReadOnly | QFile.Text)
+        ts = QTextStream(f)
+        stylesheet = ts.readAll()
+
+        # Apply OS specific patches
+        # stylesheet = _apply_stylesheet_patches(stylesheet)
+        return stylesheet
 
 
 class Ui_btmhdw(object):
@@ -38,13 +66,17 @@ class Ui_btmhdw(object):
         btmhdw.setMinimumSize(QtCore.QSize(731, 642))
         btmhdw.setMaximumSize(QtCore.QSize(731, 642))
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(resource_path('BTMHDW.svg')), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(resource_path("BTMHDW.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         btmhdw.setWindowIcon(icon)
+        btmhdw.setStyleSheet("")
         self.widgetMain = QtWidgets.QWidget(btmhdw)
         self.widgetMain.setGeometry(QtCore.QRect(10, 130, 711, 201))
         self.widgetMain.setObjectName("widgetMain")
         self.lineEditBtmhdw = QtWidgets.QLineEdit(self.widgetMain)
         self.lineEditBtmhdw.setGeometry(QtCore.QRect(0, 0, 711, 41))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.lineEditBtmhdw.setFont(font)
         self.lineEditBtmhdw.setStyleSheet("padding: 0 10px;")
         self.lineEditBtmhdw.setObjectName("lineEditBtmhdw")
         self.pushButtonGetHDWalletFromMnemonic = QtWidgets.QPushButton(self.widgetMain)
@@ -57,31 +89,13 @@ class Ui_btmhdw(object):
         self.pushButtonGenerateEntropy.setGeometry(QtCore.QRect(0, 150, 171, 41))
         self.pushButtonGenerateEntropy.setObjectName("pushButtonGenerateEntropy")
         self.radioButtonEnglish = QtWidgets.QRadioButton(self.widgetMain)
-        self.radioButtonEnglish.setGeometry(QtCore.QRect(0, 50, 81, 41))
-        self.radioButtonEnglish.setStyleSheet("QRadioButton::indicator {\n"
-                                              "    width: 16px;\n"
-                                              "    height: 16px;\n"
-                                              "}\n"
-                                              "QRadioButton::indicator:checked {\n"
-                                              "   image: url(" + resource_path('icons/radio_checked.svg') + ");\n"
-                                              "}\n"
-                                              "QRadioButton::indicator:unchecked {\n"
-                                              "    image: url(" + resource_path('icons/radio_unchecked.svg') + ");\n"
-                                              "}")
+        self.radioButtonEnglish.setGeometry(QtCore.QRect(10, 50, 71, 41))
+        self.radioButtonEnglish.setStyleSheet("")
         self.radioButtonEnglish.setChecked(True)
         self.radioButtonEnglish.setObjectName("radioButtonEnglish")
         self.radioButtonJapanese = QtWidgets.QRadioButton(self.widgetMain)
-        self.radioButtonJapanese.setGeometry(QtCore.QRect(80, 50, 91, 41))
-        self.radioButtonJapanese.setStyleSheet("QRadioButton::indicator {\n"
-                                               "    width: 16px;\n"
-                                               "    height: 16px;\n"
-                                               "}\n"
-                                               "QRadioButton::indicator:checked {\n"
-                                               "   image: url(" + resource_path('icons/radio_checked.svg') + ");\n"
-                                               "}\n"
-                                               "QRadioButton::indicator:unchecked {\n"
-                                               "    image: url(" + resource_path('icons/radio_unchecked.svg') + ");\n"
-                                               "}")
+        self.radioButtonJapanese.setGeometry(QtCore.QRect(90, 50, 81, 41))
+        self.radioButtonJapanese.setStyleSheet("")
         self.radioButtonJapanese.setObjectName("radioButtonJapanese")
         self.pushButtonGetHDWalletFromEntropy = QtWidgets.QPushButton(self.widgetMain)
         self.pushButtonGetHDWalletFromEntropy.setGeometry(QtCore.QRect(180, 100, 241, 41))
@@ -91,20 +105,14 @@ class Ui_btmhdw(object):
         self.pushButtonGetContractProgramFromXPublicKey.setObjectName("pushButtonGetContractProgramFromXPublicKey")
         self.checkBoxPath = QtWidgets.QCheckBox(self.widgetMain)
         self.checkBoxPath.setGeometry(QtCore.QRect(430, 150, 71, 41))
-        self.checkBoxPath.setStyleSheet("QCheckBox::indicator {\n"
-                                        "    width: 16px;\n"
-                                        "    height: 16px;\n"
-                                        "}\n"
-                                        "QCheckBox::indicator:checked {\n"
-                                        "    image: url(" + resource_path('icons/checkbox_checked.svg') + ");\n"
-                                        "}\n"
-                                        "QCheckBox::indicator:unchecked {\n"
-                                        "    image: url(" + resource_path('icons/checkbox_unchecked.svg') + ");\n"
-                                        "}")
+        self.checkBoxPath.setStyleSheet("")
         self.checkBoxPath.setObjectName("checkBoxPath")
         self.lineEditPath = QtWidgets.QLineEdit(self.widgetMain)
         self.lineEditPath.setEnabled(False)
-        self.lineEditPath.setGeometry(QtCore.QRect(500, 150, 211, 41))
+        self.lineEditPath.setGeometry(QtCore.QRect(482, 150, 228, 41))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.lineEditPath.setFont(font)
         self.lineEditPath.setStyleSheet("padding: 0 10px;")
         self.lineEditPath.setObjectName("lineEditPath")
         self.pushButtonGetHDWalletFromXPrivateKey = QtWidgets.QPushButton(self.widgetMain)
@@ -112,51 +120,27 @@ class Ui_btmhdw(object):
         self.pushButtonGetHDWalletFromXPrivateKey.setObjectName("pushButtonGetHDWalletFromXPrivateKey")
         self.lineEditPassword = QtWidgets.QLineEdit(self.widgetMain)
         self.lineEditPassword.setGeometry(QtCore.QRect(430, 50, 281, 41))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.lineEditPassword.setFont(font)
         self.lineEditPassword.setStyleSheet("padding: 0 10px;")
         self.lineEditPassword.setEchoMode(QtWidgets.QLineEdit.Password)
         self.lineEditPassword.setObjectName("lineEditPassword")
         self.widgetNet = QtWidgets.QWidget(btmhdw)
-        self.widgetNet.setGeometry(QtCore.QRect(490, 10, 81, 111))
+        self.widgetNet.setGeometry(QtCore.QRect(526, 9, 61, 111))
         self.widgetNet.setObjectName("widgetNet")
         self.radioButtonSolonet = QtWidgets.QRadioButton(self.widgetNet)
         self.radioButtonSolonet.setGeometry(QtCore.QRect(0, 80, 81, 31))
-        self.radioButtonSolonet.setStyleSheet("QRadioButton::indicator {\n"
-                                              "    width: 16px;\n"
-                                              "    height: 16px;\n"
-                                              "}\n"
-                                              "QRadioButton::indicator:checked {\n"
-                                              "   image: url(" + resource_path('icons/radio_checked.svg') + ");\n"
-                                              "}\n"
-                                              "QRadioButton::indicator:unchecked {\n"
-                                              "    image: url(" + resource_path('icons/radio_unchecked.svg') + ");\n"
-                                              "}")
+        self.radioButtonSolonet.setStyleSheet("")
         self.radioButtonSolonet.setObjectName("radioButtonSolonet")
         self.radioButtonMainnet = QtWidgets.QRadioButton(self.widgetNet)
         self.radioButtonMainnet.setGeometry(QtCore.QRect(0, 0, 81, 31))
-        self.radioButtonMainnet.setStyleSheet("QRadioButton::indicator {\n"
-                                              "    width: 16px;\n"
-                                              "    height: 16px;\n"
-                                              "}\n"
-                                              "QRadioButton::indicator:checked {\n"
-                                              "   image: url(" + resource_path('icons/radio_checked.svg') + ");\n"
-                                              "}\n"
-                                              "QRadioButton::indicator:unchecked {\n"
-                                              "    image: url(" + resource_path('icons/radio_unchecked.svg') + ");\n"
-                                              "}")
+        self.radioButtonMainnet.setStyleSheet("")
         self.radioButtonMainnet.setChecked(True)
         self.radioButtonMainnet.setObjectName("radioButtonMainnet")
         self.radioButtonTestnet = QtWidgets.QRadioButton(self.widgetNet)
         self.radioButtonTestnet.setGeometry(QtCore.QRect(0, 40, 81, 31))
-        self.radioButtonTestnet.setStyleSheet("QRadioButton::indicator {\n"
-                                              "    width: 16px;\n"
-                                              "    height: 16px;\n"
-                                              "}\n"
-                                              "QRadioButton::indicator:checked {\n"
-                                              "   image: url(" + resource_path('icons/radio_checked.svg') + ");\n"
-                                              "}\n"
-                                              "QRadioButton::indicator:unchecked {\n"
-                                              "    image: url(" + resource_path('icons/radio_unchecked.svg') + ");\n"
-                                              "}")
+        self.radioButtonTestnet.setStyleSheet("")
         self.radioButtonTestnet.setObjectName("radioButtonTestnet")
         self.widgetFooter = QtWidgets.QWidget(btmhdw)
         self.widgetFooter.setGeometry(QtCore.QRect(510, 600, 211, 31))
@@ -169,67 +153,49 @@ class Ui_btmhdw(object):
         self.pushButtonSave.setGeometry(QtCore.QRect(0, 0, 99, 31))
         self.pushButtonSave.setObjectName("pushButtonSave")
         self.widgetPaths = QtWidgets.QWidget(btmhdw)
-        self.widgetPaths.setGeometry(QtCore.QRect(590, 10, 131, 111))
+        self.widgetPaths.setGeometry(QtCore.QRect(610, 10, 111, 111))
         self.widgetPaths.setObjectName("widgetPaths")
         self.labelPathAddress = QtWidgets.QLabel(self.widgetPaths)
-        self.labelPathAddress.setGeometry(QtCore.QRect(0, 80, 71, 31))
+        self.labelPathAddress.setGeometry(QtCore.QRect(0, 80, 51, 31))
         self.labelPathAddress.setObjectName("labelPathAddress")
         self.labelPathChange = QtWidgets.QLabel(self.widgetPaths)
-        self.labelPathChange.setGeometry(QtCore.QRect(0, 40, 61, 31))
+        self.labelPathChange.setGeometry(QtCore.QRect(0, 40, 51, 31))
         self.labelPathChange.setObjectName("labelPathChange")
         self.spinBoxPathAccount = QtWidgets.QSpinBox(self.widgetPaths)
-        self.spinBoxPathAccount.setGeometry(QtCore.QRect(71, 0, 51, 31))
+        self.spinBoxPathAccount.setGeometry(QtCore.QRect(51, 0, 51, 31))
         self.spinBoxPathAccount.setProperty("value", 1)
         self.spinBoxPathAccount.setObjectName("spinBoxPathAccount")
         self.labelPathAccount = QtWidgets.QLabel(self.widgetPaths)
-        self.labelPathAccount.setGeometry(QtCore.QRect(0, 0, 71, 31))
+        self.labelPathAccount.setGeometry(QtCore.QRect(0, 0, 51, 31))
         self.labelPathAccount.setObjectName("labelPathAccount")
         self.spinBoxPathChange = QtWidgets.QSpinBox(self.widgetPaths)
         self.spinBoxPathChange.setEnabled(True)
-        self.spinBoxPathChange.setGeometry(QtCore.QRect(71, 40, 51, 31))
+        self.spinBoxPathChange.setGeometry(QtCore.QRect(51, 40, 51, 31))
         self.spinBoxPathChange.setMaximum(1)
         self.spinBoxPathChange.setObjectName("spinBoxPathChange")
         self.spinBoxPathAddress = QtWidgets.QSpinBox(self.widgetPaths)
         self.spinBoxPathAddress.setEnabled(True)
-        self.spinBoxPathAddress.setGeometry(QtCore.QRect(71, 80, 51, 31))
+        self.spinBoxPathAddress.setGeometry(QtCore.QRect(51, 80, 51, 31))
         self.spinBoxPathAddress.setProperty("value", 1)
         self.spinBoxPathAddress.setObjectName("spinBoxPathAddress")
         self.labelBtmhdwLogo = QtWidgets.QLabel(btmhdw)
         self.labelBtmhdwLogo.setGeometry(QtCore.QRect(10, 10, 471, 111))
         self.labelBtmhdwLogo.setText("")
-        self.labelBtmhdwLogo.setPixmap(QtGui.QPixmap(resource_path('BTMHDW.png')))
+        self.labelBtmhdwLogo.setPixmap(QtGui.QPixmap(resource_path("BTMHDW.png")))
         self.labelBtmhdwLogo.setObjectName("labelBtmhdwLogo")
         self.textEditLine = QtWidgets.QTextEdit(btmhdw)
         self.textEditLine.setEnabled(False)
-        self.textEditLine.setGeometry(QtCore.QRect(579, 21, 2, 89))
+        self.textEditLine.setGeometry(QtCore.QRect(601, 20, 2, 89))
         self.textEditLine.setStyleSheet("background: rgb(161, 161, 176);")
         self.textEditLine.setObjectName("textEditLine")
         self.checkBoxLog = QtWidgets.QCheckBox(btmhdw)
-        self.checkBoxLog.setGeometry(QtCore.QRect(10, 600, 111, 31))
-        self.checkBoxLog.setStyleSheet("QCheckBox::indicator {\n"
-                                       "    width: 16px;\n"
-                                       "    height: 16px;\n"
-                                       "}\n"
-                                       "QCheckBox::indicator:checked {\n"
-                                       "    image: url(" + resource_path('icons/checkbox_checked.svg') + ");\n"
-                                       "}\n"
-                                       "QCheckBox::indicator:unchecked {\n"
-                                       "    image: url(" + resource_path('icons/checkbox_unchecked.svg') + ");\n"
-                                       "}")
+        self.checkBoxLog.setGeometry(QtCore.QRect(10, 600, 91, 31))
+        self.checkBoxLog.setStyleSheet("")
         self.checkBoxLog.setTristate(False)
         self.checkBoxLog.setObjectName("checkBoxLog")
         self.checkBoxNightMode = QtWidgets.QCheckBox(btmhdw)
-        self.checkBoxNightMode.setGeometry(QtCore.QRect(110, 600, 111, 31))
-        self.checkBoxNightMode.setStyleSheet("QCheckBox::indicator {\n"
-                                             "    width: 16px;\n"
-                                             "    height: 16px;\n"
-                                             "}\n"
-                                             "QCheckBox::indicator:checked {\n"
-                                             "    image: url(" + resource_path('icons/checkbox_checked.svg') + ");\n"
-                                             "}\n"
-                                             "QCheckBox::indicator:unchecked {\n"
-                                             "    image: url(" + resource_path('icons/checkbox_unchecked.svg') + ");\n"
-                                             "}")
+        self.checkBoxNightMode.setGeometry(QtCore.QRect(86, 600, 111, 31))
+        self.checkBoxNightMode.setStyleSheet("")
         self.checkBoxNightMode.setCheckable(True)
         self.checkBoxNightMode.setObjectName("checkBoxNightMode")
         self.widgetHome = QtWidgets.QWidget(btmhdw)
@@ -244,7 +210,7 @@ class Ui_btmhdw(object):
         self.textEditHome.setReadOnly(True)
         self.textEditHome.setObjectName("textEditHome")
         self.labelCopyright = QtWidgets.QLabel(btmhdw)
-        self.labelCopyright.setGeometry(QtCore.QRect(230, 600, 261, 31))
+        self.labelCopyright.setGeometry(QtCore.QRect(170, 600, 321, 31))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setItalic(False)
@@ -309,7 +275,7 @@ class Ui_btmhdw(object):
         self.textEditMnemonicLabel.setReadOnly(True)
         self.textEditMnemonicLabel.setObjectName("textEditMnemonicLabel")
         self.textEditMnemonic = QtWidgets.QTextEdit(self.widgetMnemonic)
-        self.textEditMnemonic.setGeometry(QtCore.QRect(90, 0, 621, 61))
+        self.textEditMnemonic.setGeometry(QtCore.QRect(83, 0, 621, 61))
         font = QtGui.QFont()
         font.setPointSize(11)
         self.textEditMnemonic.setFont(font)
@@ -335,7 +301,10 @@ class Ui_btmhdw(object):
         self.textEditAddressLabel.setReadOnly(True)
         self.textEditAddressLabel.setObjectName("textEditAddressLabel")
         self.textEditAddress = QtWidgets.QTextEdit(self.widgetAddress)
-        self.textEditAddress.setGeometry(QtCore.QRect(76, 0, 631, 41))
+        self.textEditAddress.setGeometry(QtCore.QRect(69, 0, 631, 41))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.textEditAddress.setFont(font)
         self.textEditAddress.setStyleSheet("background: transparent;\n"
                                            "border: none;\n"
                                            "margin: 6 0;")
@@ -356,7 +325,10 @@ class Ui_btmhdw(object):
         self.textEditSeedLabel.setReadOnly(True)
         self.textEditSeedLabel.setObjectName("textEditSeedLabel")
         self.textEditSeed = QtWidgets.QTextEdit(self.widgetSeed)
-        self.textEditSeed.setGeometry(QtCore.QRect(51, -3, 657, 51))
+        self.textEditSeed.setGeometry(QtCore.QRect(50, 0, 611, 51))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.textEditSeed.setFont(font)
         self.textEditSeed.setStyleSheet("background: transparent;\n"
                                         "border: none;")
         self.textEditSeed.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
@@ -376,7 +348,7 @@ class Ui_btmhdw(object):
         self.textEditXPublicKeyLabel.setReadOnly(True)
         self.textEditXPublicKeyLabel.setObjectName("textEditXPublicKeyLabel")
         self.textEditXPublicKey = QtWidgets.QTextEdit(self.widgetXPublicKey)
-        self.textEditXPublicKey.setGeometry(QtCore.QRect(105, 0, 601, 51))
+        self.textEditXPublicKey.setGeometry(QtCore.QRect(93, -1, 611, 51))
         font = QtGui.QFont()
         font.setPointSize(11)
         self.textEditXPublicKey.setFont(font)
@@ -399,7 +371,7 @@ class Ui_btmhdw(object):
         self.textEditXPrivateKeyLabel.setReadOnly(True)
         self.textEditXPrivateKeyLabel.setObjectName("textEditXPrivateKeyLabel")
         self.textEditXPrivateKey = QtWidgets.QTextEdit(self.widgetXPrivateKey)
-        self.textEditXPrivateKey.setGeometry(QtCore.QRect(116, 3, 591, 51))
+        self.textEditXPrivateKey.setGeometry(QtCore.QRect(101, 1, 601, 51))
         font = QtGui.QFont()
         font.setPointSize(11)
         self.textEditXPrivateKey.setFont(font)
@@ -424,7 +396,10 @@ class Ui_btmhdw(object):
         self.textEditContractProgramLabel.setObjectName("textEditContractProgramLabel")
         self.textEditContractProgram = QtWidgets.QTextEdit(self.widgetContractProgram)
         self.textEditContractProgram.setEnabled(True)
-        self.textEditContractProgram.setGeometry(QtCore.QRect(153, 0, 551, 51))
+        self.textEditContractProgram.setGeometry(QtCore.QRect(135, 0, 561, 51))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.textEditContractProgram.setFont(font)
         self.textEditContractProgram.setStyleSheet("background: transparent;\n"
                                                    "border: none;\n"
                                                    "margin: 6 0;")
@@ -445,7 +420,10 @@ class Ui_btmhdw(object):
         self.textEditPathLabel.setReadOnly(True)
         self.textEditPathLabel.setObjectName("textEditPathLabel")
         self.textEditPath = QtWidgets.QTextEdit(self.widgetPath)
-        self.textEditPath.setGeometry(QtCore.QRect(49, 0, 661, 41))
+        self.textEditPath.setGeometry(QtCore.QRect(45, 0, 661, 41))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.textEditPath.setFont(font)
         self.textEditPath.setStyleSheet("background: transparent;\n"
                                         "border: none;")
         self.textEditPath.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
@@ -460,8 +438,7 @@ class Ui_btmhdw(object):
     def retranslateUi(self, btmhdw):
         _translate = QtCore.QCoreApplication.translate
         btmhdw.setWindowTitle(_translate("btmhdw", "BTMHDW"))
-        self.lineEditBtmhdw.setPlaceholderText(
-            _translate("btmhdw", "Mnemonic/Entropy/XPrivate Key/XPublic Key/Contract Program"))
+        self.lineEditBtmhdw.setPlaceholderText(_translate("btmhdw", "Mnemonic/Entropy/XPrivate Key/XPublic Key"))
         self.pushButtonGetHDWalletFromMnemonic.setText(_translate("btmhdw", "Get HDWallet from Mnemonic"))
         self.pushButtonGenerateMnemonic.setText(_translate("btmhdw", "Generate Mnemonic"))
         self.pushButtonGenerateEntropy.setText(_translate("btmhdw", "Generate Entropy"))
@@ -488,120 +465,120 @@ class Ui_btmhdw(object):
                                              "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                              "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
                                              "p, li { white-space: pre-wrap; }\n"
-                                             "</style></head><body style=\" font-family:\'Cantarell\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+                                             "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
                                              "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:26pt; font-weight:600; color:#878787;\">btmhdw</span></p>\n"
-                                             "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; color:#747474;\">Version 0.1.1</span></p>\n"
-                                             "<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Ubuntu\'; color:#747474;\"><br /></p>\n"
-                                             "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-style:italic; color:#747474;\">The implementation of Hierarchical Deterministic (HD) wallets generator for Bytom blockchain.</span></p>\n"
-                                             "<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Ubuntu\'; font-style:italic; color:#747474;\"><br /></p>\n"
-                                             "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-style:italic; color:#747474;\">With btmhdw you can generate mnemonic(English or Japanese language 12 words)/enteropy for new HDWallet, you can get HDWallet from XPrivate key, you can drive your own path(Index) and you can get HDWallet address from contract program/XPublic key.</span></p>\n"
+                                             "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; color:#747474;\">Version 1.0.2</span></p>\n"
+                                             "<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Ubuntu\'; font-size:11pt; color:#747474;\"><br /></p>\n"
+                                             "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:11pt; color:#747474;\">The implementation of Hierarchical Deterministic (HD) wallets generator for Bytom blockchain.</span></p>\n"
+                                             "<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Ubuntu\'; font-size:11pt; font-style:italic; color:#747474;\"><br /></p>\n"
+                                             "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; color:#747474;\">With btmhdw you can generate mnemonic(English or Japanese language 12 words)/enteropy for new HDWallet, you can get HDWallet from XPrivate key, you can drive your own path(Index) and you can get HDWallet address from contract program/XPublic key.</span></p>\n"
                                              "<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Ubuntu\'; font-size:10pt; font-style:italic; color:#747474;\"><br /></p>\n"
-                                             "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-style:italic; color:#747474;\">Github </span><span style=\" font-family:\'Ubuntu\'; font-size:10pt; color:#747474;\">https://github.com/meherett/btmhdw</span></p>\n"
-                                             "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-style:italic; color:#747474;\">Auther </span><span style=\" font-family:\'Ubuntu\'; font-size:10pt; color:#747474;\">Meheret Tesfaye</span></p>\n"
-                                             "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-style:italic; color:#747474;\">Email meherett@zoho.com</span></p></body></html>"))
+                                             "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; color:#747474;\">Github</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-style:italic; color:#747474;\"> </span><span style=\" font-family:\'Ubuntu\'; font-size:10pt; color:#747474;\">https://github.com/meherett/btmhdw</span></p>\n"
+                                             "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; color:#747474;\">Auther</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-style:italic; color:#747474;\"> </span><span style=\" font-family:\'Ubuntu\'; font-size:10pt; color:#747474;\">Meheret Tesfaye</span></p>\n"
+                                             "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; color:#747474;\">Email meherett@zoho.com</span></p></body></html>"))
         self.labelCopyright.setText(_translate("btmhdw", "Copyright © 2019 BTMHDW"))
         self.textEditLog.setHtml(_translate("btmhdw",
                                             "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                             "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
                                             "p, li { white-space: pre-wrap; }\n"
-                                            "</style></head><body style=\" font-family:\'Cantarell\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
-                                            "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
+                                            "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+                                            "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Cantarell\'; font-size:11pt;\"><br /></p></body></html>"))
         self.textEditLogLabel.setHtml(_translate("btmhdw",
                                                  "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                                  "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
                                                  "p, li { white-space: pre-wrap; }\n"
-                                                 "</style></head><body style=\" font-family:\'Cantarell\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+                                                 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
                                                  "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:12pt; font-weight:600; color:#909090;\">BTMHDW Log</span></p></body></html>"))
         self.pushButtonLog.setText(_translate("btmhdw", "Clear Log"))
         self.textEditStatus.setHtml(_translate("btmhdw",
                                                "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                                "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
                                                "p, li { white-space: pre-wrap; }\n"
-                                               "</style></head><body style=\" font-family:\'Droid Sans Fallback\'; font-size:11pt; font-weight:600; font-style:normal;\">\n"
-                                               "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#555555;\">STATUS</span></p></body></html>"))
+                                               "</style></head><body style=\" font-family:\'Droid Sans Fallback\'; font-size:8.25pt; font-weight:600; font-style:normal;\">\n"
+                                               "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt; color:#555555;\">STATUS</span></p></body></html>"))
         self.textEditMnemonicLabel.setHtml(_translate("btmhdw",
                                                       "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                                       "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
                                                       "p, li { white-space: pre-wrap; }\n"
-                                                      "</style></head><body style=\" font-family:\'Cantarell\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+                                                      "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
                                                       "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10.5pt; font-weight:600;\">Mnemonic</span></p></body></html>"))
         self.textEditMnemonic.setHtml(_translate("btmhdw",
                                                  "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                                  "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
                                                  "p, li { white-space: pre-wrap; }\n"
-                                                 "</style></head><body style=\" font-family:\'Cantarell\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
-                                                 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10.5pt;\">とおるãげこうãへいおんãにげるãはけんãいどうãふあんãよそくãひんこんãついかãはったつãしゃいん</span></p></body></html>"))
+                                                 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+                                                 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">とおるãげこうãへいおんãにげるãはけんãいどうãふあんãよそくãひんこんãついかãはったつãしゃいん</span></p></body></html>"))
         self.textEditAddressLabel.setHtml(_translate("btmhdw",
                                                      "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                                      "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
                                                      "p, li { white-space: pre-wrap; }\n"
-                                                     "</style></head><body style=\" font-family:\'Cantarell\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+                                                     "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
                                                      "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10.5pt; font-weight:600;\">Address</span></p></body></html>"))
         self.textEditAddress.setHtml(_translate("btmhdw",
                                                 "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                                 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
                                                 "p, li { white-space: pre-wrap; }\n"
-                                                "</style></head><body style=\" font-family:\'Cantarell\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
-                                                "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10.5pt;\">bm1qq5nzpwr2d40qwvga2qval73cvnxv3f4au5vrht</span></p></body></html>"))
+                                                "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+                                                "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\';\">bm1qq5nzpwr2d40qwvga2qval73cvnxv3f4au5vrht</span></p></body></html>"))
         self.textEditSeedLabel.setHtml(_translate("btmhdw",
                                                   "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                                   "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
                                                   "p, li { white-space: pre-wrap; }\n"
-                                                  "</style></head><body style=\" font-family:\'Cantarell\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+                                                  "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
                                                   "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10.5pt; font-weight:600;\">Seed</span></p></body></html>"))
         self.textEditSeed.setHtml(_translate("btmhdw",
                                              "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                              "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
                                              "p, li { white-space: pre-wrap; }\n"
-                                             "</style></head><body style=\" font-family:\'Cantarell\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+                                             "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10.5pt;\">d47ece6097f93b5d19259886d210dab017f5b37520b4dad8160712fd5b1065e7189b8b295cc023e0b2c78f79725f859ac512afdfebc0b94cfd83faa59e42d82e</span></p></body></html>"))
         self.textEditXPublicKeyLabel.setHtml(_translate("btmhdw",
                                                         "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                                         "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
                                                         "p, li { white-space: pre-wrap; }\n"
-                                                        "</style></head><body style=\" font-family:\'Cantarell\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+                                                        "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
                                                         "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10.5pt; font-weight:600;\">XPublic Key</span></p></body></html>"))
         self.textEditXPublicKey.setHtml(_translate("btmhdw",
                                                    "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                                    "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
                                                    "p, li { white-space: pre-wrap; }\n"
-                                                   "</style></head><body style=\" font-family:\'Cantarell\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+                                                   "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
                                                    "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10.5pt;\">d47ece6097f93b5d19259886d210dab017f5b37520b4dad8160712fd5b1065e7189b8b295cc023e0b2c78f79725f859ac512afdfebc0b94cfd83faa59e42d82e</span></p></body></html>"))
         self.textEditXPrivateKeyLabel.setHtml(_translate("btmhdw",
                                                          "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                                          "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
                                                          "p, li { white-space: pre-wrap; }\n"
-                                                         "</style></head><body style=\" font-family:\'Cantarell\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+                                                         "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
                                                          "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10.5pt; font-weight:600;\">XPrivate Key</span></p></body></html>"))
         self.textEditXPrivateKey.setHtml(_translate("btmhdw",
                                                     "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                                     "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
                                                     "p, li { white-space: pre-wrap; }\n"
-                                                    "</style></head><body style=\" font-family:\'Cantarell\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+                                                    "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
                                                     "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10.5pt;\">d47ece6097f93b5d19259886d210dab017f5b37520b4dad8160712fd5b1065e7189b8b295cc023e0b2c78f79725f859ac512afdfebc0b94cfd83faa59e42d82e</span></p></body></html>"))
         self.textEditContractProgramLabel.setHtml(_translate("btmhdw",
                                                              "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                                              "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
                                                              "p, li { white-space: pre-wrap; }\n"
-                                                             "</style></head><body style=\" font-family:\'Cantarell\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+                                                             "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
                                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10.5pt; font-weight:600;\">Contract Program</span></p></body></html>"))
         self.textEditContractProgram.setHtml(_translate("btmhdw",
                                                         "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                                         "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
                                                         "p, li { white-space: pre-wrap; }\n"
-                                                        "</style></head><body style=\" font-family:\'Cantarell\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+                                                        "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
                                                         "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10.5pt;\">001478c3aa31753389fcde04d33d0779bdc2840f0ad4</span></p></body></html>"))
         self.textEditPathLabel.setHtml(_translate("btmhdw",
                                                   "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                                   "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
                                                   "p, li { white-space: pre-wrap; }\n"
-                                                  "</style></head><body style=\" font-family:\'Cantarell\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+                                                  "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
                                                   "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10.5pt; font-weight:600;\">Path</span></p></body></html>"))
         self.textEditPath.setHtml(_translate("btmhdw",
                                              "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                              "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
                                              "p, li { white-space: pre-wrap; }\n"
-                                             "</style></head><body style=\" font-family:\'Cantarell\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+                                             "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10.5pt;\">m/44/153/1/0/1</span></p></body></html>"))
 
         # Button
@@ -748,7 +725,7 @@ class Ui_btmhdw(object):
             btmhdw.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
             self.textEditXPrivateKey.setGeometry(QtCore.QRect(116, 1.5, 591, 51))
         else:
-            btmhdw.setStyleSheet(str())
+            btmhdw.setStyleSheet(btmhdwLight())
 
     def viewLog(self):
         if self.checkBoxLog.isChecked():
@@ -779,6 +756,9 @@ class Ui_btmhdw(object):
         fileName, _ = QFileDialog.getSaveFileName(self.window, "BTMHDW Save", "",
                                                   "Json Files (*.json)",
                                                   options=options)
+        fileName = str(fileName)
+        if not fileName.endswith('.json'):
+            fileName = fileName + '.json'
         if fileName and self.saveHDWallet:
             import json
             with open(fileName, 'w', encoding='utf-8') as f:
@@ -795,7 +775,7 @@ class Ui_btmhdw(object):
         lineEditPassword = self.lineEditPassword.text()
         if not lineEditPassword:
             lineEditPassword = str()
-        if BytomHDWallet().checkMnemonic(lineEditBtmhdw, language=self.language):
+        if BytomHDWallet().checkMnemonic(lineEditBtmhdw, language=self.language) and lineEditBtmhdw:
             if not self.getPath():
                 self.hideHome = True
                 newHDWalletFromMnemonic = BTMHDW().createWallet(mnemonic=lineEditBtmhdw,
@@ -972,6 +952,7 @@ if __name__ == "__main__":
     import sys
 
     app = QtWidgets.QApplication(sys.argv)
+    app.setStyleSheet(btmhdwLight())
     Dialog = QtWidgets.QDialog()
     ui = Ui_btmhdw()
     ui.setupUi(Dialog)
