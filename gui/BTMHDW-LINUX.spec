@@ -3,19 +3,19 @@
 block_cipher = None
 
 datas = [
-     ('/root/PycharmProjects/btmhdw/ui/BTMHDW.ico', '.'),
-     ('/root/PycharmProjects/btmhdw/ui/BTMHDW.png', '.'),
-     ('/root/PycharmProjects/btmhdw/ui/BTMHDW.svg', '.'),
-     ('/root/PycharmProjects/btmhdw/ui/icons/checkbox_checked.svg', 'icons'),
-     ('/root/PycharmProjects/btmhdw/ui/icons/checkbox_unchecked.svg', 'icons'),
-     ('/root/PycharmProjects/btmhdw/ui/icons/radio_checked.svg', 'icons'),
-     ('/root/PycharmProjects/btmhdw/ui/icons/radio_unchecked.svg', 'icons'),
+     ('/root/PycharmProjects/btmhdw/gui/BTMHDW.ico', '.'),
+     ('/root/PycharmProjects/btmhdw/gui/BTMHDW.png', '.'),
+     ('/root/PycharmProjects/btmhdw/gui/BTMHDW.svg', '.'),
+     ('/root/PycharmProjects/btmhdw/gui/icons/checkbox_checked.svg', 'icons'),
+     ('/root/PycharmProjects/btmhdw/gui/icons/checkbox_unchecked.svg', 'icons'),
+     ('/root/PycharmProjects/btmhdw/gui/icons/radio_checked.svg', 'icons'),
+     ('/root/PycharmProjects/btmhdw/gui/icons/radio_unchecked.svg', 'icons'),
      ('/root/.pyenv/versions/3.7.4/lib/python3.7/site-packages/mnemonic/wordlist/english.txt', 'mnemonic/wordlist'),
      ('/root/.pyenv/versions/3.7.4/lib/python3.7/site-packages/mnemonic/wordlist/japanese.txt', 'mnemonic/wordlist')
 ]
 
 a = Analysis(['BTMHDW.py'],
-             pathex=['/root/PycharmProjects/btmhdw/ui'],
+             pathex=['/root/PycharmProjects/btmhdw/gui'],
              binaries=[],
              datas=datas,
              hiddenimports=[],
@@ -39,7 +39,7 @@ exe = EXE(pyz,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
-          icon='/root/PycharmProjects/btmhdw/ui/BTMHDW.ico',
+          icon='/root/PycharmProjects/btmhdw/gui/BTMHDW.ico',
           upx_exclude=[],
           runtime_tmpdir=None,
           console=False )

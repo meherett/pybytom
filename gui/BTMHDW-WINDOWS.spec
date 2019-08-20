@@ -3,20 +3,20 @@
 block_cipher = None
 
 datas = [
-     ('C:/Users/Admin/PycharmProjects/btmhdw/ui/BTMHDW.ico', '.'),
-     ('C:/Users/Admin/PycharmProjects/btmhdw/ui/BTMHDW.png', '.'),
-     ('C:/Users/Admin/PycharmProjects/btmhdw/ui/BTMHDW.svg', '.'),
-     ('C:/Users/Admin/PycharmProjects/btmhdw/ui/BTMHDW-LIGHT.qss', '.'),
-     ('C:/Users/Admin/PycharmProjects/btmhdw/ui/icons/checkbox_checked.svg', 'icons'),
-     ('C:/Users/Admin/PycharmProjects/btmhdw/ui/icons/checkbox_unchecked.svg', 'icons'),
-     ('C:/Users/Admin/PycharmProjects/btmhdw/ui/icons/radio_checked.svg', 'icons'),
-     ('C:/Users/Admin/PycharmProjects/btmhdw/ui/icons/radio_unchecked.svg', 'icons'),
+     ('C:/Users/Admin/PycharmProjects/btmhdw/gui/BTMHDW.ico', '.'),
+     ('C:/Users/Admin/PycharmProjects/btmhdw/gui/BTMHDW.png', '.'),
+     ('C:/Users/Admin/PycharmProjects/btmhdw/gui/BTMHDW.svg', '.'),
+     ('C:/Users/Admin/PycharmProjects/btmhdw/gui/BTMHDW-LIGHT.qss', '.'),
+     ('C:/Users/Admin/PycharmProjects/btmhdw/gui/icons/checkbox_checked.svg', 'icons'),
+     ('C:/Users/Admin/PycharmProjects/btmhdw/gui/icons/checkbox_unchecked.svg', 'icons'),
+     ('C:/Users/Admin/PycharmProjects/btmhdw/gui/icons/radio_checked.svg', 'icons'),
+     ('C:/Users/Admin/PycharmProjects/btmhdw/gui/icons/radio_unchecked.svg', 'icons'),
      ('C:/Users/Admin/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/mnemonic/wordlist/english.txt', 'mnemonic/wordlist'),
      ('C:/Users/Admin/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/mnemonic/wordlist/japanese.txt', 'mnemonic/wordlist')
 ]
 
 a = Analysis(['BTMHDW.py'],
-             pathex=['C:/Users/Admin/PycharmProjects/btmhdw/ui'],
+             pathex=['C:/Users/Admin/PycharmProjects/btmhdw/gui'],
              binaries=[],
              datas=datas,
              hiddenimports=[],
@@ -40,7 +40,7 @@ exe = EXE(pyz,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
-          icon='C:/Users/Admin/PycharmProjects/btmhdw/ui/BTMHDW.ico',
+          icon='C:/Users/Admin/PycharmProjects/btmhdw/gui/BTMHDW.ico',
           upx_exclude=[],
           runtime_tmpdir=None,
           console=False )
