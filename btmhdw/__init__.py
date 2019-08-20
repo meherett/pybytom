@@ -133,8 +133,9 @@ class BytomHDWallet:
         xprivate_bytes = get_bytes(self.xprivate)
         scalar = decodeint(xprivate_bytes[:len(xprivate_bytes) // 2])
         buf = encodepoint(scalarmultbase(scalar))
-        self.xpublic = buf + xprivate_bytes[len(xprivate_bytes) // 2:]
-        return self.xpublic.hex()
+        xpublic = buf + xprivate_bytes[len(xprivate_bytes) // 2:]
+        self.xpublic = xpublic.hex()
+        return self.xpublic
 
     def expandPrivateKey(self, xprivate=None):
         if xprivate:
@@ -366,6 +367,7 @@ class BytomHDWallet:
         if program:
             address_str = encode(hrp, 0, get_bytes(program[4:]))
             return address_str
+        self.program()
         address_str = encode(hrp, 0, get_bytes(self.program()[4:]))
         return address_str
 
@@ -427,7 +429,7 @@ class BTMHDW:
                 address=bytomHDWallet.address(network=network),
                 seed=bytomHDWallet.seed.hex(),
                 xprivate=bytomHDWallet.xprivate,
-                xpublic=bytomHDWallet.xpublic.hex(),
+                xpublic=bytomHDWallet.xpublic,
                 program=bytomHDWallet.program(),
                 path=bytomHDWallet.getPath()
             )
@@ -438,7 +440,7 @@ class BTMHDW:
             address=bytomHDWallet.address(network=network),
             seed=bytomHDWallet.seed.hex(),
             xprivate=bytomHDWallet.xprivate,
-            xpublic=bytomHDWallet.xpublic.hex(),
+            xpublic=bytomHDWallet.xpublic,
             program=bytomHDWallet.program(),
             path=bytomHDWallet.getPath()
         )
@@ -464,7 +466,7 @@ class BTMHDW:
         return dict(
             address=bytomHDWallet.address(network=network),
             xprivate=bytomHDWallet.xprivate,
-            xpublic=bytomHDWallet.xpublic.hex(),
+            xpublic=bytomHDWallet.xpublic,
             program=bytomHDWallet.program(),
             path=bytomHDWallet.getPath()
         )
