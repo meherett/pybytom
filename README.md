@@ -118,7 +118,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 Desktop application of BTMHDW. Here are more [screenshots](https://github.com/meherett/btmhdw/blob/master/ui/screenshot).
 
 <p align="start">		
-  <img src="https://raw.githubusercontent.com/meherett/btmhdw/master/ui/screenshot/DARK%20GENERATED%20BTMHDW.png">
+  <img src="https://raw.githubusercontent.com/meherett/btmhdw/master/gui/screenshot/DARK%20GENERATED%20BTMHDW.png">
 </p>
 
 ## API
