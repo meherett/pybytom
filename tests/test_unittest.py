@@ -6,37 +6,35 @@
 #
 #     def test_generateMnemonic(self):
 #
-#         enMnemonic = self.generateMnemonic('english')
+#         enMnemonic = self.generate_mnemonic('english')
 #
-#         enCheck = self.checkMnemonic(enMnemonic, 'english')
+#         enCheck = self.check_mnemonic(enMnemonic, 'english')
 #
 #         self.assertTrue(enCheck)
 #
-#         jpMnemonic = self.generateMnemonic('japanese')
+#         jpMnemonic = self.generate_mnemonic('japanese')
 #
-#         jpCheck = self.checkMnemonic(jpMnemonic, 'japanese')
+#         jpCheck = self.check_mnemonic(jpMnemonic, 'japanese')
 #
 #         self.assertTrue(jpCheck)
 #
 #     def test_createWallet(self):
 #
-#         mnemonic = self.generateMnemonic()
+#         mnemonic = self.generate_mnemonic()
 #
-#         created = self.createWallet(mnemonic=mnemonic,
-#                                     passphrase='password')
+#         created = self.create(mnemonic=mnemonic, passphrase='password')
 #
 #         self.assertEqual(len(created["xprivate"]), 128)
 #
-#         self.assertTrue(self.checkMnemonic(created["mnemonic"]))
+#         self.assertTrue(self.check_mnemonic(created["mnemonic"]))
 #
 #     def test_walletFromXPrivate(self):
 #
-#         mnemonic = self.generateMnemonic()
+#         mnemonic = self.generate_mnemonic()
 #
-#         created = self.createWallet(mnemonic=mnemonic,
-#                                     passphrase='password')
+#         created = self.create(mnemonic=mnemonic, passphrase='password')
 #
-#         wallet_xprivate = self.walletFromXPrivate(created["xprivate"])
+#         wallet_xprivate = self.wallet_from_xprivate(created["xprivate"])
 #
 #         self.assertEqual(created["address"], wallet_xprivate["address"])
 #

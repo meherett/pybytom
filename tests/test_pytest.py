@@ -1,5 +1,7 @@
 from btmhdw import BTMHDW, BytomHDWallet, BTMHDW_HARDEN, PATH, INDEXES
 
+import hashlib
+
 MNEMONIC = "ancient young hurt bone shuffle deposit congress normal crack six boost despair"
 
 XPRIVATE = "c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759d513bc370335cac" \
@@ -13,39 +15,37 @@ btmhdw = BTMHDW()
 
 def test_generateMnemonic():
 
-    enMnemonic = btmhdw.generateMnemonic('english')
+    enMnemonic = btmhdw.generate_mnemonic('english')
 
-    enCheck = btmhdw.checkMnemonic(enMnemonic, 'english')
+    enCheck = btmhdw.check_mnemonic(enMnemonic, 'english')
 
     assert enCheck
 
-    jpMnemonic = btmhdw.generateMnemonic('japanese')
+    jpMnemonic = btmhdw.generate_mnemonic('japanese')
 
-    jpCheck = btmhdw.checkMnemonic(jpMnemonic, 'japanese')
+    jpCheck = btmhdw.check_mnemonic(jpMnemonic, 'japanese')
 
     assert jpCheck
 
 
 def test_createWallet():
 
-    mnemonic = btmhdw.generateMnemonic()
+    mnemonic = btmhdw.generate_mnemonic()
 
-    created = btmhdw.createWallet(mnemonic=mnemonic,
-                                  passphrase='password')
+    created = btmhdw.create(mnemonic=mnemonic, passphrase='password')
 
     assert len(created["xprivate"]) == 128
 
-    assert btmhdw.checkMnemonic(created["mnemonic"])
+    assert btmhdw.check_mnemonic(created["mnemonic"])
 
 
 def test_walletFromXPrivate():
 
-    mnemonic = btmhdw.generateMnemonic()
+    mnemonic = btmhdw.generate_mnemonic()
 
-    created = btmhdw.createWallet(mnemonic=mnemonic,
-                                  passphrase='password')
+    created = btmhdw.create(mnemonic=mnemonic, passphrase='password')
 
-    wallet_xprivate = btmhdw.walletFromXPrivate(created["xprivate"])
+    wallet_xprivate = btmhdw.wallet_from_xprivate(created["xprivate"])
 
     assert created["address"] == wallet_xprivate["address"]
 
@@ -53,9 +53,9 @@ def test_walletFromXPrivate():
 
 
 def test_masterKeyFromMnemonic():
-    bytomHDWallet = BytomHDWallet().masterKeyFromMnemonic(mnemonic=MNEMONIC)
+    bytomHDWallet = BytomHDWallet().master_key_from_mnemonic(mnemonic=MNEMONIC)
 
-    bytomHDWallet.fromPath("m/44/153/1/0/1")
+    bytomHDWallet.from_path("m/44/153/1/0/1")
     assert (bytomHDWallet.program())
     assert (bytomHDWallet.address(network="testnet"))
     assert (bytomHDWallet.seed.hex())
@@ -81,13 +81,31 @@ def test_HARDEN():
     bytomHDWallet = BytomHDWallet()
 
     bytomHDWallet, mnemonic = bytomHDWallet\
-        .masterKeyFromEntropy(passphrase="meherett",
-                              language="japanese")
+        .master_key_from_entropy(passphrase="meherett", language="japanese")
 
-    bytomHDWallet.fromIndex(44 + BTMHDW_HARDEN)
-    bytomHDWallet.fromIndex(153)
-    bytomHDWallet.fromIndex(1 + BTMHDW_HARDEN)
-    bytomHDWallet.fromIndex(0)
-    bytomHDWallet.fromIndex(1)
+    bytomHDWallet.from_index(44 + BTMHDW_HARDEN)
+    bytomHDWallet.from_index(153)
+    bytomHDWallet.from_index(1 + BTMHDW_HARDEN)
+    bytomHDWallet.from_index(0)
+    bytomHDWallet.from_index(1)
     assert (bytomHDWallet.program())
     assert (bytomHDWallet.address(network="testnet"))
+
+
+def test_sing_and_verify():
+    bytomHDWallet = BytomHDWallet()
+
+    bytomHDWallet, mnemonic = bytomHDWallet \
+        .master_key_from_entropy(passphrase="meherett", language="japanese")
+
+    bytomHDWallet.from_index(44 + BTMHDW_HARDEN)
+    bytomHDWallet.from_index(153)
+    bytomHDWallet.from_index(1 + BTMHDW_HARDEN)
+    bytomHDWallet.from_index(0)
+    bytomHDWallet.from_index(1)
+
+    signature = bytomHDWallet.sign(message=hashlib.sha256("meherett".encode()).hexdigest())
+    assert signature
+
+    assert bytomHDWallet.verify(message=hashlib.sha256("meherett".encode()).hexdigest(),
+                                signature=signature)
