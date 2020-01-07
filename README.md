@@ -41,16 +41,16 @@ from btmhdw import BTMHDW
 btmhdw = BTMHDW()
 
 # Generate mnemonic english/japanese
-mnemonic = btmhdw.generateMnemonic("english")
+mnemonic = btmhdw.generate_mnemonic("english")
 
 # Checking mnemonic language
-if not btmhdw.checkMnemonic(mnemonic, "english"):
+if not btmhdw.check_mnemonic(mnemonic, "english"):
     exit()
 
 # Create a new wallet
-createdWallet = btmhdw.createWallet(mnemonic=mnemonic, network="mainnet")
+wallet = btmhdw.create(mnemonic=mnemonic, network="mainnet")
 
-print(createdWallet)
+print(wallet)
 ```
 `OUTPUT`
 ```json5
@@ -75,8 +75,10 @@ XPRIVATE = "8007196f3e0841bbdf90d97df172a19cb18edda007466d362fa2d5ff23822a40189b
 btmhdw = BTMHDW()
 
 # Wallet from xprivate
-walletFromXPrivate = btmhdw.walletFromXPrivate(xprivate=XPRIVATE,
-                                               network="mainnet")
+wallet = btmhdw.wallet_from_xprivate(xprivate=XPRIVATE,
+                                     network="mainnet")
+
+print(wallet)
 ```
 `OUTPUT`
 ```json5
@@ -92,15 +94,6 @@ walletFromXPrivate = btmhdw.walletFromXPrivate(xprivate=XPRIVATE,
 ## Example
 Here are more [btmhdw/example](https://github.com/meherett/btmhdw/blob/master/examples/example.py)
 
-# Running UI
-Install PyQt5 and clone the repository and then run
-```
-cd ui
-
-# Run BTMHDW
-python BTMHDW.py
-```
-
 ## Meta
 
 Meheret Tesfaye – [@meherett](https://github.com/meherett) – meherett@zoho.com
@@ -113,18 +106,10 @@ Distributed under the MIT license. See ``LICENSE`` for more information.
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
-## Screenshot
-
-Desktop application of BTMHDW. Here are more [screenshots](https://github.com/meherett/btmhdw/blob/master/ui/screenshot).
-
-<p align="start">		
-  <img src="https://raw.githubusercontent.com/meherett/btmhdw/master/gui/screenshot/DARK%20GENERATED%20BTMHDW.png">
-</p>
-
 ## API
 
 ### Class BTMHDW()
-**`generateMnemonic()`**: It is to generate new mnemonic.
+**`generate_mnemonic()`**: It is to generate new mnemonic.
 
 **Parameters**
 
@@ -141,8 +126,8 @@ Desktop application of BTMHDW. Here are more [screenshots](https://github.com/me
 **Example**
 
 ```python
-print(btmhdw.generateMnemonic(language="english", passphrase="meherett"))
-print(btmhdw.generateMnemonic(language="japanese", passphrase="meherett"))
+print(btmhdw.generate_mnemonic(language="english", passphrase="meherett"))
+print(btmhdw.generate_mnemonic(language="japanese", passphrase="meherett"))
 ```
 <details>
 <summary>Output</summary>
@@ -155,7 +140,7 @@ print(btmhdw.generateMnemonic(language="japanese", passphrase="meherett"))
 
 ----
 
-**`checkMnemonic()`**: It is to check mnemonic language.
+**`check_mnemonic()`**: It is to check mnemonic language.
 
 **Parameters**
 
@@ -175,8 +160,8 @@ print(btmhdw.generateMnemonic(language="japanese", passphrase="meherett"))
 ```python
 MNEMONIC = "ancient young hurt bone shuffle deposit congress normal crack six boost despair"
 
-print(btmhdw.checkMnemonic(MNEMONIC, "english"))
-print(btmhdw.checkMnemonic(MNEMONIC, "japanese"))
+print(btmhdw.check_mnemonic(MNEMONIC, "english"))
+print(btmhdw.check_mnemonic(MNEMONIC, "japanese"))
 ```
 <details>
 <summary>Output</summary>
@@ -189,7 +174,7 @@ False
 
 ----
 
-**`generateEntropy()`**: It is to generate new entropy.
+**`generate_entropy()`**: It is to generate new entropy.
 
 **Returns**
 
@@ -199,7 +184,7 @@ False
 **Example**
 
 ```python
-print(btmhdw.generateEntropy())
+print(btmhdw.generate_entropy())
 ```
 <details>
 <summary>Output</summary>
@@ -209,7 +194,7 @@ print(btmhdw.generateEntropy())
 ```
 </details>
 
-**`createWallet()`**: It is to create new Bytom wallet.
+**`create()`**: It is to create new Bytom wallet.
 
 **Parameters**
 
@@ -231,9 +216,9 @@ print(btmhdw.generateEntropy())
 **Example**
 
 ```python
-mnemonic = btmhdw.generateMnemonic("english")
+mnemonic = btmhdw.generate_mnemonic("english")
 
-createdWallet = btmhdw.createWallet(mnemonic=mnemonic, 
+createdWallet = btmhdw.create(mnemonic=mnemonic, 
                                     network="mainnet")
 print(createdWallet['address'])
 print(createdWallet['xprivate'], '\n')
@@ -260,7 +245,7 @@ print(createdWallet)
 
 ----
 
-**`walletFromXPrivate()`**: It is to get wallet from XPrivate
+**`wallet_from_xprivate()`**: It is to get wallet from XPrivate
 
 **Parameters**
 
@@ -285,11 +270,11 @@ print(createdWallet)
 ```python
 XPRIVATE = "c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759d513bc370335cac51d77f0be5dfe84de024cfee562530b4d873b5f5e2ff4f57c"
 
-walletFromXPrivate = btmhdw.walletFromXPrivate(xprivate=XPRIVATE,
+wallet_from_xprivate = btmhdw.wallet_from_xprivate(xprivate=XPRIVATE,
                                                network="mainnet")
-print(walletFromXPrivate['address'])
-print(walletFromXPrivate['xprivate'], '\n')
-print(walletFromXPrivate)
+print(wallet_from_xprivate['address'])
+print(wallet_from_xprivate['xprivate'], '\n')
+print(wallet_from_xprivate)
 ```
 <details>
 <summary>Output</summary>
@@ -312,7 +297,7 @@ print(walletFromXPrivate)
 
 ### Class BytomHDWallet()
 
-**`masterKeyFromMnemonic()`**: It is to get master key from mnemonic.
+**`master_key_from_mnemonic()`**: It is to get master key from mnemonic.
 
 **Parameters**
 
@@ -332,13 +317,13 @@ print(walletFromXPrivate)
 ```python
 MNEMONIC = "ancient young hurt bone shuffle deposit congress normal crack six boost despair"
 
-bytomHDWallet = BytomHDWallet.masterKeyFromMnemonic(mnemonic=MNEMONIC,
+bytomHDWallet = BytomHDWallet.master_key_from_mnemonic(mnemonic=MNEMONIC,
                                                     passphrase="Meheret Tesfaye")
 ```
 
 ----
 
-**`masterKeyFromXPrivate()`**: It is to get master key from XPrivate.
+**`master_key_from_xprivate()`**: It is to get master key from XPrivate.
 
 **Parameters**
 
@@ -355,12 +340,12 @@ bytomHDWallet = BytomHDWallet.masterKeyFromMnemonic(mnemonic=MNEMONIC,
 ```python
 XPRIVATE = "c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759d513bc370335cac51d77f0be5dfe84de024cfee562530b4d873b5f5e2ff4f57c"
 
-bytomHDWallet = BytomHDWallet.masterKeyFromXPrivate(xprivate=XPRIVATE)
+bytomHDWallet = BytomHDWallet.master_key_from_xprivate(xprivate=XPRIVATE)
 ```
 
 ----
 
-**`generateEntropy()`**: It is to generate new entropy.
+**`generate_entropy()`**: It is to generate new entropy.
 
 **Returns**
 
@@ -370,7 +355,7 @@ bytomHDWallet = BytomHDWallet.masterKeyFromXPrivate(xprivate=XPRIVATE)
 **Example**
 
 ```python
-print(bytomHDWallet.generateEntropy().hex())
+print(bytomHDWallet.generate_entropy().hex())
 ```
 <details>
 <summary>Output</summary>
@@ -382,7 +367,7 @@ print(bytomHDWallet.generateEntropy().hex())
 
 ----
 
-**`masterKeyFromEntropy()`**: It is to get master key from mnemonic.
+**`master_key_from_entropy()`**: It is to get master key from mnemonic.
 
 **Parameters**
 
@@ -401,11 +386,11 @@ print(bytomHDWallet.generateEntropy().hex())
 **Example**
 
 ```python
-entropy = bytomHDWallet.generateEntropy()
+entropy = bytomHDWallet.generate_entropy()
 
-bytomHDWallet, mnemonic = bytomHDWallet.masterKeyFromEntropy(entropy=entropy,
-                                                             passphrase="meherett",
-                                                             language="japanese")
+bytomHDWallet, mnemonic = bytomHDWallet.master_key_from_entropy(entropy=entropy,
+                                                                passphrase="meherett",
+                                                                language="japanese")
 print(mnemonic)
 print(bytomHDWallet)
 ```
@@ -420,7 +405,7 @@ print(bytomHDWallet)
 
 ----
 
-**`xprivateKey()`**: It is to get XPrivate key.
+**`xprivate_key()`**: It is to get XPrivate key.
 
 **Returns**
 
@@ -433,10 +418,10 @@ print(bytomHDWallet)
 MNEMONIC = "ancient young hurt bone shuffle deposit congress normal crack six boost despair"
 
 bytomHDWallet = BytomHDWallet()
-bytomHDWallet = bytomHDWallet.masterKeyFromMnemonic(mnemonic=MNEMONIC)
-bytomHDWallet.fromPath("m/44/153/1/0/1")
+bytomHDWallet = bytomHDWallet.master_key_from_mnemonic(mnemonic=MNEMONIC)
+bytomHDWallet.from_path("m/44/153/1/0/1")
 
-print(bytomHDWallet.xprivateKey())
+print(bytomHDWallet.xprivate_key())
 ```
 <details>
 <summary>Output</summary>
@@ -448,7 +433,7 @@ print(bytomHDWallet.xprivateKey())
 
 ----
 
-**`xpublicKey()`**: It is to get XPublic key.
+**`xpublic_key()`**: It is to get XPublic key.
 
 **Parameters**
 
@@ -465,7 +450,7 @@ print(bytomHDWallet.xprivateKey())
 ```python
 XPRIVATE = "c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759d513bc370335cac51d77f0be5dfe84de024cfee562530b4d873b5f5e2ff4f57c"
 
-print(bytomHDWallet.xpublicKey(xprivate=XPRIVATE))
+print(bytomHDWallet.xpublic_key(xprivate=XPRIVATE))
 ```
 <details>
 <summary>Output</summary>
@@ -477,7 +462,7 @@ print(bytomHDWallet.xpublicKey(xprivate=XPRIVATE))
 
 ----
 
-**`expandPrivateKey()`**: It is to get Expand XPrivate key.
+**`expand_xprivate_key()`**: It is to get Expand XPrivate key.
 
 **Parameters**
 
@@ -494,7 +479,7 @@ print(bytomHDWallet.xpublicKey(xprivate=XPRIVATE))
 ```python
 XPRIVATE = "c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759d513bc370335cac51d77f0be5dfe84de024cfee562530b4d873b5f5e2ff4f57c"
 
-print(bytomHDWallet.expandPrivateKey(xprivate=XPRIVATE))
+print(bytomHDWallet.expand_xprivate_key(xprivate=XPRIVATE))
 ```
 <details>
 <summary>Output</summary>
@@ -506,7 +491,7 @@ print(bytomHDWallet.expandPrivateKey(xprivate=XPRIVATE))
 
 ----
 
-**`publicKey()`**: It is to get public key(length 64).
+**`public_key()`**: It is to get public key(length 64).
 
 **Parameters**
 
@@ -523,7 +508,7 @@ print(bytomHDWallet.expandPrivateKey(xprivate=XPRIVATE))
 ```python
 XPUBLIC = "3c6664244d2d57168d173c4691dbf8741a67d972b2d3e1b0067eb825e2005d20c5eebd1c26ccad4de5142d7c339bf62cc1fb79a8b3e42a708cd521368dbc9286"
 
-print(bytomHDWallet.publicKey(xpublic=XPUBLIC))
+print(bytomHDWallet.public_key(xpublic=XPUBLIC))
 ```
 <details>
 <summary>Output</summary>
@@ -535,7 +520,7 @@ print(bytomHDWallet.publicKey(xpublic=XPUBLIC))
 
 ----
 
-**`fromIndexes()`**: It is to set collection of index.
+**`from_indexes()`**: It is to set collection of index.
 
 **Parameters**
 
@@ -552,12 +537,12 @@ print(bytomHDWallet.publicKey(xpublic=XPUBLIC))
 ```python
 INDEXES = ['2c000000', '99000000', '01000000', '01000000', '99000000']
 
-bytomHDWallet = bytomHDWallet.fromIndexes(indexes=INDEXES)
+bytomHDWallet = bytomHDWallet.from_indexes(indexes=INDEXES)
 ```
 
 ----
 
-**`fromIndex()`**: It is to set index.
+**`from_index()`**: It is to set index.
 
 **Parameters**
 
@@ -574,24 +559,24 @@ bytomHDWallet = bytomHDWallet.fromIndexes(indexes=INDEXES)
 ```python
 bytomHDWallet = BytomHDWallet()
 
-bytomHDWallet.fromIndex(44)
-bytomHDWallet.fromIndex(153)
-bytomHDWallet.fromIndex(1)  # account
-bytomHDWallet.fromIndex(0)  # change 0 or 1
-bytomHDWallet.fromIndex(1)  # address
+bytomHDWallet.from_index(44)
+bytomHDWallet.from_index(153)
+bytomHDWallet.from_index(1)  # account
+bytomHDWallet.from_index(0)  # change 0 or 1
+bytomHDWallet.from_index(1)  # address
 
 # Advanced BTMHDW_HARDEN
 
-bytomHDWallet.fromIndex(44)
-bytomHDWallet.fromIndex(153 + BTMHDW_HARDEN)
-bytomHDWallet.fromIndex(1 + BTMHDW_HARDEN)
-bytomHDWallet.fromIndex(0)
-bytomHDWallet.fromIndex(1)
+bytomHDWallet.from_index(44)
+bytomHDWallet.from_index(153 + BTMHDW_HARDEN)
+bytomHDWallet.from_index(1 + BTMHDW_HARDEN)
+bytomHDWallet.from_index(0)
+bytomHDWallet.from_index(1)
 ```
 
 ----
 
-**`fromPath()`**: It is to set index from path.
+**`from_path()`**: It is to set index from path.
 
 **Parameters**
 
@@ -608,16 +593,16 @@ bytomHDWallet.fromIndex(1)
 ```python
 bytomHDWallet = BytomHDWallet()
 
-bytomHDWallet.fromPath("m/44/153/1/0/1")
+bytomHDWallet.from_path("m/44/153/1/0/1")
 
 # Advanced BTMHDW_HARDEN using "'"
 
-bytomHDWallet.fromPath("m/44/153'/1'/0/1")
+bytomHDWallet.from_path("m/44/153'/1'/0/1")
 ```
 
 ----
 
-**`getIndexes()`**: It is to get collection of index.
+**`get_indexes()`**: It is to get collection of index.
 
 **Returns**
 
@@ -627,7 +612,7 @@ bytomHDWallet.fromPath("m/44/153'/1'/0/1")
 **Example**
 
 ```python
-print(bytomHDWallet.getIndexes())
+print(bytomHDWallet.get_indexes())
 ```
 <details>
 <summary>Output</summary>
@@ -639,7 +624,7 @@ print(bytomHDWallet.getIndexes())
 
 ----
 
-**`getPath()`**: It is to get path of indexes.
+**`get_path()`**: It is to get path of indexes.
 
 **Parameters**
 
@@ -656,7 +641,7 @@ print(bytomHDWallet.getIndexes())
 ```python
 from btmhdw import INDEXES
 
-print(bytomHDWallet.getPath(indexes=INDEXES))
+print(bytomHDWallet.get_path(indexes=INDEXES))
 ```
 <details>
 <summary>Output</summary>
@@ -668,7 +653,7 @@ print(bytomHDWallet.getPath(indexes=INDEXES))
 
 ----
 
-**`childXPrivateKey()`**: It is to get child of XPrivate key.
+**`child_xprivate_key()`**: It is to get child of XPrivate key.
 
 **Parameters**
 
@@ -688,9 +673,9 @@ from btmhdw import INDEXES
 
 XPRIVATE = "c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759d513bc370335cac51d77f0be5dfe84de024cfee562530b4d873b5f5e2ff4f57c"
 
-childXPrivateKey = bytomHDWallet.childXPrivateKey(xprivate=XPRIVATE,
-                                                  indexes=INDEXES)
-print(childXPrivateKey)
+child_xprivate_key = bytomHDWallet.child_xprivate_key(xprivate=XPRIVATE,
+                                                      indexes=INDEXES)
+print(child_xprivate_key)
 ```
 <details>
 <summary>Output</summary>
@@ -702,7 +687,77 @@ print(childXPrivateKey)
 
 ----
 
-**`childXPublicKey()`**: It is to get child of XPublic key.
+**`sing()`**: Singing message.
+
+**Parameters**
+
+`Object`:
+- `String` - *message*, message to sing.
+
+`Optional`:
+- `String` - *xprivate*, xprivate key.
+
+**Returns**
+
+`Object`:
+- `String` - *signature*, signed message.
+
+**Example**
+
+```python
+
+MESSAGE = "27c42b40a7a35a6d489fb2e41bde15bdb4b4c276045bd0628525b88c2abbc4c0"
+
+signature = bytomHDWallet.sign(message=MESSAGE)
+
+print(signature)
+```
+<details>
+<summary>Output</summary>
+
+```json5
+"75ca5b6cf7ba40c7a51f20e1fd03686666e09cf58d0d2978ab6072d8057cbbd3072eabbdefe96eefcbb0c8ec654239b82fa5efcbe24e8704c7d06efd79c40d0a"
+```
+</details>
+
+----
+
+**`verify()`**: Verifying signed message.
+
+**Parameters**
+
+`Object`:
+- `String` - *message*, message to sing.
+- `String` - *signature*, signed message.
+
+`Optional`:
+- `String` - *xpublic*, xpublic key.
+
+**Returns**
+
+`Object`:
+- `Boolean` - *bool*, true or false.
+
+**Example**
+
+```python
+MESSAGE = "27c42b40a7a35a6d489fb2e41bde15bdb4b4c276045bd0628525b88c2abbc4c0"
+
+verify_signature = bytomHDWallet.verify(message=MESSAGE, signature=signature)
+
+print(verify_signature)
+```
+<details>
+<summary>Output</summary>
+
+```python
+True
+```
+</details>
+
+----
+
+**`child_xpublic_key()`**: It is to get child of XPublic key.
 
 **Parameters**
 
@@ -713,7 +768,7 @@ print(childXPrivateKey)
 **Returns**
 
 `Object`:
-- `String` - *childXPublicKey*, child xpublic key from xpublic/indexes/master key.
+- `String` - *child_xpublic_key*, child xpublic key from xpublic/indexes/master key.
 
 **Example**
 
@@ -722,9 +777,9 @@ from btmhdw import INDEXES
 
 XPUBLIC = "3c6664244d2d57168d173c4691dbf8741a67d972b2d3e1b0067eb825e2005d20c5eebd1c26ccad4de5142d7c339bf62cc1fb79a8b3e42a708cd521368dbc9286"
 
-childXPublicKey = bytomHDWallet.childXPublicKey(xpublic=XPUBLIC,
-                                                indexes=INDEXES)
-print(childXPublicKey)
+child_xpublic_key = bytomHDWallet.child_xpublic_key(xpublic=XPUBLIC,
+                                                    indexes=INDEXES)
+print(child_xpublic_key)
 ```
 <details>
 <summary>Output</summary>
@@ -806,5 +861,79 @@ print(bytomHDWallet.address(program=program,
 "bm1qpta5qnqn5y3rqmhgda0lnvthxdxcugahcpaum5"
 "tm1qpta5qnqn5y3rqmhgda0lnvthxdxcugahuhucm9"
 "sm1qpta5qnqn5y3rqmhgda0lnvthxdxcugahesham6"
+```
+</details>
+
+----
+
+### Extra Functions
+
+**`sing()`**: Singing message.
+
+**Parameters**
+
+`Object`:
+- `String` - *message*, message to sing.
+- `String` - *xprivate*, xprivate key.
+
+**Returns**
+
+`Object`:
+- `String` - *signature*, signed message.
+
+**Example**
+
+```python
+from btmhdw import sign
+
+MESSAGE = "27c42b40a7a35a6d489fb2e41bde15bdb4b4c276045bd0628525b88c2abbc4c0"
+XPRIVATE = "302a25c7c0a68a83fa043f594a2db8b44bc871fced553a8a33144b31bc7fb84887c9e75915bb6ba3fd0b9f94a60b7a5897ab9db6a48f888c2559132dba9152b0"
+
+signature = sign(message=MESSAGE, xprivate=XPRIVATE)
+
+print(signature)
+```
+<details>
+<summary>Output</summary>
+
+```json5
+"a39045f6c8b87b3adce39057e448b37c2300bb3dfce0d8b6034a28bbcccfa4353fc23cb158a310990205fed302bbdfa64255b49f7b1eb2fb502756f164922309"
+```
+</details>
+
+----
+
+**`verify()`**: Verifying signed message.
+
+**Parameters**
+
+`Object`:
+- `String` - *message*, message to sing.
+- `String` - *signature*, signed message.
+- `String` - *xpublic*, xpublic key.
+
+**Returns**
+
+`Object`:
+- `Boolean` - *bool*, true or false.
+
+**Example**
+
+```python
+from btmhdw import verify
+
+MESSAGE = "27c42b40a7a35a6d489fb2e41bde15bdb4b4c276045bd0628525b88c2abbc4c0"
+SIGNATURE = "a39045f6c8b87b3adce39057e448b37c2300bb3dfce0d8b6034a28bbcccfa4353fc23cb158a310990205fed302bbdfa64255b49f7b1eb2fb502756f164922309"
+XPUBLIC = "9407d490e9dbc7762c924122368e6c5743d5829ff2a1e2eb4b219a08e080499687c9e75915bb6ba3fd0b9f94a60b7a5897ab9db6a48f888c2559132dba9152b0"
+
+verify_signature = verify(message=MESSAGE, signature=SIGNATURE, xpublic=XPUBLIC)
+
+print(verify_signature)
+```
+<details>
+<summary>Output</summary>
+
+```python
+True
 ```
 </details>
