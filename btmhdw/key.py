@@ -47,10 +47,10 @@ def prune_intermediate_scalar(f):
     return f
 
 
-def sign(xprivate, message_hexstr):
+def sign(xprivate, message):
     xprivate = get_expanded_private_key(xprivate)
     xprv_bytes = bytes.fromhex(xprivate)
-    message_bytes = bytes.fromhex(message_hexstr)
+    message_bytes = bytes.fromhex(message)
     data_bytes = xprv_bytes[32:64] + message_bytes
 
     message_digest = hashlib.sha512(data_bytes).digest()
@@ -74,10 +74,10 @@ def sign(xprivate, message_hexstr):
     s = bytes.fromhex(s.decode())
 
     signature_bytes = encoded_r + s
-    signature_hexstr = signature_bytes.hex()
-    return signature_hexstr
+    signature = signature_bytes.hex()
+    return signature
 
 
-def verify(xpublic, message_hexstr, signature_hexstr):
-    return verify(get_public_key(xpublic), signature_hexstr, message_hexstr)
+def verify(xpublic, message, signature):
+    return verify(get_public_key(xpublic), signature, message)
 
