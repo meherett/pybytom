@@ -370,10 +370,10 @@ class BytomHDWallet:
             return sign(self.xprivate, message)
         return sign(xprivate, message)
 
-    def verify(self, message, sig, xpublic=None):
+    def verify(self, message, signature, xpublic=None):
         if xpublic is None:
-            return verify(self.xpublic, message, sig)
-        return verify(xpublic, message, sig)
+            return verify(self.xpublic_key(), message, signature)
+        return verify(xpublic, message, signature)
 
 
 class BTMHDW:

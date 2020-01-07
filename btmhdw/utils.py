@@ -11,13 +11,13 @@ from .ed25519 import *
 L = 2 ** 252 + 27742317777372353535851937790883648493
 
 
-def sign(private_key_str, message_str):
+def _sign(private_key_str, message_str):
     signing_key = ed25519.SigningKey(bytes.fromhex(private_key_str))
     signature = signing_key.sign(bytes.fromhex(message_str), encoding='hex')
     return signature.decode()
 
 
-def verify(public_key_str, signature_str, message_str):
+def _verify(public_key_str, signature_str, message_str):
     result = False
     verifying_key = ed25519.VerifyingKey(public_key_str.encode(), encoding='hex')
     try:

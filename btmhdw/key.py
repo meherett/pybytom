@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
-from .utils import *
+import hmac
+import hashlib
+
+from .utils import decodeint, encodepoint, scalarmultbase, sc_reduce32, sc_muladd, _verify
 
 
 def prune_root_scalar(s_str):
@@ -79,5 +82,5 @@ def sign(xprivate, message):
 
 
 def verify(xpublic, message, signature):
-    return verify(get_public_key(xpublic), signature, message)
+    return _verify(get_public_key(xpublic), signature, message)
 
