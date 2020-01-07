@@ -4,10 +4,11 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-mnemonic = "==0.13"
+mnemonic = ">=0.19,<1"
+ed25519 = ">=1.5,<2"
 
 [packages]
 btmhdw = {editable = true,path = "."}
 
 [requires]
-python_version = "3.6"
+python_version = "3.8"
