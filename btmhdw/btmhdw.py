@@ -321,7 +321,15 @@ class BytomHDWallet:
         child_xpublic = xpublic
         return child_xpublic
 
-    def program(self, xpublic=None, indexes=None, path=None):
+    def program(self, xpublic=None, indexes=None, path=None, public=None):
+        if public and not xpublic:
+            public_byte = get_bytes(public)
+
+            ripemd160 = hashlib.new('ripemd160')
+            ripemd160.update(public_byte)
+            public_hash = ripemd160.hexdigest()
+            control_program = '0014' + public_hash
+            return control_program
         if indexes is None:
             if path is not None:
                 self.from_path(path)
