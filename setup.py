@@ -8,14 +8,14 @@ with open("requirements.txt", "r") as _requirements:
 
 setup(
     name="btmhdw",
-    version="2.1.0",
+    version="2.1.1",
     description="The implementation of Hierarchical Deterministic (HD) wallets generator for Bytom blockchain",
     long_description=long_description,
     long_description_content_type="text/markdown",
     license="MIT",
     author="Meheret Tesfaye",
     author_email="meherett@zoho.com",
-    url="https://github.com/mehetett/btmhdw",
+    url="https://github.com/meherett/btmhdw",
     packages=find_packages(),
     python_requires=">=3.5,<4",
     install_requires=requirements,
