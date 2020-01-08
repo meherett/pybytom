@@ -8,6 +8,8 @@ XPRIVATE = "c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759d513
 XPUBLIC = "3c6664244d2d57168d173c4691dbf8741a67d972b2d3e1b0067eb825e2005d20c5eebd1c26ccad4" \
           "de5142d7c339bf62cc1fb79a8b3e42a708cd521368dbc9286"
 
+PUBLIC = "eec15ce68d46569f92ecebd7769101b22e34109892cc7ddfd54dc772f850c243"
+
 MESSAGE = "27c42b40a7a35a6d489fb2e41bde15bdb4b4c276045bd0628525b88c2abbc4c0"
 
 # ####################################### BTMHDW ############################################
@@ -91,6 +93,7 @@ print(BytomHDWallet().program(xpublic=XPUBLIC, path="m/44/153/2/0/8"))
 print(BytomHDWallet().program(xpublic=XPUBLIC, path=PATH))
 print(BytomHDWallet().program(xpublic=XPUBLIC, indexes=INDEXES))
 print(BytomHDWallet().program(xpublic=XPUBLIC, indexes=['2c000000', '99000000', '01000000', '01000000', '01000000']))
+print(BytomHDWallet().program(public=PUBLIC))
 
 program = BytomHDWallet().program(xpublic=XPUBLIC, path=PATH)
 print(bytomHDWallet.address(program=program,
