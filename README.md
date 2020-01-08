@@ -814,6 +814,7 @@ print(BytomHDWallet().program(xpublic=XPUBLIC, path="m/44/153/2/0/8"))
 print(BytomHDWallet().program(xpublic=XPUBLIC, path=PATH))
 print(BytomHDWallet().program(xpublic=XPUBLIC, indexes=INDEXES))
 print(BytomHDWallet().program(xpublic=XPUBLIC, indexes=['2c000000', '99000000', '01000000', '01000000', '01000000']))
+print(BytomHDWallet().program(public=PUBLIC))
 ```
 <details>
 <summary>Output</summary>
@@ -821,6 +822,7 @@ print(BytomHDWallet().program(xpublic=XPUBLIC, indexes=['2c000000', '99000000', 
 ```json5
 "00140afb404c13a122306ee86f5ff9b177334d8e23b7"
 "0014052620b86a6d5e07311d5019dffa3864ccc8a6bd"
+"00140afb404c13a122306ee86f5ff9b177334d8e23b7"
 "0014052620b86a6d5e07311d5019dffa3864ccc8a6bd"
 "001478c3aa31753389fcde04d33d0779bdc2840f0ad4"
 ```
