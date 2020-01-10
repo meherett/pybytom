@@ -157,11 +157,11 @@ class BytomHDWallet:
         index = int(index).to_bytes(4, byteorder='little').hex()
         self.indexes.append(index)
 
-        return BytomHDWallet()
+        return self
 
     def from_indexes(self, indexes):
         self.indexes = indexes
-        return BytomHDWallet()
+        return self
 
     def from_index(self, index):
         if not str(index)[0:2] != "m/":
@@ -179,7 +179,7 @@ class BytomHDWallet:
                 self.derive_private_key(int(index[:-1]) + BTMHDW_HARDEN)
             else:
                 self.derive_private_key(int(index))
-        return BytomHDWallet()
+        return self
 
     def get_indexes(self):
         return self.indexes
@@ -203,8 +203,11 @@ class BytomHDWallet:
                 path = path + str(number) + '/'
         return path
 
-    def child_xprivate_key(self, xprivate=None, indexes=None):
-        if indexes is None:
+    def child_xprivate_key(self, xprivate=None, indexes=None, path=None):
+        if indexes is None and path is None:
+            indexes = self.indexes
+        elif path is not None:
+            self.from_path(path)
             indexes = self.indexes
         if xprivate:
             for index in range(len(indexes)):
@@ -264,8 +267,11 @@ class BytomHDWallet:
         child_xprivate = xprivate
         return child_xprivate
 
-    def child_xpublic_key(self, xpublic=None, indexes=None):
-        if indexes is None:
+    def child_xpublic_key(self, xpublic=None, indexes=None, path=None):
+        if indexes is None and path is None:
+            indexes = self.indexes
+        elif path is not None:
+            self.from_path(path)
             indexes = self.indexes
         if xpublic:
             for index in range(len(indexes)):
