@@ -148,10 +148,23 @@ class BytomHDWallet:
         expandPrivate = self.xprivate[:64] + Ir
         return expandPrivate
 
-    def public_key(self, xpublic=None):
+    def public_key(self, xpublic=None, indexes=None, path=None):
+        if indexes is None and path is None:
+            indexes = self.indexes
+        elif path is not None:
+            self.from_path(path)
+            indexes = self.indexes
+
         if xpublic:
-            return xpublic[:64]
-        return self.xpublic_key()[:64]
+            child_xpublic = self.child_xpublic_key(
+                xpublic=xpublic, indexes=indexes)
+            child_public = child_xpublic[:64]
+            return child_public
+        else:
+            child_xpublic = self.child_xpublic_key(
+                xpublic=self.xpublic_key(), indexes=indexes)
+            child_public = child_xpublic[:64]
+            return child_public
 
     def derive_private_key(self, index):
         index = int(index).to_bytes(4, byteorder='little').hex()
@@ -336,30 +349,22 @@ class BytomHDWallet:
             public_hash = ripemd160.hexdigest()
             control_program = '0014' + public_hash
             return control_program
-        if indexes is None:
-            if path is not None:
-                self.from_path(path)
-                indexes = self.indexes
-            else:
-                indexes = self.indexes
         if xpublic:
-            child_xpublic = self.child_xpublic_key(xpublic=xpublic,
-                                                   indexes=indexes)
-            child_public = self.public_key(xpublic=child_xpublic)
-            child_public_byte = get_bytes(child_public)
+            public = self.public_key(
+                xpublic=xpublic, indexes=indexes, path=path)
+            public_byte = get_bytes(public)
 
             ripemd160 = hashlib.new('ripemd160')
-            ripemd160.update(child_public_byte)
+            ripemd160.update(public_byte)
             public_hash = ripemd160.hexdigest()
             control_program = '0014' + public_hash
             return control_program
-        child_xpublic = self.child_xpublic_key(xpublic=self.xpublic,
-                                               indexes=indexes)
-        child_public = self.public_key(xpublic=child_xpublic)
-        child_public_byte = get_bytes(child_public)
+        public = self.public_key(
+            xpublic=self.xpublic, indexes=indexes, path=path)
+        public_byte = get_bytes(public)
 
         ripemd160 = hashlib.new('ripemd160')
-        ripemd160.update(child_public_byte)
+        ripemd160.update(public_byte)
         public_hash = ripemd160.hexdigest()
         program = '0014' + public_hash
         return program
@@ -464,8 +469,8 @@ class BTMHDW:
         )
 
     @staticmethod
-    def wallet_from_xprivate(xprivate, network='sm', account=1,
-                             change=0, address=1, path=None, indexes=None):
+    def from_xprivate(xprivate, network='sm', account=1,
+                      change=0, address=1, path=None, indexes=None):
         bytomHDWallet = BytomHDWallet.master_key_from_xprivate(xprivate=xprivate)
 
         if indexes is not None \
