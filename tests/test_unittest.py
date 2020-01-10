@@ -34,7 +34,7 @@
 #
 #         created = self.create(mnemonic=mnemonic, passphrase='password')
 #
-#         wallet_xprivate = self.wallet_from_xprivate(created["xprivate"])
+#         wallet_xprivate = self.from_xprivate(created["xprivate"])
 #
 #         self.assertEqual(created["address"], wallet_xprivate["address"])
 #

@@ -28,7 +28,7 @@ def test_generateMnemonic():
     assert jpCheck
 
 
-def test_createWallet():
+def test_create():
 
     mnemonic = btmhdw.generate_mnemonic()
 
@@ -39,13 +39,13 @@ def test_createWallet():
     assert btmhdw.check_mnemonic(created["mnemonic"])
 
 
-def test_walletFromXPrivate():
+def test_from_xprivate():
 
     mnemonic = btmhdw.generate_mnemonic()
 
     created = btmhdw.create(mnemonic=mnemonic, passphrase='password')
 
-    wallet_xprivate = btmhdw.wallet_from_xprivate(created["xprivate"])
+    wallet_xprivate = btmhdw.from_xprivate(created["xprivate"])
 
     assert created["address"] == wallet_xprivate["address"]
 
@@ -56,9 +56,15 @@ def test_masterKeyFromMnemonic():
     bytomHDWallet = BytomHDWallet().master_key_from_mnemonic(mnemonic=MNEMONIC)
 
     bytomHDWallet.from_path("m/44/153/1/0/1")
-    assert (bytomHDWallet.program())
-    assert (bytomHDWallet.address(network="testnet"))
+    assert bytomHDWallet.program() == "00143ed47dc9522049f3dfc7571a5063236e6407cd59"
+    assert bytomHDWallet.address(network="mainnet") == "bm1q8m28mj2jypyl8h782ud9qcerdejq0n2e7525f3"
+    assert bytomHDWallet.public_key() == "41eeff845c6bd6d13351572cec08900f23365fb2685b64ce01784792457804a5"
     assert (bytomHDWallet.seed.hex())
+
+    assert BytomHDWallet().program(public=bytomHDWallet.public_key())
+    assert BytomHDWallet().address(program=BytomHDWallet()
+                                   .program(public=bytomHDWallet.public_key()), network="mainnet")
+    assert BytomHDWallet().public_key(bytomHDWallet.xpublic_key(), path=PATH)
 
 
 def test_BytomHDWallet_Functions():
