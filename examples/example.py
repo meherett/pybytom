@@ -31,8 +31,8 @@ print(wallet['address'])
 print(wallet['xprivate'])
 
 # Wallet from xprivate
-wallet_from_xprivate = btmhdw.wallet_from_xprivate(xprivate=wallet["xprivate"],
-                                                   network="mainnet")
+wallet_from_xprivate = btmhdw.from_xprivate(xprivate=wallet["xprivate"],
+                                            network="mainnet")
 print(wallet_from_xprivate['address'])
 print(wallet_from_xprivate['xprivate'])
 
