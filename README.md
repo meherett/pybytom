@@ -660,6 +660,7 @@ print(bytomHDWallet.get_path(indexes=INDEXES))
 `Optional`:
 - `String` - *xprivate*, from xprivate key.
 - `String` - *indexes*, collection of index.
+- `String` - *path*, path of index.
 
 **Returns**
 
@@ -764,6 +765,7 @@ True
 `Optional`:
 - `String` - *xpublic*, from xpublic key.
 - `String` - *indexes*, collection of index.
+- `String` - *path*, path of index.
 
 **Returns**
 
