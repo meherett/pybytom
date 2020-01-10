@@ -10,7 +10,7 @@
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/btmhdw.svg)
 ![PyPI License](https://img.shields.io/pypi/l/btmhdw.svg?color=black)
 ![PyPI Version](https://img.shields.io/pypi/v/btmhdw.svg?color=blue)
-[![Coverage Status](https://coveralls.io/repos/github/meherett/btmhdw/badge.svg?branch=master)](https://coveralls.io/github/meherett/btmhdw?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/meherett/btmhdw/badge.svg)](https://coveralls.io/github/meherett/btmhdw)
 
 ## Installation
 Install btmhdw
@@ -27,6 +27,8 @@ pip install -e . -r requirements.txt
 ## Running the test
 You can run the tests with:
 ```
+pip install -r test-requirements.txt
+
 pytest tests
 ```
 Or use `tox` to run the complete suite against the full set of build targets, or pytest to run specific 
@@ -75,8 +77,7 @@ XPRIVATE = "8007196f3e0841bbdf90d97df172a19cb18edda007466d362fa2d5ff23822a40189b
 btmhdw = BTMHDW()
 
 # Wallet from xprivate
-wallet = btmhdw.wallet_from_xprivate(xprivate=XPRIVATE,
-                                     network="mainnet")
+wallet = btmhdw.from_xprivate(xprivate=XPRIVATE, network="mainnet")
 
 print(wallet)
 ```
@@ -100,7 +101,7 @@ Meheret Tesfaye – [@meherett](https://github.com/meherett) – meherett@zoho.c
 
 Distributed under the MIT license. See ``LICENSE`` for more information.
 
-[https://github.com/meherett](https://github.com/meherett) - *Initial work* - [Cobra](https://github.com/cobraframework)
+[https://github.com/meherett/btmhdw](LICENSE)
 
 ## License
 
@@ -245,7 +246,7 @@ print(createdWallet)
 
 ----
 
-**`wallet_from_xprivate()`**: It is to get wallet from XPrivate
+**`from_xprivate()`**: It is to get wallet from xprivate key.
 
 **Parameters**
 
@@ -270,8 +271,8 @@ print(createdWallet)
 ```python
 XPRIVATE = "c003f4bcccf9ad6f05ad2c84fa5ff98430eb8e73de5de232bc29334c7d074759d513bc370335cac51d77f0be5dfe84de024cfee562530b4d873b5f5e2ff4f57c"
 
-wallet_from_xprivate = btmhdw.wallet_from_xprivate(xprivate=XPRIVATE,
-                                               network="mainnet")
+wallet_from_xprivate = btmhdw.from_xprivate(xprivate=XPRIVATE, network="mainnet")
+
 print(wallet_from_xprivate['address'])
 print(wallet_from_xprivate['xprivate'], '\n')
 print(wallet_from_xprivate)
@@ -317,8 +318,8 @@ print(wallet_from_xprivate)
 ```python
 MNEMONIC = "ancient young hurt bone shuffle deposit congress normal crack six boost despair"
 
-bytomHDWallet = BytomHDWallet.master_key_from_mnemonic(mnemonic=MNEMONIC,
-                                                    passphrase="Meheret Tesfaye")
+bytomHDWallet = BytomHDWallet.master_key_from_mnemonic(mnemonic=MNEMONIC, 
+                                                       passphrase="Meheret Tesfaye")
 ```
 
 ----
