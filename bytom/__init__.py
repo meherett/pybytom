@@ -7,16 +7,15 @@ Github: https://github.com/meherett
 LinkedIn: https://linkedin.com/in/meherett
 """
 
-from .btmhdw import BytomHDWallet, BTMHDW, BTMHDW_HARDEN, PATH, INDEXES
-from .key import sign, verify
+from .wallet import Wallet, PATH, INDEXES, HARDEN
+from .signature import sign, verify
 
 
 __all__ = [
     "sign",
     "verify",
-    "BTMHDW",
+    "Wallet",
     "PATH",
     "INDEXES",
-    "BTMHDW_HARDEN",
-    "BytomHDWallet"
+    "HARDEN"
 ]
