@@ -9,8 +9,6 @@ install:
   - pip install tox-travis coveralls
 matrix:
   include:
-  - name: "3.5"
-    python: 3.5
   - name: "3.6"
     python: 3.6
   - name: "3.7"

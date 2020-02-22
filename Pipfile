@@ -8,7 +8,7 @@ mnemonic = ">=0.19,<1"
 ed25519 = ">=1.5,<2"
 
 [packages]
-btmhdw = {editable = true,path = "."}
+bytom = {editable = true,path = "."}
 
 [requires]
 python_version = "3.8"
