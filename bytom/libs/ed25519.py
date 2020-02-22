@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # ed25519.py - Optimized version of the reference implementation of Ed25519
 #
 # Written in 2011? by Daniel J. Bernstein <djb@cr.yp.to>
@@ -71,7 +73,7 @@ def pow2(x, p):
 
 
 def inv(z):
-    """$= z^{-1} \mod q$, for z != 0"""
+    # $= z^{-1} \mod q$, for z != 0
     # Adapted from curve25519_athlon.c in djb's Curve25519.
     z2 = z * z % q                                # 2
     z9 = pow2(z2, 2) * z % q                      # 9
@@ -198,7 +200,7 @@ def scalarmult_B(e):
 
 def encodeint(y):
     bits = [(y >> i) & 1 for i in range(b)]
-    return b''.join([
+    return b"".join([
         int2byte(sum([bits[i * 8 + j] << j for j in range(8)]))
         for i in range(b//8)
     ])
@@ -210,7 +212,7 @@ def encodepoint(P):
     x = (x * zi) % q
     y = (y * zi) % q
     bits = [(y >> i) & 1 for i in range(b - 1)] + [x & 1]
-    return b''.join([
+    return b"".join([
         int2byte(sum([bits[i * 8 + j] << j for j in range(8)]))
         for i in range(b // 8)
     ])
