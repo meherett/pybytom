@@ -1,14 +1,63 @@
 #!/usr/bin/env python3
 
 from binascii import hexlify, unhexlify
+from mnemonic.mnemonic import Mnemonic
 
 import ed25519
+import random
 import hmac
 
-from .ed25519 import *
+from ..libs.ed25519 import *
 
 
 L = 2 ** 252 + 27742317777372353535851937790883648493
+
+
+def generate_entropy():
+    return random.randint(0, 2 ** 128 - 1) \
+        .to_bytes(16, byteorder='big')
+
+
+def check_mnemonic(mnemonic, language='english'):
+    try:
+        Mnemonic(language=language).check(mnemonic)
+        return True
+    except Exception as exception:
+        if exception:
+            return False
+
+
+def get_bytes(string):
+    if isinstance(string, bytes):
+        byte = string
+    elif isinstance(string, str):
+        byte = bytes.fromhex(string)
+    else:
+        raise TypeError("Agreement must be either 'bytes' or 'string'!")
+    return byte
+
+
+def prune_root_scalar(string):
+    s = bytearray(get_bytes(string=string))
+    s[0] = s[0] & 248
+    # clear top 3 bits
+    s[31] = s[31] & 31
+    # set second highest bit
+    s[31] = s[31] | 64
+    return s
+
+
+def prune_intermediate_scalar(f):
+    f = bytearray(f)
+    # clear bottom 3 bits
+    f[0] = f[0] & 248
+    # clear 7 high bits
+    f[29] = f[29] & 1
+    # clear 8 bits
+    f[30] = 0
+    # clear 8 bits
+    f[31] = 0
+    return f
 
 
 def _sign(private_key_str, message_str):
