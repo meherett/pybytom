@@ -4,7 +4,7 @@
 # Setuptools stuff
 build/
 dist/
-btmhdw.egg-info/
+pybytom.egg-info/
 
 # Python stuff
 __pycache__/
