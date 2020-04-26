@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from bytom import Wallet, HARDEN, PATH, INDEXES
+from bytom.wallet import Wallet, HARDEN, PATH, INDEXES
 from bytom.utils import check_mnemonic, generate_entropy
 
 import hashlib

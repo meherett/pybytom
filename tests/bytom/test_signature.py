@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from bytom import sign, verify
+from bytom.signature import sign, verify
 
 
 PRIVATE_KEY = "e07af52746e7cccd0a7d1fba6651a6f474bada481f34b1c5bab5e2d71e36ee515803ee" \
