@@ -4,11 +4,14 @@ with open("README.md", "r") as readme:
     long_description = readme.read()
 
 with open("requirements.txt", "r") as _requirements:
-    requirements = list(map(str.strip, _requirements.read().split("\n")))[:-1]
+    requirements = list(map(str.strip, _requirements.read().split("\n")))
+
+print(requirements)
+exit()
 
 setup(
     name="pybytom",
-    version="0.1.0",
+    version="0.1.1",
     description="Python library with tools for Bytom blockchain.",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -26,7 +29,7 @@ setup(
         ]
     },
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 5 - Production/Stable",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
