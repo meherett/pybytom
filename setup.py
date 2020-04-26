@@ -8,7 +8,7 @@ with open("requirements.txt", "r") as _requirements:
 
 setup(
     name="pybytom",
-    version="0.1.0.dev1",
+    version="0.1.0",
     description="Python library with tools for Bytom blockchain.",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -19,11 +19,18 @@ setup(
     packages=find_packages(),
     python_requires=">=3.6,<4",
     install_requires=requirements,
+    extras_require={
+        "tests": [
+            "pytest>=5.4.1,<6",
+            "pytest-cov>=2.8.1,<3"
+        ]
+    },
     classifiers=[
         "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8"
+        "Programming Language :: Python :: 3.8",
+        "Topic :: Software Development :: Libraries :: Python Modules"
     ],
 )
