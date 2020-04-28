@@ -1,30 +1,14 @@
 #!/usr/bin/env python3
 
 from binascii import hexlify, unhexlify
-from mnemonic.mnemonic import Mnemonic
 
 import ed25519
-import random
 import hmac
 
 from ..libs.ed25519 import *
 
 
 L = 2 ** 252 + 27742317777372353535851937790883648493
-
-
-def generate_entropy():
-    return random.randint(0, 2 ** 128 - 1) \
-        .to_bytes(16, byteorder='big')
-
-
-def check_mnemonic(mnemonic, language='english'):
-    try:
-        Mnemonic(language=language).check(mnemonic)
-        return True
-    except Exception as exception:
-        if exception:
-            return False
 
 
 def get_bytes(string):
