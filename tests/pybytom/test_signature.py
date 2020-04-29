@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
-from bytom.signature import sign, verify
+from pybytom.signature import sign, verify
+
+import hashlib
+import pytest
 
 
 PRIVATE_KEY = "e07af52746e7cccd0a7d1fba6651a6f474bada481f34b1c5bab5e2d71e36ee515803ee" \
@@ -13,9 +16,11 @@ MESSAGE = "1246b84985e1ab5f83f4ec2bdf271114666fd3d9e24d12981a3c861b9ed523c6"
 
 def test_signature():
 
-    signed = sign(private=PRIVATE_KEY, message=MESSAGE)
+    signed = sign(private_key=PRIVATE_KEY, message=MESSAGE)
 
     assert signed == "f6624fea84fadccbc1bc72dc384f662468e271c4e32d846bc0a152447054999" \
                      "2c8ffcc3ca43891a30de4235392b0868c506ed254f0f77cc1f2b9c1a2385ddb05"
 
-    assert verify(public=PUBLIC_KEY, message=MESSAGE, signature=signed)
+    assert verify(public_key=PUBLIC_KEY, message=MESSAGE, signature=signed)
+
+    assert not verify(public_key=PUBLIC_KEY, message=hashlib.sha256("meherett".encode()).hexdigest(), signature=signed)
