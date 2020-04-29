@@ -1,12 +1,20 @@
 #!/usr/bin/env python3
 
+from binascii import hexlify, unhexlify
 from mnemonic import Mnemonic
 
-from ..libs.segwit import encode
+import hmac
+import hashlib
+
+from ..libs.segwit import encode, decode
+from ..libs.ed25519 import (
+    encodeint, encodepoint, decodeint, decodepoint,
+    scalarmultbase, edwards_double, edwards_add
+)
 from ..signature import sign, verify
 from ..utils import get_mnemonic_language, check_mnemonic
 from .tools import get_xpublic_key
-from .utils import *
+from .utils import prune_root_scalar, prune_intermediate_scalar, get_bytes
 
 
 class Wallet:
@@ -62,7 +70,7 @@ class Wallet:
         if not isinstance(passphrase, str):
             raise TypeError("passphrase must be string format")
         if not isinstance(language, str):
-            raise TypeError("passphrase must be string format")
+            raise TypeError("language must be string format")
         if language not in "english/french/italian/spanish/" \
                            "chinese_simplified/chinese_traditional/japanese/korean".split("/"):
             raise ValueError("invalid language option, choose only english, french, italian, spanish, "
@@ -101,14 +109,14 @@ class Wallet:
         # Checking parameters
         if not isinstance(mnemonic, str):
             raise TypeError("mnemonic must be string format")
+        if not isinstance(passphrase, str):
+            raise TypeError("passphrase must be string format")
         if language and language not in "english/french/italian/spanish/chinese_simplified" \
                                         "/chinese_traditional/japanese/korean".split("/"):
             raise ValueError("invalid language option, choose only english, french, italian, spanish, "
                              "chinese_simplified, chinese_traditional, japanese & korean language")
         if not check_mnemonic(mnemonic=mnemonic, language=language):
             raise ValueError("invalid 12 word mnemonic.")
-        if not isinstance(passphrase, str):
-            raise TypeError("passphrase must be string format")
 
         self._mnemonic = mnemonic
         self._passphrase, self._language = \
@@ -240,7 +248,7 @@ class Wallet:
 
         # Checking parameters
         if not isinstance(path, str):
-            raise TypeError("index must be string format")
+            raise TypeError("path must be string format")
         if str(path)[0:2] != "m/":
             raise ValueError("bad path, insert like this type of path \"m/0'/0\"! ")
 
