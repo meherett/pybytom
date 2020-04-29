@@ -79,6 +79,19 @@ def test_wallet_errors():
         Wallet("solonet").from_path(int())
     with pytest.raises(ValueError, match=r"bad path, insert like this type of path .*"):
         Wallet("mainnet").from_path("mm/")
+    # address
+    with pytest.raises(TypeError, match="network must be string format"):
+        Wallet("solonet").address(int())
+    with pytest.raises(ValueError, match=r"invalid network option, .*"):
+        Wallet("solonet").address("unknown_network")
+    # sign
+    with pytest.raises(TypeError, match="message must be string format"):
+        Wallet("solonet").sign(int())
+    # verify
+    with pytest.raises(TypeError, match="message must be string format"):
+        Wallet("solonet").verify(int(), bool())
+    with pytest.raises(TypeError, match="signature must be string format"):
+        Wallet("solonet").verify(str(), float())
 
     with pytest.raises(TypeError, match=r".*'bytes' or 'string'.*"):
         get_bytes(float())
