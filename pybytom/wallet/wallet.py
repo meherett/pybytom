@@ -591,17 +591,63 @@ class Wallet:
         elif network == "testnet":
             return encode("tm", 0, get_bytes(self.program()[4:]))
 
-    def sign(self, message, private=None):
-        if private is None:
-            return sign(self.private_key(), message)
-        return sign(private, message)
+    def sign(self, message):
+        """
+        Sign bytom message data by private key.
 
-    def verify(self, message, signature, public=None):
-        if public is None:
-            return verify(self.public_key(), message, signature)
-        return verify(public, message, signature)
+        :param message: Message data.
+        :type message: str.
+        :return: str -- bytom signed message or signature.
+
+        >>> from pybytom.wallet import Wallet
+        >>> wallet = Wallet(network="mainnet")
+        >>> wallet.from_mnemonic("indicate warm sock mistake code spot acid ribbon sing over taxi toast")
+        >>> wallet.sign(message_data)
+        "..."
+        """
+
+        if not isinstance(message, str):
+            raise TypeError("message must be string format")
+
+        return sign(self.private_key(), message)
+
+    def verify(self, message, signature):
+        """
+        Verify bytom signature by public key.
+
+        :param message: Message data.
+        :type message: str.
+        :param signature: Signed message data.
+        :type signature: str.
+        :return: bool -- verified signature.
+
+        >>> from pybytom.wallet import Wallet
+        >>> wallet = Wallet(network="mainnet")
+        >>> wallet.from_mnemonic("indicate warm sock mistake code spot acid ribbon sing over taxi toast")
+        >>> wallet.verify(message_data, bytom_signature)
+        True
+        """
+
+        if not isinstance(message, str):
+            raise TypeError("message must be string format")
+        if not isinstance(signature, str):
+            raise TypeError("signature must be string format")
+
+        return verify(self.public_key(), message, signature)
 
     def dumps(self):
+        """
+        Get all bytom wallet information's
+
+        :return: dict -- wallet info's.
+
+        >>> from pybytom.wallet import Wallet
+        >>> wallet = Wallet(network="mainnet")
+        >>> wallet.from_mnemonic("indicate warm sock mistake code spot acid ribbon sing over taxi toast")
+        >>> wallet.dumps()
+        {...}
+        """
+
         return dict(
             entropy=self.entropy(),
             mnemonic=self.mnemonic(),
