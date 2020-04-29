@@ -64,7 +64,7 @@ def verify(public_key, message, signature):
     :return: bool -- verified signature.
 
     >>> from pybytom.signature import verify
-    >>> verify(bytom_private_key, message_data, bytom_signature)
+    >>> verify(bytom_public_key, message_data, bytom_signature)
     True
     """
 
