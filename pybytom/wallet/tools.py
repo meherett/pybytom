@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 
+import hmac
+import hashlib
+
 from ..libs.segwit import encode
-from .utils import *
+from ..libs.ed25519 import (encodepoint, decodepoint, decodeint, scalarmultbase, edwards_add)
+from .utils import prune_intermediate_scalar, get_bytes
 
 
 # Constant values
@@ -55,6 +59,10 @@ def get_expand_xprivate_key(xprivate_key):
     "205b15f70e253399da90b127b074ea02904594be9d54678207872ec1ba31ee5102416c643cfb46ab1ae5a524c8b4aaa002eb771d0d9cfc7490c0c3a8177e053e"
     """
 
+    # Checking parameters
+    if not isinstance(xprivate_key, str):
+        raise TypeError("xprivate key must be string format")
+
     i = hmac.HMAC(b"Expand", get_bytes(xprivate_key),
                   digestmod=hashlib.sha512).hexdigest()
     il, ir = i[:64], i[64:]
@@ -107,7 +115,7 @@ def path_to_indexes(path):
 
     # Checking parameters
     if not isinstance(path, str):
-        raise TypeError("index must be string format")
+        raise TypeError("path must be string format")
     if str(path)[0:2] != "m/":
         raise ValueError("bad path, insert like this type of path \"m/0'/0\"! ")
 
@@ -139,6 +147,9 @@ def get_child_xprivate_key(xprivate_key, indexes=None, path=None):
     "00ca8555655d336c4c0d11464a1d401f0cc7c29fdc52bf52f5fc8e0ced32ee51b9c62d145693b366cde5ba74a06962bfa9f6b1e810a3e15eadf791247333547e"
     """
 
+    # Checking parameters
+    if not isinstance(xprivate_key, str):
+        raise TypeError("xprivate key must be string format")
     if indexes is None and path is None:
         indexes = INDEXES
     elif indexes is not None:
@@ -146,7 +157,7 @@ def get_child_xprivate_key(xprivate_key, indexes=None, path=None):
             raise TypeError("indexes must be list format")
     elif path is not None:
         if not isinstance(path, str):
-            raise TypeError("indexes must be string format")
+            raise TypeError("path must be string format")
         indexes = path_to_indexes(path=path)
 
     for index in range(len(indexes)):
@@ -196,6 +207,9 @@ def get_child_xpublic_key(xpublic_key, indexes=None, path=None):
     "91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e25803ee0a6682fb19e279d8f4f7acebee8abd0fc74771c71565f9a9643fd77141"
     """
 
+    # Checking parameters
+    if not isinstance(xpublic_key, str):
+        raise TypeError("xpublic key must be string format")
     if indexes is None and path is None:
         indexes = INDEXES
     elif indexes is not None:
@@ -203,7 +217,7 @@ def get_child_xpublic_key(xpublic_key, indexes=None, path=None):
             raise TypeError("indexes must be list format")
     elif path is not None:
         if not isinstance(path, str):
-            raise TypeError("indexes must be string format")
+            raise TypeError("path must be string format")
         indexes = path_to_indexes(path=path)
 
     for index in range(len(indexes)):
