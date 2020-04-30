@@ -21,7 +21,7 @@ class Wallet:
     """
     Bytom wallet class.
 
-    :param network: bytom network, defaults to testnet.
+    :param network: bytom network, defaults to solonet.
     :type network: str
     :returns:  Wallet -- bytom wallet instance.
 
@@ -45,7 +45,7 @@ class Wallet:
 
     def from_entropy(self, entropy, passphrase=None, language="english"):
         """
-        Get bytom wallet from entropy.
+        Initialize bytom wallet from entropy.
 
         :param entropy: Entropy hex string.
         :type entropy: str.
@@ -53,7 +53,7 @@ class Wallet:
         :type passphrase: str.
         :param language: Mnemonic language, default to english.
         :type language: str.
-        :returns:  Wallet -- bytom wallet instance.
+        :returns:  Wallet -- Bytom wallet class instance.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
@@ -87,7 +87,7 @@ class Wallet:
 
     def from_mnemonic(self, mnemonic, passphrase=None, language=None):
         """
-        Get bytom wallet from mnemonic.
+        Initialize bytom wallet from mnemonic.
 
         :param mnemonic: 12 words mnemonic.
         :type mnemonic: str.
@@ -95,11 +95,11 @@ class Wallet:
         :type passphrase: str.
         :param language: Mnemonic language, default to None.
         :type language: str.
-        :returns:  Wallet -- bytom wallet instance.
+        :returns:  Wallet -- Bytom wallet class instance.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
-        >>> wallet.from_entropy("8d7454bb99e8e68de6adfc5519cbee64")
+        >>> wallet.from_mnemonic("舒 使 系 款 株 擾 麼 鄉 狗 振 誤 謀")
         <pybytom.wallet.Wallet object at 0x040DA268>
         """
 
@@ -128,11 +128,11 @@ class Wallet:
 
     def from_seed(self, seed):
         """
-        Get bytom wallet from seed.
+        Initialize bytom wallet from seed.
 
         :param seed: Mnemonic seed hex string.
         :type seed: str.
-        :returns:  Wallet -- bytom wallet instance.
+        :returns:  Wallet -- Bytom wallet class instance.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
@@ -158,11 +158,11 @@ class Wallet:
 
     def from_xprivate_key(self, xprivate_key):
         """
-        Get bytom wallet from seed.
+        Initialize bytom wallet from seed.
 
         :param xprivate_key: Bytom xprivate key.
         :type xprivate_key: str.
-        :returns:  Wallet -- bytom wallet instance.
+        :returns:  Wallet -- Bytom wallet class instance.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
@@ -188,7 +188,7 @@ class Wallet:
 
         :param indexes: Bytom derivation indexes.
         :type indexes: list.
-        :returns:  Wallet -- bytom wallet instance.
+        :returns:  Wallet -- Bytom wallet class instance.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
@@ -210,14 +210,18 @@ class Wallet:
 
         :param index: Bytom derivation index.
         :type index: int.
-        :param harden: BIP 32 key harden, default to .
-        :type harden: int.
-        :returns:  Wallet -- bytom wallet instance.
+        :param harden: BIP 32 key harden, default to False.
+        :type harden: bool.
+        :returns:  Wallet -- Bytom wallet class instance.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
-        >>> wallet.from_xprivate_key("205b15f70e253399da90b127b074ea02904594be9d54678207872ec1ba31ee51ef4490504bd2b6f997113671892458830de09518e6bd5958d5d5dd97624cfa4b")
+        >>> wallet.from_entropy(entropy="8d7454bb99e8e68de6adfc5519cbee64", language="japaneses")
         >>> wallet.from_index(44)
+        >>> wallet.from_index(153)
+        >>> wallet.from_index(1)  # Account
+        >>> wallet.from_index(0)  # Change False(0)/True(1)
+        >>> wallet.from_index(1)  # Address
         <pybytom.wallet.Wallet object at 0x040DA268>
         """
 
@@ -241,7 +245,7 @@ class Wallet:
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
-        >>> wallet.from_xprivate_key("205b15f70e253399da90b127b074ea02904594be9d54678207872ec1ba31ee51ef4490504bd2b6f997113671892458830de09518e6bd5958d5d5dd97624cfa4b")
+        >>> wallet.from_mnemonic(mnemonic="舒 使 系 款 株 擾 麼 鄉 狗 振 誤 謀", passphrase="Hello Meheret!")
         >>> wallet.from_path("m/44/153/1/0/1")
         <pybytom.wallet.Wallet object at 0x040DA268>
         """
@@ -261,9 +265,9 @@ class Wallet:
 
     def entropy(self):
         """
-        Get bytom wallet entropy.
+        Get wallet entropy.
 
-        :return: str -- entropy.
+        :return: str -- Entropy hex string.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
@@ -276,7 +280,7 @@ class Wallet:
 
     def mnemonic(self):
         """
-        Get bytom wallet mnemonic.
+        Get wallet mnemonic.
 
         :return: str -- 12 word mnemonic.
 
@@ -291,9 +295,9 @@ class Wallet:
 
     def passphrase(self):
         """
-        Get bytom wallet secret password/passphrase.
+        Get wallet secret password/passphrase.
 
-        :return: str -- passphrase.
+        :return: str -- Secret password/passphrase.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
@@ -306,9 +310,9 @@ class Wallet:
 
     def language(self):
         """
-        Get bytom wallet mnemonic language.
+        Get wallet mnemonic language.
 
-        :return: str -- language.
+        :return: str -- Mnemonic language.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
@@ -321,7 +325,7 @@ class Wallet:
 
     def seed(self):
         """
-        Get bytom wallet seed.
+        Get wallet mnemonic seed.
 
         :return: str -- Mnemonic seed.
 
@@ -338,7 +342,7 @@ class Wallet:
         """
         Get bytom wallet xprivate key.
 
-        :return: str -- bytom xprivate key.
+        :return: str -- Bytom xprivate key.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
@@ -353,7 +357,7 @@ class Wallet:
         """
         Get bytom wallet xpublic key.
 
-        :return: str -- bytom xpublic key.
+        :return: str -- Bytom xpublic key.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
@@ -373,7 +377,7 @@ class Wallet:
         """
         Get bytom wallet expand xprivate key.
 
-        :return: str -- bytom expand xprivate key.
+        :return: str -- Bytom expand xprivate key.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
@@ -395,11 +399,12 @@ class Wallet:
         """
         Get bytom wallet private key.
 
-        :return: str -- bytom private key.
+        :return: str -- Bytom private key.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
         >>> wallet.from_mnemonic("indicate warm sock mistake code spot acid ribbon sing over taxi toast")
+        >>> wallet.from_path("m/44/153/1/0/1")
         >>> wallet.private_key()
         "e07af52746e7cccd0a7d1fba6651a6f474bada481f34b1c5bab5e2d71e36ee515803ee0a6682fb19e279d8f4f7acebee8abd0fc74771c71565f9a9643fd77141"
         """
@@ -410,11 +415,12 @@ class Wallet:
         """
         Get bytom wallet public key.
 
-        :return: str -- bytom public key.
+        :return: str -- Bytom public key.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
         >>> wallet.from_mnemonic("indicate warm sock mistake code spot acid ribbon sing over taxi toast")
+        >>> wallet.from_path("m/44/153/1/0/1")
         >>> wallet.public_key()
         "91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e2"
         """
@@ -425,11 +431,12 @@ class Wallet:
         """
         Get bytom wallet derivation indexes.
 
-        :return: list -- bytom derivation indexes.
+        :return: list -- Bytom derivation indexes.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
         >>> wallet.from_mnemonic("indicate warm sock mistake code spot acid ribbon sing over taxi toast")
+        >>> wallet.from_path("m/44/153/1/0/1")
         >>> wallet.indexes()
         ["2c000000", "99000000", "01000000", "00000000", "01000000"]
         """
@@ -440,11 +447,12 @@ class Wallet:
         """
         Get bytom wallet derivation path.
 
-        :return: str -- bytom derivation path.
+        :return: str -- Bytom derivation path.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
         >>> wallet.from_mnemonic("indicate warm sock mistake code spot acid ribbon sing over taxi toast")
+        >>> wallet.from_indexes(["2c000000", "99000000", "01000000", "00000000", "01000000"])
         >>> wallet.path()
         "m/44/153/1/0/1"
         """
@@ -462,11 +470,12 @@ class Wallet:
         """
         Get bytom get child xprivate key.
 
-        :return: str -- bytom child xprivate key.
+        :return: str -- Bytom child xprivate key.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
         >>> wallet.from_mnemonic("indicate warm sock mistake code spot acid ribbon sing over taxi toast")
+        >>> wallet.from_path("m/44/153/1/0/1")
         >>> wallet.child_xprivate_key()
         "e07af52746e7cccd0a7d1fba6651a6f474bada481f34b1c5bab5e2d71e36ee515803ee0a6682fb19e279d8f4f7acebee8abd0fc74771c71565f9a9643fd77141"
         """
@@ -505,11 +514,12 @@ class Wallet:
         """
         Get bytom get child xpublic key.
 
-        :return: str -- bytom child xpublic key.
+        :return: str -- Bytom child xpublic key.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
         >>> wallet.from_mnemonic("indicate warm sock mistake code spot acid ribbon sing over taxi toast")
+        >>> wallet.from_path("m/44/153/1/0/1")
         >>> wallet.child_xpublic_key()
         "91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e25803ee0a6682fb19e279d8f4f7acebee8abd0fc74771c71565f9a9643fd77141"
         """
@@ -546,11 +556,12 @@ class Wallet:
         """
         Get bytom wallet control program.
 
-        :return: str -- bytom control program.
+        :return: str -- Bytom wallet control program.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
         >>> wallet.from_mnemonic("indicate warm sock mistake code spot acid ribbon sing over taxi toast")
+        >>> wallet.from_indexes(["2c000000", "99000000", "01000000", "00000000", "01000000"])
         >>> wallet.program()
         "00142cda4f99ea8112e6fa61cdd26157ed6dc408332a"
         """
@@ -568,11 +579,14 @@ class Wallet:
         """
         Get bytom wallet address.
 
-        :return: str -- bytom address.
+        :param network: bytom network, defaults to solonet.
+        :type network: str
+        :return: str -- Bytom wallet address.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
         >>> wallet.from_mnemonic("indicate warm sock mistake code spot acid ribbon sing over taxi toast")
+        >>> wallet.from_indexes(["2c000000", "99000000", "01000000", "00000000", "01000000"])
         >>> wallet.address()
         "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7"
         """
@@ -593,17 +607,19 @@ class Wallet:
 
     def sign(self, message):
         """
-        Sign bytom message data by private key.
+        Sign message data by private key.
 
         :param message: Message data.
         :type message: str.
-        :return: str -- bytom signed message or signature.
+        :return: str -- Signed message data (signature).
 
         >>> from pybytom.wallet import Wallet
-        >>> wallet = Wallet(network="mainnet")
+        >>> message = "1246b84985e1ab5f83f4ec2bdf271114666fd3d9e24d12981a3c861b9ed523c6"
+        >>> wallet = Wallet(network="testnet")
         >>> wallet.from_mnemonic("indicate warm sock mistake code spot acid ribbon sing over taxi toast")
-        >>> wallet.sign(message_data)
-        "..."
+        >>> wallet.from_indexes(["2c000000", "99000000", "01000000", "00000000", "01000000"])
+        >>> wallet.sign(message=message)
+        "f6624fea84fadccbc1bc72dc384f662468e271c4e32d846bc0a1524470549992c8ffcc3ca43891a30de4235392b0868c506ed254f0f77cc1f2b9c1a2385ddb05"
         """
 
         if not isinstance(message, str):
@@ -613,18 +629,21 @@ class Wallet:
 
     def verify(self, message, signature):
         """
-        Verify bytom signature by public key.
+        Verify signature by public key.
 
         :param message: Message data.
         :type message: str.
         :param signature: Signed message data.
         :type signature: str.
-        :return: bool -- verified signature.
+        :return: bool -- Verified signature (True/False).
 
         >>> from pybytom.wallet import Wallet
-        >>> wallet = Wallet(network="mainnet")
+        >>> message = "1246b84985e1ab5f83f4ec2bdf271114666fd3d9e24d12981a3c861b9ed523c6"
+        >>> signature = "f6624fea84fadccbc1bc72dc384f662468e271c4e32d846bc0a1524470549992c8ffcc3ca43891a30de4235392b0868c506ed254f0f77cc1f2b9c1a2385ddb05"
+        >>> wallet = Wallet(network="testnet")
         >>> wallet.from_mnemonic("indicate warm sock mistake code spot acid ribbon sing over taxi toast")
-        >>> wallet.verify(message_data, bytom_signature)
+        >>> wallet.from_indexes(["2c000000", "99000000", "01000000", "00000000", "01000000"])
+        >>> wallet.verify(message=message, signature=signature)
         True
         """
 
@@ -637,15 +656,16 @@ class Wallet:
 
     def dumps(self):
         """
-        Get all bytom wallet information's
+        Get bytom all wallet information's
 
-        :return: dict -- wallet info's.
+        :return: dict -- Bytom all wallet information's.
 
         >>> from pybytom.wallet import Wallet
-        >>> wallet = Wallet(network="mainnet")
+        >>> wallet = Wallet()
         >>> wallet.from_mnemonic("indicate warm sock mistake code spot acid ribbon sing over taxi toast")
+        >>> wallet.from_indexes(["2c000000", "99000000", "01000000", "00000000", "01000000"])
         >>> wallet.dumps()
-        {...}
+        {'entropy': None, 'mnemonic': 'indicate warm sock mistake code spot acid ribbon sing over taxi toast', 'language': 'english', 'passphrase': None, 'seed': 'baff3e1fe60e1f2a2d840d304acc98d1818140c79354a353b400fb019bfb256bc392d7aa9047adff1f14bce0342e14605c6743a6c08e02150588375eb2eb7d49', 'xprivate_key': '205b15f70e253399da90b127b074ea02904594be9d54678207872ec1ba31ee51ef4490504bd2b6f997113671892458830de09518e6bd5958d5d5dd97624cfa4b', 'xpublic_key': '16476b7fd68ca2acd92cfc38fa353e75d6103f828276f44d587e660a6bd7a5c5ef4490504bd2b6f997113671892458830de09518e6bd5958d5d5dd97624cfa4b', 'expand_xprivate_key': '205b15f70e253399da90b127b074ea02904594be9d54678207872ec1ba31ee5102416c643cfb46ab1ae5a524c8b4aaa002eb771d0d9cfc7490c0c3a8177e053e', 'indexes': ['2c000000', '99000000', '01000000', '00000000', '01000000'], 'path': 'm/44/153/1/0/1', 'child_xprivate_key': 'e07af52746e7cccd0a7d1fba6651a6f474bada481f34b1c5bab5e2d71e36ee515803ee0a6682fb19e279d8f4f7acebee8abd0fc74771c71565f9a9643fd77141', 'child_xpublic_key': '91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e25803ee0a6682fb19e279d8f4f7acebee8abd0fc74771c71565f9a9643fd77141', 'private_key': 'e07af52746e7cccd0a7d1fba6651a6f474bada481f34b1c5bab5e2d71e36ee515803ee0a6682fb19e279d8f4f7acebee8abd0fc74771c71565f9a9643fd77141', 'public_key': '91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e2', 'program': '00142cda4f99ea8112e6fa61cdd26157ed6dc408332a', 'address': {'mainnet': 'bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7', 'solonet': 'sm1q9ndylx02syfwd7npehfxz4lddhzqsve2gdsdcs', 'testnet': 'tm1q9ndylx02syfwd7npehfxz4lddhzqsve2d2mgc0'}}
         """
 
         return dict(

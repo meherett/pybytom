@@ -28,7 +28,7 @@ def get_xpublic_key(xprivate_key):
 
     :param xprivate_key: Bytom xprivate key.
     :type xprivate_key: str.
-    :return: str -- bytom xpublic key.
+    :return: str -- Bytom xpublic key.
 
     >>> from pybytom.wallet.tools import get_xpublic_key
     >>> get_xpublic_key("205b15f70e253399da90b127b074ea02904594be9d54678207872ec1ba31ee51ef4490504bd2b6f997113671892458830de09518e6bd5958d5d5dd97624cfa4b")
@@ -52,7 +52,7 @@ def get_expand_xprivate_key(xprivate_key):
 
     :param xprivate_key: Bytom xprivate key.
     :type xprivate_key: str.
-    :return: str -- bytom expand xprivate key.
+    :return: str -- Bytom expand xprivate key.
 
     >>> from pybytom.wallet.tools import get_expand_xprivate_key
     >>> get_expand_xprivate_key("205b15f70e253399da90b127b074ea02904594be9d54678207872ec1ba31ee51ef4490504bd2b6f997113671892458830de09518e6bd5958d5d5dd97624cfa4b")
@@ -75,11 +75,11 @@ def get_expand_xprivate_key(xprivate_key):
 
 def indexes_to_path(indexes):
     """
-    Get bytom derivation path.
+    Change derivation indexes to path.
 
     :param indexes: Bytom derivation indexes.
     :type indexes: list.
-    :return: str -- bytom derivation path.
+    :return: str -- Bytom derivation path.
 
     >>> from pybytom.wallet.tools import indexes_to_path
     >>> indexes_to_path(["2c000000", "99000000", "01000000", "00000000", "01000000"])
@@ -102,11 +102,11 @@ def indexes_to_path(indexes):
 
 def path_to_indexes(path):
     """
-    Get bytom derivation path.
+    Change derivation path to indexes.
 
     :param path: Bytom derivation path.
     :type path: str.
-    :return: list -- bytom derivation indexes.
+    :return: list -- Bytom derivation indexes.
 
     >>> from pybytom.wallet.tools import path_to_indexes
     >>> path_to_indexes("m/44/153/1/0/1")
@@ -136,11 +136,11 @@ def get_child_xprivate_key(xprivate_key, indexes=None, path=None):
 
     :param xprivate_key: Bytom xprivate key.
     :type xprivate_key: str.
-    :param indexes: Bytom derivation indexes, default to ["2c000000", "99000000", "01000000", "00000000", "01000000"]
+    :param indexes: Bytom derivation indexes, default to ["2c000000", "99000000", "01000000", "00000000", "01000000"].
     :type indexes: list.
     :param path: Bytom derivation path, default to None.
     :type path: str.
-    :return: str -- bytom child xprivate key.
+    :return: str -- Bytom child xprivate key.
 
     >>> from pybytom.wallet.tools import get_child_xprivate_key
     >>> get_child_xprivate_key("205b15f70e253399da90b127b074ea02904594be9d54678207872ec1ba31ee51ef4490504bd2b6f997113671892458830de09518e6bd5958d5d5dd97624cfa4b")
@@ -196,11 +196,11 @@ def get_child_xpublic_key(xpublic_key, indexes=None, path=None):
 
     :param xpublic_key: Bytom xpublic key.
     :type xpublic_key: str.
-    :param indexes: Bytom derivation indexes, default to ["2c000000", "99000000", "01000000", "00000000", "01000000"]
+    :param indexes: Bytom derivation indexes, default to ["2c000000", "99000000", "01000000", "00000000", "01000000"].
     :type indexes: list.
     :param path: Bytom derivation path, default to None.
     :type path: str.
-    :return: str -- bytom child xpublic key.
+    :return: str -- Bytom child xpublic key.
 
     >>> from pybytom.wallet.tools import get_child_xpublic_key
     >>> get_child_xpublic_key("16476b7fd68ca2acd92cfc38fa353e75d6103f828276f44d587e660a6bd7a5c5ef4490504bd2b6f997113671892458830de09518e6bd5958d5d5dd97624cfa4b")
@@ -254,11 +254,11 @@ def get_private_key(xprivate_key, indexes=None, path=None):
 
     :param xprivate_key: Bytom xprivate key.
     :type xprivate_key: str.
-    :param indexes: Bytom derivation indexes, default to ["2c000000", "99000000", "01000000", "00000000", "01000000"]
+    :param indexes: Bytom derivation indexes, default to ["2c000000", "99000000", "01000000", "00000000", "01000000"].
     :type indexes: list.
     :param path: Bytom derivation path, default to None.
     :type path: str.
-    :return: str -- bytom private key.
+    :return: str -- Bytom private key.
 
     >>> from pybytom.wallet.tools import get_private_key
     >>> get_private_key("205b15f70e253399da90b127b074ea02904594be9d54678207872ec1ba31ee51ef4490504bd2b6f997113671892458830de09518e6bd5958d5d5dd97624cfa4b")
@@ -271,15 +271,15 @@ def get_private_key(xprivate_key, indexes=None, path=None):
 
 def get_public_key(xpublic_key=None, indexes=None, path=None):
     """
-    Get bytom private key from xpublic key.
+    Get bytom public key from xpublic key.
 
     :param xpublic_key: Bytom xpublic key.
     :type xpublic_key: str.
-    :param indexes: Bytom derivation indexes, default to ["2c000000", "99000000", "01000000", "00000000", "01000000"]
+    :param indexes: Bytom derivation indexes, default to ["2c000000", "99000000", "01000000", "00000000", "01000000"].
     :type indexes: list.
     :param path: Bytom derivation path, default to None.
     :type path: str.
-    :return: str -- bytom public key.
+    :return: str -- Bytom public key.
 
     >>> from pybytom.wallet.tools import get_public_key
     >>> get_public_key("16476b7fd68ca2acd92cfc38fa353e75d6103f828276f44d587e660a6bd7a5c5ef4490504bd2b6f997113671892458830de09518e6bd5958d5d5dd97624cfa4b")
@@ -296,7 +296,7 @@ def get_program(public_key):
 
     :param public_key: Bytom public key.
     :type public_key: str.
-    :return: str -- bytom control program.
+    :return: str -- Bytom control program.
 
     >>> from pybytom.wallet.tools import get_program
     >>> get_program("91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e2")
@@ -323,7 +323,7 @@ def get_address(program, network="solonet"):
     :type program: str.
     :param network: Bytom network, default to solonet.
     :type network: str.
-    :return: str -- bytom address.
+    :return: str -- Bytom address.
 
     >>> from pybytom.wallet.tools import get_address
     >>> get_address("00142cda4f99ea8112e6fa61cdd26157ed6dc408332a", "mainnet")
