@@ -19,8 +19,6 @@ $ pip install -e . -r requirements.txt
 
 ### Quick Usage
 
-> #### pybytom.wallet
-
 ```python
 #!/usr/bin/env python3
 
@@ -82,8 +80,6 @@ print(json.dumps(wallet.dumps(), indent=4, ensure_ascii=False))
 }
 ```
 </details>
-
-> #### pybytom.signature
 
 ```python
 #!/usr/bin/env python3
