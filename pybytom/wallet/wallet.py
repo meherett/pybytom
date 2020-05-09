@@ -12,7 +12,7 @@ from ..libs.ed25519 import (
     scalarmultbase, edwards_double, edwards_add
 )
 from ..signature import sign, verify
-from ..utils import get_mnemonic_language, check_mnemonic
+from ..utils import get_mnemonic_language, is_mnemonic
 from .tools import get_xpublic_key
 from .utils import prune_root_scalar, prune_intermediate_scalar, get_bytes
 
@@ -115,7 +115,7 @@ class Wallet:
                                         "/chinese_traditional/japanese/korean".split("/"):
             raise ValueError("invalid language option, choose only english, french, italian, spanish, "
                              "chinese_simplified, chinese_traditional, japanese & korean language")
-        if not check_mnemonic(mnemonic=mnemonic, language=language):
+        if not is_mnemonic(mnemonic=mnemonic, language=language):
             raise ValueError("invalid 12 word mnemonic.")
 
         self._mnemonic = mnemonic
@@ -261,6 +261,29 @@ class Wallet:
                 self.derive_private_key(int(index[:-1]) + 0x80000000)
             else:
                 self.derive_private_key(int(index))
+        return self
+
+    def clean_derivation(self):
+        """
+        Clean derivation indexes/path.
+
+        :returns:  Wallet -- bytom wallet instance.
+
+        >>> from pybytom.wallet import Wallet
+        >>> wallet = Wallet(network="mainnet")
+        >>> wallet.from_mnemonic(mnemonic="舒 使 系 款 株 擾 麼 鄉 狗 振 誤 謀", passphrase="Hello Meheret!")
+        >>> wallet.from_path("m/44/153/1/0/1")
+        >>> wallet.indexes()
+        ["2c000000", "99000000", "01000000", "00000000", "01000000"]
+        >>> wallet.path()
+        "m/44/153/1/0/1"
+        >>> wallet.clean_derivation()
+        >>> wallet.indexes()
+        []
+        >>> wallet.path()
+        None
+        """
+        self._indexes = list()
         return self
 
     def entropy(self):
@@ -464,7 +487,7 @@ class Wallet:
                 path = path + str(number)
             else:
                 path = path + str(number) + "/"
-        return path
+        return path if not path == "m/" else None
 
     def child_xprivate_key(self):
         """
