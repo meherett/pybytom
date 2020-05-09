@@ -1,24 +1,24 @@
 #!/usr/bin/env python3
 
 from pybytom.wallet import Wallet
-from pybytom.utils import generate_mnemonic, check_mnemonic
+from pybytom.utils import generate_mnemonic, is_mnemonic
 
 import json
 
 # 12 word mnemonic seed
-MNEMONIC = "병아리 실컷 여인 축제 극히 저녁 경찰 설사 할인 해물 시각 자가용"
+MNEMONIC = "indicate warm sock mistake code spot acid ribbon sing over taxi toast"
 # Or generate mnemonic
 # MNEMONIC = generate_mnemonic(language="korean", strength=128)
 # Secret passphrase
 PASSPHRASE = None  # str("meherett")
-# Choose language english, french, italian, spanish, chinese_simplified, chinese_traditional & korean
-LANGUAGE = "korean"  # default is english
+# Choose language english, french, italian, spanish, chinese_simplified, chinese_traditional, japanese & korean
+LANGUAGE = "english"  # default is english
 
 # Message data
 MESSAGE = "a0841d35364046649ab8fc4af5a6266245890778f6cf7304696c4ab8edd86242"
 
 # Checking 12 word mnemonic seed
-assert check_mnemonic(mnemonic=MNEMONIC, language=LANGUAGE), \
+assert is_mnemonic(mnemonic=MNEMONIC, language=LANGUAGE), \
       "Invalid %s 12 word mnemonic seed." % LANGUAGE
 
 # Initialize wallet
@@ -28,12 +28,14 @@ wallet.from_mnemonic(mnemonic=MNEMONIC, passphrase=PASSPHRASE, language=LANGUAGE
 
 # Derivation from path
 # wallet.from_path("m/44/153/1/0/1")
-# Derivation from index
-wallet.from_index(44)
-wallet.from_index(153)
-wallet.from_index(1)
-wallet.from_index(0)
-wallet.from_index(1)
+# Or derivation from index
+# wallet.from_index(44)
+# wallet.from_index(153)
+# wallet.from_index(1)  # Account
+# wallet.from_index(0)  # Change
+# wallet.from_index(1)  # Address
+# Or derivation from indexes
+wallet.from_indexes(['2c000000', '99000000', '01000000', '00000000', '01000000'])
 
 # Print all wallet information's
 # print(json.dumps(wallet.dumps(), indent=4))

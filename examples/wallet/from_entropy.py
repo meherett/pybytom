@@ -11,7 +11,7 @@ ENTROPY = "50f002376c81c96e430b48f1fe71df57"
 # ENTROPY = generate_entropy(strength=128)
 # Secret passphrase
 PASSPHRASE = None  # str("meherett")
-# Choose language english, french, italian, spanish, chinese_simplified, chinese_traditional & korean
+# Choose language english, french, italian, spanish, chinese_simplified, chinese_traditional, japanese & korean
 LANGUAGE = "korean"  # default is english
 
 # Message data
@@ -24,12 +24,14 @@ wallet.from_entropy(entropy=ENTROPY, passphrase=PASSPHRASE, language=LANGUAGE)
 
 # Derivation from path
 # wallet.from_path("m/44/153/1/0/1")
-# Derivation from index
+# Or derivation from index
 wallet.from_index(44)
 wallet.from_index(153)
-wallet.from_index(1)
-wallet.from_index(0)
-wallet.from_index(1)
+wallet.from_index(1)  # Account
+wallet.from_index(0)  # Change
+wallet.from_index(1)  # Address
+# Or derivation from indexes
+# wallet.from_indexes(['2c000000', '99000000', '01000000', '00000000', '01000000'])
 
 # Print all wallet information's
 # print(json.dumps(wallet.dumps(), indent=4))
