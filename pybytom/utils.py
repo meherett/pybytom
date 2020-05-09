@@ -57,9 +57,9 @@ def generate_mnemonic(language="english", strength=128):
     return Mnemonic(language=language).generate(strength=strength)
 
 
-def check_mnemonic(mnemonic, language=None):
+def is_mnemonic(mnemonic, language=None):
     """
-    Check 12 word mnemonic.
+    Check 12 word mnemonic is Valid.
 
     :param mnemonic: 12 word mnemonic.
     :type mnemonic: str.
@@ -67,8 +67,8 @@ def check_mnemonic(mnemonic, language=None):
     :type language: str.
     :returns:  mnemonic -- True/False.
 
-    >>> from pybytom.utils import check_mnemonic
-    >>> check_mnemonic("sceptre capter séquence girafe absolu relatif fleur zoologie muscle sirop saboter parure")
+    >>> from pybytom.utils import is_mnemonic
+    >>> is_mnemonic("sceptre capter séquence girafe absolu relatif fleur zoologie muscle sirop saboter parure")
     True
     """
 
@@ -104,7 +104,7 @@ def get_mnemonic_language(mnemonic):
     "french"
     """
 
-    if not check_mnemonic(mnemonic=mnemonic):
+    if not is_mnemonic(mnemonic=mnemonic):
         raise ValueError("invalid 12 word mnemonic.")
 
     language = None
