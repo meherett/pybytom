@@ -112,7 +112,7 @@ print("\nAddresses For Change:", ADDRESSES_FOR_CHANGE)
 for address_index in range(1, 10):
     # Derivation from path
     wallet.from_path(f"m/44/153/{ACCOUNT_INDEX}/{1 if ADDRESSES_FOR_CHANGE else 0}/{address_index}")
-    # Print account_index, change, addresses_index, address and private_key like bytom core wallet accounts
+    # Print account_index, change, address_index, address and private_key like bytom core wallet accounts
     print(f"({ACCOUNT_INDEX}) ({ADDRESSES_FOR_CHANGE}) ({address_index}) {wallet.address()} {wallet.private_key()}")
     # Clean derivation
     wallet.clean_derivation()
