@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-from binascii import unhexlify
-
 
 def get_bytes(string):
     if isinstance(string, bytes):
