@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from binascii import unhexlify
+
 
 def get_bytes(string):
     if isinstance(string, bytes):
@@ -9,6 +11,17 @@ def get_bytes(string):
     else:
         raise TypeError("Agreement must be either 'bytes' or 'string'!")
     return byte
+
+
+def bad_seed_checker(il, ir=False):
+    if ir:
+        parse_ir = str(il)
+        if not parse_ir:
+            raise ValueError("Bad seed, resulting in invalid key!")
+    else:
+        parse_il = int.from_bytes(il, "big")
+        if parse_il == 0:
+            raise ValueError("Bad seed, resulting in invalid key!")
 
 
 def prune_root_scalar(string):
