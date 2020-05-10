@@ -14,7 +14,7 @@ from ..libs.ed25519 import (
 from ..signature import sign, verify
 from ..utils import get_mnemonic_language, is_mnemonic
 from .tools import get_xpublic_key
-from .utils import prune_root_scalar, prune_intermediate_scalar, get_bytes
+from .utils import prune_root_scalar, prune_intermediate_scalar, get_bytes, bad_seed_checker
 
 
 class Wallet:
@@ -148,10 +148,8 @@ class Wallet:
         i = hmac.HMAC(b"Root", get_bytes(self._seed),
                       digestmod=hashlib.sha512).hexdigest()
         il, ir = i[:64], i[64:]
+        bad_seed_checker(il, True)
 
-        parse_il = str(il)
-        if not parse_il:
-            raise ValueError("bad seed, resulting in invalid key!")
         # get root xprivate_key key
         self._xprivate_key = prune_root_scalar(il).hex() + ir
         return self
@@ -412,9 +410,8 @@ class Wallet:
         i = hmac.HMAC(b"Expand", get_bytes(self._xprivate_key),
                       digestmod=hashlib.sha512).hexdigest()
         il, ir = i[:64], i[64:]
-        parse_ir = str(ir)
-        if not parse_ir:
-            raise ValueError("bad seed, resulting in invalid key!")
+        bad_seed_checker(ir, True)
+
         expand_xprivate = self._xprivate_key[:64] + ir
         return expand_xprivate
 
@@ -513,10 +510,7 @@ class Wallet:
                                     b"N" + xpublic_bytes[:32] + index_bytes,
                                     digestmod=hashlib.sha512).digest())
             il, ir = i[:32], i[32:]
-
-            parse_il = int.from_bytes(il, "big")
-            if parse_il == 0:
-                raise ValueError("bad seed, resulting in invalid key!")
+            bad_seed_checker(il)
 
             i = prune_intermediate_scalar(il)[:32] + ir
 
@@ -556,10 +550,7 @@ class Wallet:
                                     digestmod=hashlib.sha512).digest())
 
             il, ir = i[:32], i[32:]
-
-            parse_il = int.from_bytes(il, "big")
-            if parse_il == 0:
-                raise ValueError("bad seed, resulting in invalid key!")
+            bad_seed_checker(il)
 
             f = bytes(prune_intermediate_scalar(il))
             scalar = decodeint(f)

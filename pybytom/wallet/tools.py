@@ -5,7 +5,7 @@ import hashlib
 
 from ..libs.segwit import encode
 from ..libs.ed25519 import (encodepoint, decodepoint, decodeint, scalarmultbase, edwards_add)
-from .utils import prune_intermediate_scalar, get_bytes
+from .utils import prune_intermediate_scalar, get_bytes, bad_seed_checker
 
 
 # Constant values
@@ -66,9 +66,8 @@ def get_expand_xprivate_key(xprivate_key):
     i = hmac.HMAC(b"Expand", get_bytes(xprivate_key),
                   digestmod=hashlib.sha512).hexdigest()
     il, ir = i[:64], i[64:]
-    parse_ir = str(ir)
-    if not parse_ir:
-        raise ValueError("bad seed, resulting in invalid key!")
+    bad_seed_checker(ir, True)
+
     expand_xprivate_key = xprivate_key[:64] + ir
     return expand_xprivate_key
 
@@ -169,10 +168,7 @@ def get_child_xprivate_key(xprivate_key, indexes=None, path=None):
                                 b"N" + xpublic_bytes[:32] + index_bytes,
                                 digestmod=hashlib.sha512).digest())
         il, ir = i[:32], i[32:]
-
-        parse_il = int.from_bytes(il, "big")
-        if parse_il == 0:
-            raise ValueError("bad seed, resulting in invalid key!")
+        bad_seed_checker(il)
 
         i = prune_intermediate_scalar(il)[:32] + ir
 
@@ -228,10 +224,7 @@ def get_child_xpublic_key(xpublic_key, indexes=None, path=None):
                                 digestmod=hashlib.sha512).digest())
 
         il, ir = i[:32], i[32:]
-
-        parse_il = int.from_bytes(il, "big")
-        if parse_il == 0:
-            raise ValueError("bad seed, resulting in invalid key!")
+        bad_seed_checker(il)
 
         f = bytes(prune_intermediate_scalar(il))
         scalar = decodeint(f)
