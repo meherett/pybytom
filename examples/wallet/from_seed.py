@@ -21,9 +21,9 @@ wallet.from_path("m/44/153/1/0/1")
 # Or derivation from index
 # wallet.from_index(44)
 # wallet.from_index(153)
-# wallet.from_index(1)  # Account
-# wallet.from_index(0)  # Change
-# wallet.from_index(1)  # Address
+# wallet.from_index(1)
+# wallet.from_index(0)
+# wallet.from_index(1)
 # Or derivation from indexes
 # wallet.from_indexes(['2c000000', '99000000', '01000000', '00000000', '01000000'])
 
