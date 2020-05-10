@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 from pybytom.wallet import Wallet
-from pybytom.utils import check_mnemonic, generate_entropy
-from pybytom.wallet.utils import get_bytes
+from pybytom.utils import is_mnemonic, generate_entropy
+from pybytom.wallet.utils import get_bytes, bad_seed_checker
 
 import hashlib
 import pytest
@@ -95,3 +95,9 @@ def test_wallet_errors():
 
     with pytest.raises(TypeError, match=r".*'bytes' or 'string'.*"):
         get_bytes(float())
+
+    with pytest.raises(ValueError, match="Bad seed, resulting in invalid key!"):
+        bad_seed_checker(str(), True)
+
+    with pytest.raises(ValueError, match="Bad seed, resulting in invalid key!"):
+        bad_seed_checker(b"", False)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from pybytom.utils import generate_mnemonic, generate_entropy, check_mnemonic, get_mnemonic_language
+from pybytom.utils import generate_mnemonic, generate_entropy, is_mnemonic, get_mnemonic_language
 
 import pytest
 
@@ -17,12 +17,18 @@ def test_base58():
     with pytest.raises(ValueError, match=r".*[128, 160, 192, 224, 256].*"):
         assert len(generate_entropy(strength=129).split(" ")) == 12
 
-    assert check_mnemonic(mnemonic=MNEMONIC, language="korean")
+    assert is_mnemonic(mnemonic=MNEMONIC, language="korean")
 
     with pytest.raises(ValueError, match=r"invalid language, .*"):
-        assert check_mnemonic(mnemonic=MNEMONIC, language="amharic")
+        assert is_mnemonic(mnemonic=MNEMONIC, language="amharic")
 
-    assert not check_mnemonic(mnemonic=12341234, language="english")
+    assert not is_mnemonic(mnemonic=12341234, language="english")
 
     with pytest.raises(ValueError, match="invalid 12 word mnemonic."):
         assert get_mnemonic_language("1234 meheret tesfaye")
+
+    with pytest.raises(ValueError, match=r"invalid language, .*"):
+        assert generate_mnemonic(language="amharic")
+
+    with pytest.raises(ValueError, match=r"Strength should be one of the following .*"):
+        assert generate_mnemonic(strength=129)

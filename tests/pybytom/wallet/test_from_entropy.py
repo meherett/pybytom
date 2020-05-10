@@ -58,5 +58,9 @@ def test_from_entropy():
         }
     }
 
+    wallet.clean_derivation()
+    assert wallet.path() is None
+    assert wallet.indexes() == list()
+
     with pytest.raises(TypeError, match="language must be string format"):
         wallet.from_entropy(entropy=ENTROPY, passphrase="meherett", language=None)
