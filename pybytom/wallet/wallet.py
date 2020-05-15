@@ -13,8 +13,12 @@ from ..libs.ed25519 import (
 )
 from ..signature import sign, verify
 from ..utils import get_mnemonic_language, is_mnemonic
+from ..rpc import account_create
 from .tools import get_xpublic_key
-from .utils import prune_root_scalar, prune_intermediate_scalar, get_bytes, bad_seed_checker
+from .utils import (
+    prune_root_scalar, prune_intermediate_scalar,
+    get_bytes, bad_seed_checker
+)
 
 
 class Wallet:
@@ -41,7 +45,7 @@ class Wallet:
         self._entropy, self._mnemonic, self._passphrase, \
             self._language, self._seed = None, None, None, None, None
         self._xprivate_key, self._xpublic_key, self._indexes, \
-            self._path = None, None, list(), None
+            self._path, self._guid = None, None, list(), None, None
 
     def from_entropy(self, entropy, passphrase=None, language="english"):
         """
@@ -283,6 +287,25 @@ class Wallet:
         """
         self._indexes = list()
         return self
+
+    # Getting guid from blockcenter
+    def guid(self):
+        """
+        Get bytom wallet blockcenter guid.
+
+        :return: str -- bytom blockcenter guid.
+
+        >>> from pybytom.wallet import Wallet
+        >>> wallet = Wallet(network="mainnet")
+        >>> wallet.from_mnemonic("indicate warm sock mistake code spot acid ribbon sing over taxi toast")
+        >>> wallet.guid()
+        "f0ed6ddd-9d6b-49fd-8866-a52d1083a13b"
+        """
+
+        if self._guid is None:
+            self._guid = account_create(
+                xpublic_key=self.xpublic_key(), network=self.network)["guid"]
+        return self._guid
 
     def entropy(self):
         """
