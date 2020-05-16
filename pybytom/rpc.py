@@ -4,38 +4,16 @@ import requests
 import json
 
 from .exceptions import APIError
+from . import configuration as config
+
 
 # Request headers
 headers = dict()
 headers.setdefault("Content-Type", "application/json")
 
-# Configuration
-bytom = {
-    "mainnet": {
-        "bytom": "http://localhost:9888",
-        "blockmeta": "https://blockmeta.com/api/v2",
-        "blockcenter": "https://bcapi.bystack.com/api/v2/btm"
-    },
-    "solonet": {
-        "bytom": "http://localhost:9888",
-        "blockmeta": "https://blockmeta.com/api/v2",
-        "blockcenter": "https://bcapi.bystack.com/api/v2/btm"
-    },
-    "testnet": {
-        "bytom": "http://localhost:9888",
-        "blockmeta": "https://blockmeta.com/api/wisdom",
-        "blockcenter": "https://bcapi.bystack.com/api/v2/wisdom"
-    },
-    "timeout": 60,
-    "BTM_asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-    "fee": 10000000,
-    "confirmations": 1,
-    "sequence": 100
-}
-
 
 # Get balance by address
-def get_balance(address, network="testnet", limit=1, page=1, timeout=bytom["timeout"]):
+def get_balance(address, network="testnet", limit=1, page=1, timeout=config["timeout"]):
     """
     Get bytom balance.
 
@@ -57,7 +35,7 @@ def get_balance(address, network="testnet", limit=1, page=1, timeout=bytom["time
     """
 
     parameter = dict(limit=limit, page=page)
-    url = str(bytom[network]["blockmeta"]) + ("/address/%s" % address)
+    url = str(config[network]["blockmeta"]) + ("/address/%s" % address)
     response = requests.get(url=url, params=parameter,
                             headers=headers, timeout=timeout)
     if response.status_code == 204:
@@ -67,7 +45,7 @@ def get_balance(address, network="testnet", limit=1, page=1, timeout=bytom["time
 
 # Create account in blockcenter
 def account_create(xpublic_key, label="1st address", email=None,
-                   network="testnet", timeout=bytom["timeout"]):
+                   network="testnet", timeout=config["timeout"]):
     """
     Create account in blockcenter.
 
@@ -88,7 +66,7 @@ def account_create(xpublic_key, label="1st address", email=None,
     {"guid": "f0ed6ddd-9d6b-49fd-8866-a52d1083a13b", "address": "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "label": "1st address"}
     """
 
-    url = str(bytom[network]["blockcenter"]) + "/account/create"
+    url = str(config[network]["blockcenter"]) + "/account/create"
     data = dict(pubkey=xpublic_key, label=label, email=email)
     response = requests.post(url=url, data=json.dumps(data),
                              headers=headers, timeout=timeout)
@@ -98,7 +76,7 @@ def account_create(xpublic_key, label="1st address", email=None,
 
 
 # List addresses from blockcenter
-def list_address(guid, limit=10, network="testnet", timeout=bytom["timeout"]):
+def list_address(guid, limit=10, network="testnet", timeout=config["timeout"]):
     """
     List address from blockcenter.
 
@@ -117,7 +95,7 @@ def list_address(guid, limit=10, network="testnet", timeout=bytom["timeout"]):
     [{"guid": "f0ed6ddd-9d6b-49fd-8866-a52d1083a13b", "address": "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "label": "1st address", "balances": [{"asset": "f37dea62efd2965174b84bbb59a0bd0a671cf5fb2857303ffd77c1b482b84bdf", "balance": "100000000000", "total_received": "100000000000", "total_sent": "0", "decimals": 8, "alias": "Asset", "icon": "", "name": "f37dea62efd2965174b84bbb59a0bd0a671cf5fb2857303ffd77c1b482b84bdf", "symbol": "Asset", "in_usd": "0.00", "in_cny": "0.00", "in_btc": "0.000000"}, {"asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "balance": "2450000000", "total_received": "4950000000", "total_sent": "2500000000", "decimals": 8, "alias": "btm", "icon": "", "name": "BTM", "symbol": "BTM", "in_usd": "2.90", "in_cny": "20.58", "in_btc": "0.000283"}]}]
     """
 
-    url = str(bytom[network]["blockcenter"]) + "/account/list-address"
+    url = str(config[network]["blockcenter"]) + "/account/list-address"
     response = requests.post(url=url, data=json.dumps(dict(guid=guid)),
                              params=dict(limit=limit), headers=headers, timeout=timeout)
     if response.status_code == 200 and response.json()["code"] == 300:
@@ -126,12 +104,12 @@ def list_address(guid, limit=10, network="testnet", timeout=bytom["timeout"]):
 
 
 # Build transaction in blockcenter
-def build_transaction(tx, network="testnet", timeout=bytom["timeout"]):
+def build_transaction(transaction, network="testnet", timeout=config["timeout"]):
     """
     Build bytom transaction in blockcenter.
 
-    :param tx: bytom transaction.
-    :type tx: dict
+    :param transaction: bytom transaction.
+    :type transaction: dict
     :param network: bytom network, defaults to testnet.
     :type network: str
     :param timeout: request timeout, default to 15.
@@ -140,11 +118,11 @@ def build_transaction(tx, network="testnet", timeout=bytom["timeout"]):
 
     >>> from pybytom.rpc import build_transaction
     >>> build_transaction(transaction, "mainnet")
-    {"tx": {"hash": "2993414225f65390220730d0c1a356c14e91bca76db112d37366df93e364a492", "status_fail": false, "size": 379, "submission_timestamp": 0, "memo": "", "inputs": [{"script": "00142cda4f99ea8112e6fa61cdd26157ed6dc408332a", "address": "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": 2450000000, "type": "spend"}], "outputs": [{"utxo_id": "5edccebe497893c289121f9e365fdeb34c97008b9eb5a9960fe9541e7923aabc", "script": "01642091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e220ac13c0bb1445423a641754182d53f0677cd4351a0e743e6f10b35122c3d7ea01202b9a5949f5546f63a253e41cda6bffdedb527288a7e24ed953f5c2680c70d6ff741f547a6416000000557aa888537a7cae7cac631f000000537acd9f6972ae7cac00c0", "address": "smart contract", "asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": 1000, "type": "control"}, {"utxo_id": "f8cfbb692db1963be88b09c314adcc9e19d91c6c019aa556fb7cb76ba8ffa1fa", "script": "00142cda4f99ea8112e6fa61cdd26157ed6dc408332a", "address": "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": 2439999000, "type": "control"}], "fee": 10000000, "balances": [{"asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": "-10001000"}], "types": ["ordinary"]}, "raw_transaction": "070100010160015e7f2d7ecec3f61d30d0b2968973a3ac8448f0599ea20dce883b48c903c4d6e87fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8091a0900901011600142cda4f99ea8112e6fa61cdd26157ed6dc408332a22012091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e20201ad01ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe80701880101642091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e220ac13c0bb1445423a641754182d53f0677cd4351a0e743e6f10b35122c3d7ea01202b9a5949f5546f63a253e41cda6bffdedb527288a7e24ed953f5c2680c70d6ff741f547a6416000000557aa888537a7cae7cac631f000000537acd9f6972ae7cac00c000013dffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff98dcbd8b09011600142cda4f99ea8112e6fa61cdd26157ed6dc408332a00", "signing_instructions": [{"derivation_path": ["2c000000", "99000000", "01000000", "00000000", "01000000"], "sign_data": ["37727d44af9801e9723eb325592f4d55cc8d7e3815b1d663d61b7f1af9fc13a7"], "pubkey": "91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e2"}], "fee": 10000000}
+    {"transaction": {"hash": "2993414225f65390220730d0c1a356c14e91bca76db112d37366df93e364a492", "status_fail": false, "size": 379, "submission_timestamp": 0, "memo": "", "inputs": [{"script": "00142cda4f99ea8112e6fa61cdd26157ed6dc408332a", "address": "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": 2450000000, "type": "spend"}], "outputs": [{"utransactiono_id": "5edccebe497893c289121f9e365fdeb34c97008b9eb5a9960fe9541e7923aabc", "script": "01642091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e220ac13c0bb1445423a641754182d53f0677cd4351a0e743e6f10b35122c3d7ea01202b9a5949f5546f63a253e41cda6bffdedb527288a7e24ed953f5c2680c70d6ff741f547a6416000000557aa888537a7cae7cac631f000000537acd9f6972ae7cac00c0", "address": "smart contract", "asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": 1000, "type": "control"}, {"utransactiono_id": "f8cfbb692db1963be88b09c314adcc9e19d91c6c019aa556fb7cb76ba8ffa1fa", "script": "00142cda4f99ea8112e6fa61cdd26157ed6dc408332a", "address": "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": 2439999000, "type": "control"}], "fee": 10000000, "balances": [{"asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": "-10001000"}], "types": ["ordinary"]}, "raw_transaction": "070100010160015e7f2d7ecec3f61d30d0b2968973a3ac8448f0599ea20dce883b48c903c4d6e87fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8091a0900901011600142cda4f99ea8112e6fa61cdd26157ed6dc408332a22012091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e20201ad01ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe80701880101642091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e220ac13c0bb1445423a641754182d53f0677cd4351a0e743e6f10b35122c3d7ea01202b9a5949f5546f63a253e41cda6bffdedb527288a7e24ed953f5c2680c70d6ff741f547a6416000000557aa888537a7cae7cac631f000000537acd9f6972ae7cac00c000013dffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff98dcbd8b09011600142cda4f99ea8112e6fa61cdd26157ed6dc408332a00", "signing_instructions": [{"derivation_path": ["2c000000", "99000000", "01000000", "00000000", "01000000"], "sign_data": ["37727d44af9801e9723eb325592f4d55cc8d7e3815b1d663d61b7f1af9fc13a7"], "pubkey": "91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e2"}], "fee": 10000000}
     """
 
-    url = str(bytom[network]["blockcenter"]) + "/merchant/build-transaction"
-    response = requests.post(url=url, data=json.dumps(tx),
+    url = str(config[network]["blockcenter"]) + "/merchant/build-transaction"
+    response = requests.post(url=url, data=json.dumps(transaction),
                              headers=headers, timeout=timeout)
     if response.status_code == 200 and response.json()["code"] == 300:
         raise APIError(response.json()["code"], response.json()["msg"])
@@ -154,12 +132,12 @@ def build_transaction(tx, network="testnet", timeout=bytom["timeout"]):
 
 
 # Get transaction from blockcenter
-def get_transaction(tx_id, network="testnet", timeout=bytom["timeout"]):
+def get_transaction(transaction_id, network="testnet", timeout=config["timeout"]):
     """
     Get bytom transaction detail.
 
-    :param tx_id: bytom transaction id.
-    :type tx_id: str
+    :param transaction_id: bytom transaction id.
+    :type transaction_id: str
     :param network: bytom network, defaults to testnet.
     :type network: str
     :param timeout: request timeout, default to 15.
@@ -168,11 +146,11 @@ def get_transaction(tx_id, network="testnet", timeout=bytom["timeout"]):
 
     >>> from pybytom.rpc import get_transaction
     >>> get_transaction(transaction_id, "mainnet")
-    {"tx": {"hash": "2993414225f65390220730d0c1a356c14e91bca76db112d37366df93e364a492", "status_fail": false, "size": 379, "submission_timestamp": 0, "memo": "", "inputs": [{"script": "00142cda4f99ea8112e6fa61cdd26157ed6dc408332a", "address": "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": 2450000000, "type": "spend"}], "outputs": [{"utxo_id": "5edccebe497893c289121f9e365fdeb34c97008b9eb5a9960fe9541e7923aabc", "script": "01642091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e220ac13c0bb1445423a641754182d53f0677cd4351a0e743e6f10b35122c3d7ea01202b9a5949f5546f63a253e41cda6bffdedb527288a7e24ed953f5c2680c70d6ff741f547a6416000000557aa888537a7cae7cac631f000000537acd9f6972ae7cac00c0", "address": "smart contract", "asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": 1000, "type": "control"}, {"utxo_id": "f8cfbb692db1963be88b09c314adcc9e19d91c6c019aa556fb7cb76ba8ffa1fa", "script": "00142cda4f99ea8112e6fa61cdd26157ed6dc408332a", "address": "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": 2439999000, "type": "control"}], "fee": 10000000, "balances": [{"asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": "-10001000"}], "types": ["ordinary"]}, "raw_transaction": "070100010160015e7f2d7ecec3f61d30d0b2968973a3ac8448f0599ea20dce883b48c903c4d6e87fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8091a0900901011600142cda4f99ea8112e6fa61cdd26157ed6dc408332a22012091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e20201ad01ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe80701880101642091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e220ac13c0bb1445423a641754182d53f0677cd4351a0e743e6f10b35122c3d7ea01202b9a5949f5546f63a253e41cda6bffdedb527288a7e24ed953f5c2680c70d6ff741f547a6416000000557aa888537a7cae7cac631f000000537acd9f6972ae7cac00c000013dffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff98dcbd8b09011600142cda4f99ea8112e6fa61cdd26157ed6dc408332a00", "signing_instructions": [{"derivation_path": ["2c000000", "99000000", "01000000", "00000000", "01000000"], "sign_data": ["37727d44af9801e9723eb325592f4d55cc8d7e3815b1d663d61b7f1af9fc13a7"], "pubkey": "91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e2"}], "fee": 10000000}
+    {"transaction": {"hash": "2993414225f65390220730d0c1a356c14e91bca76db112d37366df93e364a492", "status_fail": false, "size": 379, "submission_timestamp": 0, "memo": "", "inputs": [{"script": "00142cda4f99ea8112e6fa61cdd26157ed6dc408332a", "address": "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": 2450000000, "type": "spend"}], "outputs": [{"utransactiono_id": "5edccebe497893c289121f9e365fdeb34c97008b9eb5a9960fe9541e7923aabc", "script": "01642091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e220ac13c0bb1445423a641754182d53f0677cd4351a0e743e6f10b35122c3d7ea01202b9a5949f5546f63a253e41cda6bffdedb527288a7e24ed953f5c2680c70d6ff741f547a6416000000557aa888537a7cae7cac631f000000537acd9f6972ae7cac00c0", "address": "smart contract", "asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": 1000, "type": "control"}, {"utransactiono_id": "f8cfbb692db1963be88b09c314adcc9e19d91c6c019aa556fb7cb76ba8ffa1fa", "script": "00142cda4f99ea8112e6fa61cdd26157ed6dc408332a", "address": "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": 2439999000, "type": "control"}], "fee": 10000000, "balances": [{"asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": "-10001000"}], "types": ["ordinary"]}, "raw_transaction": "070100010160015e7f2d7ecec3f61d30d0b2968973a3ac8448f0599ea20dce883b48c903c4d6e87fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8091a0900901011600142cda4f99ea8112e6fa61cdd26157ed6dc408332a22012091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e20201ad01ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe80701880101642091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e220ac13c0bb1445423a641754182d53f0677cd4351a0e743e6f10b35122c3d7ea01202b9a5949f5546f63a253e41cda6bffdedb527288a7e24ed953f5c2680c70d6ff741f547a6416000000557aa888537a7cae7cac631f000000537acd9f6972ae7cac00c000013dffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff98dcbd8b09011600142cda4f99ea8112e6fa61cdd26157ed6dc408332a00", "signing_instructions": [{"derivation_path": ["2c000000", "99000000", "01000000", "00000000", "01000000"], "sign_data": ["37727d44af9801e9723eb325592f4d55cc8d7e3815b1d663d61b7f1af9fc13a7"], "pubkey": "91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e2"}], "fee": 10000000}
     """
 
-    url = str(bytom[network]["blockcenter"]) + "/merchant/get-transaction"
-    response = requests.post(url=url, data=json.dumps(dict(tx_id=tx_id)),
+    url = str(config[network]["blockcenter"]) + "/merchant/get-transaction"
+    response = requests.post(url=url, data=json.dumps(dict(transaction_id=transaction_id)),
                              headers=headers, timeout=timeout)
     if response.status_code == 200 and response.json()["code"] == 300:
         raise APIError(response.json()["code"], response.json()["msg"])
@@ -180,15 +158,15 @@ def get_transaction(tx_id, network="testnet", timeout=bytom["timeout"]):
 
 
 # Submit payment from blockcenter
-def submit_payment(guid, tx_raw, signatures,
-                   network, memo="mock", timeout=bytom["timeout"]):
+def submit_payment(guid, transaction_raw, signatures,
+                   network, memo="mock", timeout=config["timeout"]):
     """
      Submit transaction raw to Bytom blockchain.
 
     :param guid: bytom blockcenter id.
     :type guid: str
-    :param tx_raw: bytom transaction raw.
-    :type tx_raw: str
+    :param transaction_raw: bytom transaction raw.
+    :type transaction_raw: str
     :param signatures: bytom signed datas.
     :type signatures: list
     :param network: bytom network, defaults to testnet.
@@ -205,8 +183,8 @@ def submit_payment(guid, tx_raw, signatures,
     """
     if not isinstance(signatures, list):
         raise TypeError("signatures must be list format")
-    url = str(bytom[network]["blockcenter"]) + "/merchant/submit-payment"
-    data = dict(guid=guid, raw_transaction=tx_raw, signatures=signatures, memo=memo)
+    url = str(config[network]["blockcenter"]) + "/merchant/submit-payment"
+    data = dict(guid=guid, raw_transaction=transaction_raw, signatures=signatures, memo=memo)
     response = requests.post(url=url, data=json.dumps(data),
                              headers=headers, timeout=timeout)
     if response.json()["code"] != 200:
@@ -215,25 +193,25 @@ def submit_payment(guid, tx_raw, signatures,
 
 
 # Decode transaction raw
-def decode_tx_raw(tx_raw, network="testnet", timeout=bytom["timeout"]):
+def decode_transaction_raw(transaction_raw, network="testnet", timeout=config["timeout"]):
     """
     Get decoded transaction raw.
 
-    :param tx_raw: bytom transaction raw.
-    :type tx_raw: str
+    :param transaction_raw: bytom transaction raw.
+    :type transaction_raw: str
     :param network: bytom network, defaults to testnet.
     :type network: str
     :param timeout: request timeout, default to 15.
     :type timeout: int
     :returns: dict -- bytom decoded transaction raw.
 
-    >>> from pybytom.rpc import decode_tx_raw
-    >>> decode_tx_raw(transaction_raw, "testnet")
+    >>> from pybytom.rpc import decode_transaction_raw
+    >>> decode_transaction_raw(transaction_raw, "testnet")
     {...}
     """
 
-    url = str(bytom[network]["bytom"]) + "/decode-raw-transaction"
-    response = requests.post(url=url, data=json.dumps(dict(raw_transaction=tx_raw)),
+    url = str(config[network]["bytom"]) + "/decode-raw-transaction"
+    response = requests.post(url=url, data=json.dumps(dict(raw_transaction=transaction_raw)),
                              headers=headers, timeout=timeout)
     if response.status_code == 400:
         raise APIError(response.json()["code"], response.json()["msg"])
