@@ -242,7 +242,7 @@ class Wallet:
         Drive bytom wallet from path.
 
         :param path: Bytom derivation path.
-        :type path: int.
+        :type path: str.
         :returns:  Wallet -- bytom wallet instance.
 
         >>> from pybytom.wallet import Wallet
