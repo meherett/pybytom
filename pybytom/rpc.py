@@ -4,22 +4,47 @@ import requests
 import json
 
 from .exceptions import APIError
-from . import configuration as config
 
 
 # Request headers
 headers = dict()
-headers.setdefault("Content-Type", "application/json")
+# headers.setdefault("Content-Type", "application/json")
+
+# Bytom configuration
+config = {
+    "mainnet": {
+        "bytom": "http://localhost:9888",
+        "blockmeta": "https://blockmeta.com/api/v3",
+        "blockcenter": "https://bcapi.bystack.com/api/v2/btm"
+    },
+    "solonet": {
+        "bytom": "http://localhost:9888",
+        "blockmeta": None,
+        "blockcenter": None
+    },
+    "testnet": {
+        "bytom": "http://localhost:9888",
+        "blockmeta": None,
+        "blockcenter": None
+    },
+    "network": "solonet",  # mainnet, solonet & testnet
+    "timeout": 60,
+    "BTM_ASSET": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "fee": 10_000_000,  # 0.1 BTM
+    "confirmations": 1
+}
 
 
 # Get balance by address
-def get_balance(address, network="testnet", limit=1, page=1, timeout=config["timeout"]):
+def get_balance(address, asset=config["BTM_ASSET"], network=config["network"], limit=1, page=1, timeout=config["timeout"]):
     """
     Get bytom balance.
 
     :param address: bytom address.
     :type address: str
-    :param network: bytom network, defaults to testnet.
+    :param asset: bytom asset, default to BTM asset.
+    :type asset: str
+    :param network: bytom network, defaults to solonet.
     :type network: str
     :param limit: bytom limit, defaults to 1.
     :type limit: str
@@ -35,17 +60,20 @@ def get_balance(address, network="testnet", limit=1, page=1, timeout=config["tim
     """
 
     parameter = dict(limit=limit, page=page)
-    url = str(config[network]["blockmeta"]) + ("/address/%s" % address)
+    url = f"{config[network]['blockmeta']}/address/{address}/asset"
     response = requests.get(url=url, params=parameter,
                             headers=headers, timeout=timeout)
     if response.status_code == 204:
         return 0
-    return response.json()["balance"]
+    for _asset in response.json():
+        if asset == _asset["asset_id"]:
+            return response.json()["balance"]
+    return None
 
 
 # Create account in blockcenter
 def account_create(xpublic_key, label="1st address", email=None,
-                   network="testnet", timeout=config["timeout"]):
+                   network=config["network"], timeout=config["timeout"]):
     """
     Create account in blockcenter.
 
@@ -55,7 +83,7 @@ def account_create(xpublic_key, label="1st address", email=None,
     :type label: str
     :param email: email address, defaults to None.
     :type email: str
-    :param network: bytom network, defaults to testnet.
+    :param network: bytom network, defaults to solonet.
     :type network: str
     :param timeout: request timeout, default to 15.
     :type timeout: int
@@ -76,7 +104,7 @@ def account_create(xpublic_key, label="1st address", email=None,
 
 
 # List addresses from blockcenter
-def list_address(guid, limit=10, network="testnet", timeout=config["timeout"]):
+def list_address(guid, limit=10, network=config["network"], timeout=config["timeout"]):
     """
     List address from blockcenter.
 
@@ -84,7 +112,7 @@ def list_address(guid, limit=10, network="testnet", timeout=config["timeout"]):
     :type guid: str
     :param limit: blockcenter limit default to 10.
     :type limit: int
-    :param network: bytom network, defaults to testnet.
+    :param network: bytom network, defaults to solonet.
     :type network: str
     :param timeout: request timeout, default to 15.
     :type timeout: int
@@ -104,13 +132,13 @@ def list_address(guid, limit=10, network="testnet", timeout=config["timeout"]):
 
 
 # Build transaction in blockcenter
-def build_transaction(transaction, network="testnet", timeout=config["timeout"]):
+def build_transaction(transaction, network=config["network"], timeout=config["timeout"]):
     """
     Build bytom transaction in blockcenter.
 
     :param transaction: bytom transaction.
     :type transaction: dict
-    :param network: bytom network, defaults to testnet.
+    :param network: bytom network, defaults to solonet.
     :type network: str
     :param timeout: request timeout, default to 15.
     :type timeout: int
@@ -132,13 +160,13 @@ def build_transaction(transaction, network="testnet", timeout=config["timeout"])
 
 
 # Get transaction from blockcenter
-def get_transaction(transaction_id, network="testnet", timeout=config["timeout"]):
+def get_transaction(transaction_id, network=config["network"], timeout=config["timeout"]):
     """
     Get bytom transaction detail.
 
     :param transaction_id: bytom transaction id.
     :type transaction_id: str
-    :param network: bytom network, defaults to testnet.
+    :param network: bytom network, defaults to solonet.
     :type network: str
     :param timeout: request timeout, default to 15.
     :type timeout: int
@@ -150,16 +178,16 @@ def get_transaction(transaction_id, network="testnet", timeout=config["timeout"]
     """
 
     url = str(config[network]["blockcenter"]) + "/merchant/get-transaction"
-    response = requests.post(url=url, data=json.dumps(dict(transaction_id=transaction_id)),
+    response = requests.post(url=url, data=json.dumps(dict(tx_id=transaction_id)),
                              headers=headers, timeout=timeout)
     if response.status_code == 200 and response.json()["code"] == 300:
-        raise APIError(response.json()["code"], response.json()["msg"])
+        raise APIError(response.json()["msg"], response.json()["code"])
     return response.json()["result"]["data"]
 
 
-# Submit payment from blockcenter
-def submit_payment(guid, transaction_raw, signatures,
-                   network, memo="mock", timeout=config["timeout"]):
+# Submit transaction raw from blockcenter
+def submit_transaction_raw(guid, transaction_raw, signatures,
+                           network, memo="mock", timeout=config["timeout"]):
     """
      Submit transaction raw to Bytom blockchain.
 
@@ -169,7 +197,7 @@ def submit_payment(guid, transaction_raw, signatures,
     :type transaction_raw: str
     :param signatures: bytom signed datas.
     :type signatures: list
-    :param network: bytom network, defaults to testnet.
+    :param network: bytom network, defaults to solonet.
     :type network: str
     :param memo: memo, defaults to mock.
     :type memo: str
@@ -177,8 +205,8 @@ def submit_payment(guid, transaction_raw, signatures,
     :type timeout: int
     :returns: dict -- bytom transaction id, fee, type and date.
 
-    >>> from pybytom.rpc import submit_payment
-    >>> submit_payment("guid", transaction_raw, [[...], [...]], "mainent")
+    >>> from pybytom.rpc import submit_transaction_raw
+    >>> submit_transaction_raw("guid", transaction_raw, [[...], [...]], "mainent")
     {...}
     """
     if not isinstance(signatures, list):
@@ -189,17 +217,17 @@ def submit_payment(guid, transaction_raw, signatures,
                              headers=headers, timeout=timeout)
     if response.json()["code"] != 200:
         raise APIError(response.json()["code"], response.json()["msg"])
-    return response.json()["result"]["data"]
+    return response.json()["result"]["data"]["transaction_hash"]
 
 
 # Decode transaction raw
-def decode_transaction_raw(transaction_raw, network="testnet", timeout=config["timeout"]):
+def decode_transaction_raw(transaction_raw, network=config["network"], timeout=config["timeout"]):
     """
     Get decoded transaction raw.
 
     :param transaction_raw: bytom transaction raw.
     :type transaction_raw: str
-    :param network: bytom network, defaults to testnet.
+    :param network: bytom network, defaults to solonet.
     :type network: str
     :param timeout: request timeout, default to 15.
     :type timeout: int
