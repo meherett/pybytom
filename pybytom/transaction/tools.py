@@ -3,23 +3,24 @@
 from ..rpc import get_transaction
 
 
-def find_contract_utxo_id(tx_id, network):
+def find_contract_utxo_id(transaction_id, network):
     """
     Find smart contract UTXO id.
 
-    :param tx_id: bytom transaction id or hash.
-    :type tx_id: str
-    :param network: bytom network.
+    :param transaction_id: Bytom transaction id or hash.
+    :type transaction_id: str
+    :param network: Bytom network.
     :type network: str
     :returns: str -- UTXO id.
 
     >>> from pybytom.transaction.tools import find_contract_utxo_id
-    >>> find_contract_utxo_id(bytom_transaction_id, "mainnet")
+    >>> find_contract_utxo_id("e4d4fab70a41536cf298d6f261c0a1ac169a45be47583f7240115c9059cd0d03", "mainnet")
     "169a45be47583f7240115c9059cd0d03e4d4fab70a41536cf298d6f261c0a1ac"
     """
 
     utxo_id = None
-    contract_transaction = get_transaction(tx_id=tx_id, network=network)
+    contract_transaction = get_transaction(
+        transaction_id=transaction_id, network=network)
     contract_outputs = contract_transaction["outputs"]
     for contract_output in contract_outputs:
         if contract_output["address"] == "smart contract":
@@ -32,9 +33,9 @@ def spend_utxo_action(utxo):
     """
     Get spend UTXO action
 
-    :param utxo: bytom utxo id.
+    :param utxo: Bytom utxo id.
     :type utxo: str
-    :returns: dict -- bytom spend utxo action.
+    :returns: dict -- Bytom spend utxo action.
 
     >>> from pybytom.transaction.tools import spend_utxo_action
     >>> spend_utxo_action(bytom_utxo_id)
@@ -48,13 +49,13 @@ def contract_arguments(amount, address, value=None):
     """
     Get contract arguments.
 
-    :param amount: bytom amount.
+    :param amount: Bytom amount.
     :type amount: int
-    :param address: bytom address.
+    :param address: Bytom address.
     :type address: str
     :param value: value, default to None.
     :type value: str
-    :returns: list -- bytom contract arguments.
+    :returns: list -- Bytom contract arguments.
 
     >>> from pybytom.transaction.tools import contract_arguments
     >>> contract_arguments(bytom_amount, bytom_address)
@@ -72,11 +73,11 @@ def spend_wallet_action(amount, asset):
     """
     Get spend wallet action.
 
-    :param amount: bytom amount.
+    :param amount: Bytom amount.
     :type amount: int
-    :param asset: bytom asset.
+    :param asset: Bytom asset.
     :type asset: str
-    :returns: dict -- bytom spend wallet action.
+    :returns: dict -- Bytom spend wallet action.
 
     >>> from pybytom.transaction.tools import spend_wallet_action
     >>> spend_wallet_action(bytom_amount, bytom_asset)
@@ -93,13 +94,13 @@ def spend_account_action(account, amount, asset):
     """
     Get spend account action.
 
-    :param account: bytom account.
+    :param account: Bytom account.
     :type account: str
-    :param amount: bytom amount.
+    :param amount: Bytom amount.
     :type amount: int
-    :param asset: bytom asset.
+    :param asset: Bytom asset.
     :type asset: str
-    :returns: dict -- bytom spend account action.
+    :returns: dict -- Bytom spend account action.
 
     >>> from pybytom.transaction.tools import spend_account_action
     >>> spend_account_action(bytom_account, bytom_amount, bytom_asset)
@@ -114,13 +115,13 @@ def control_program_action(amount, asset, control_program):
     """
     Get control program action.
 
-    :param amount: bytom amount.
+    :param amount: Bytom amount.
     :type amount: int
-    :param asset: bytom asset.
+    :param asset: Bytom asset.
     :type asset: str
-    :param control_program: bytom control program.
+    :param control_program: Bytom control program.
     :type control_program: str
-    :returns: dict -- bytom control program action.
+    :returns: dict -- Bytom control program action.
 
     >>> from pybytom.transaction.tools import control_program_action
     >>> control_program_action(bytom_amount, bytom_asset, bytom_control_program)
@@ -138,17 +139,17 @@ def control_address_action(amount, asset, address):
     """
     Get control address action.
 
-    :param amount: bytom amount.
+    :param amount: Bytom amount.
     :type amount: int
-    :param asset: bytom asset.
+    :param asset: Bytom asset.
     :type asset: str
-    :param address: bytom address.
+    :param address: Bytom address.
     :type address: str
-    :returns: dict -- bytom control address action.
+    :returns: dict -- Bytom control address action.
 
     >>> from pybytom.transaction.tools import control_address_action
     >>> control_address_action(bytom_amount, bytom_asset, bytom_address)
-    {'type': 'control_address', 'amount': 100, 'asset': '...', 'address': '...'}
+    {'type': 'control_address', 'amount': 10000000, 'asset': '...', 'address': '...'}
     """
 
     return dict(
