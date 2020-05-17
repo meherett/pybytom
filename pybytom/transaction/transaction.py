@@ -1,93 +1,136 @@
 #!/usr/bin/env python3
 
-from .. import configuration as config
+from ..rpc import config
 from ..wallet import Wallet
 from ..wallet.tools import (
     indexes_to_path, get_program, get_address
 )
-from ..rpc import build_transaction  # , decode_tx_raw
+from ..rpc import build_transaction
 from .tools import spend_wallet_action, control_address_action
+from ..exceptions import ClientError, NetworkError
 
 
+# Byrom transaction
 class Transaction:
     """
     Bytom Transaction class.
 
-    :param network: bytom network, defaults to solonet.
+    :param network: Bytom network, defaults to solonet.
     :type network: str
 
-    :returns:  Transaction -- bytom transaction instance.
+    :returns: Transaction -- Bytom transaction instance.
     .. note::
         Bytom has only three networks, ``mainnet``. ``solonet`` and ``testnet``.
     """
 
     # Initialization transaction
-    def __init__(self, network="solonet"):
-        # Transaction
-        self.transaction = None
-        # Bytom network
-        self.network: str = network
-        # Bytom fee
-        self.fee: int = config["fee"]
-        # Signed datas
-        self.signatures: list = []
+    def __init__(self, network=config["network"]):
+
+        # Checking network
+        if not isinstance(network, str):
+            raise TypeError("invalid network instance, only takes string type")
+        if network not in ["mainnet", "solonet", "testnet"]:
+            raise NetworkError("invalid network type",
+                               "choose only mainnet, solonet or testnet networks")
+        # Bytom network and transaction
+        self.network, self.transaction = network, None
+        # Bytom fee, signed datas/signatures and confirmations
+        self._fee, self._signatures, self._confirmations = \
+            config["fee"], [], config["confirmations"]
 
     # Building bytom transaction
-    def build_transaction(self, guid: str, inputs: list, outputs: list, fee=config["fee"],
-                          confirmations=config["confirmations"], *args, **kwargs):
+    def build_transaction(self, **kwargs):
         """
-        Build bytom transaction.
+        Bytom build transaction.
 
-        :param guid: bytom blockcenter guid.
-        :type guid: str
-        :param inputs: bytom transaction inputs.
-        :type inputs: list
-        :param outputs: bytom transaction outputs.
-        :type outputs: list
-        :param fee: bytom transaction fee, defaults to 10000000.
-        :type fee: int
-        :param confirmations: bytom transaction confirmations, defaults to 1.
-        :type confirmations: int
-        :returns:  Transaction -- bytom transaction instance.
+        :param kwargs: Arbitrary keyword arguments. If you do accept ``**kwargs``, make sure
+        you link to documentation that describes what keywords are accepted,
+        or list the keyword arguments as a definition list:
+        ``guid`` (str) bytom blockcenter guid.
+        ``inputs`` (list) bytom blockcenter inputs.
+        ``outputs`` (list) bytom blockcenter outputs.
+        ``fee`` (int) bytom transaction fee, defaults to 10000000.
+        ``confirmations`` (int) confirmations: bytom transaction confirmations, defaults to 1.
+        :returns:  Transaction -- Bytom transaction instance.
 
         >>> from pybytom.transaction import Transaction
         >>> transaction = Transaction(network="mainnet")
-        >>> transaction.build_transaction("f0ed6ddd-9d6b-49fd-8866-a52d1083a13b", inputs=[...], outputs=[...], fee=10000000, confirmations=3)
+        >>> transaction.build_transaction(guid="f0ed6ddd-9d6b-49fd-8866-a52d1083a13b", inputs=[[...], ...], outputs=[[...], ...], fee=10000000, confirmations=3)
         <pybytom.transaction.transaction.Transaction object at 0x0409DAF0>
         """
 
         # Checking build transaction arguments instance
-        if not isinstance(guid, str):
+        if {"guid", "inputs", "outputs"} - set(kwargs.keys()):
+            raise ClientError("you can't build transaction without 'guid', 'inputs' and 'outputs'",
+                              "default fee is 10000000 and confirmations to 1.")
+        if not isinstance(kwargs["guid"], str):
             raise TypeError("invalid guid instance, only takes string type")
-        if not isinstance(inputs, list):
+        if not isinstance(kwargs["inputs"], list):
             raise TypeError("invalid inputs instance, only takes list type")
-        if not isinstance(outputs, list):
+        if not isinstance(kwargs["outputs"], list):
             raise TypeError("invalid outputs instance, only takes list type")
-        if not isinstance(fee, int):
+        if "fee" in kwargs.keys() and not isinstance(kwargs["fee"], int):
             raise TypeError("invalid fee instance, only takes integer type")
-        if not isinstance(confirmations, int):
+        if "confirmations" in kwargs.keys() and not isinstance(kwargs["confirmations"], int):
             raise TypeError("invalid confirmations instance, only takes integer type")
 
-        self.fee = fee
-        # Transaction
+        # Setting fee and confirmations
+        self._fee = kwargs["fee"] \
+            if "fee" in kwargs.keys() else config["fee"]
+        self._confirmations = kwargs["confirmations"] \
+            if "confirmations" in kwargs.keys() else config["confirmations"]
+
+        # Transaction config
         transaction = dict(
-            guid=guid,
-            inputs=inputs,
-            outputs=outputs,
-            fee=fee,
-            confirmations=confirmations
+            guid=kwargs["guid"],
+            inputs=kwargs["inputs"],
+            outputs=kwargs["outputs"],
+            fee=self._fee,
+            confirmations=self._confirmations
         )
         # Building transaction
         self.transaction = build_transaction(
             transaction=transaction, network=self.network)
         return self
 
+    # Transaction fee
+    def fee(self) -> int:
+        """
+        Bytom transaction fee.
+
+        :returns: list -- Bytom transaction fee.
+
+        >>> from pybytom.transaction import Transaction
+        >>> transaction = Transaction(network="mainnet")
+        >>> transaction.build_transaction("f0ed6ddd-9d6b-49fd-8866-a52d1083a13b", inputs=[...], outputs=[...])
+        >>> transaction.fee()
+        10000000
+        """
+
+        return self._fee
+
+    # Transaction confirmations
+    def confirmations(self) -> int:
+        """
+        Bytom transaction confirmations.
+
+        :returns: int -- Bytom transaction confirmations.
+
+        >>> from pybytom.transaction import Transaction
+        >>> transaction = Transaction(network="mainnet")
+        >>> transaction.build_transaction("f0ed6ddd-9d6b-49fd-8866-a52d1083a13b", inputs=[...], outputs=[...])
+        >>> transaction.confirmations()
+        2
+        """
+
+        return self._confirmations
+
     # Transaction hash
     def hash(self) -> str:
         """
-        Get bytom transaction hash.
+        Bytom transaction hash.
 
-        :returns: str -- bytom transaction hash or transaction id.
+        :returns: str -- Bytom transaction hash or transaction id.
 
         >>> from pybytom.transaction import Transaction
         >>> transaction = Transaction(network="mainnet")
@@ -100,12 +143,29 @@ class Transaction:
             raise ValueError("transaction is none, build transaction first.")
         return self.transaction["tx"]["hash"]
 
+    # Transaction json
+    def json(self):
+        """
+        Bytom transaction json format.
+
+        :returns: dict -- Bytom transaction json format.
+
+        >>> from pybytom.transaction import Transaction
+        >>> transaction = Transaction(network="mainnet")
+        >>> transaction.build_transaction("f0ed6ddd-9d6b-49fd-8866-a52d1083a13b", inputs=[...], outputs=[...])
+        >>> transaction.json()
+        {"hash": "2993414225f65390220730d0c1a356c14e91bca76db112d37366df93e364a492", "status_fail": false, "size": 379, "submission_timestamp": 0, "memo": "", "inputs": [{"script": "00142cda4f99ea8112e6fa61cdd26157ed6dc408332a", "address": "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": 2450000000, "type": "spend"}], "outputs": [{"utxo_id": "5edccebe497893c289121f9e365fdeb34c97008b9eb5a9960fe9541e7923aabc", "script": "01642091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e220ac13c0bb1445423a641754182d53f0677cd4351a0e743e6f10b35122c3d7ea01202b9a5949f5546f63a253e41cda6bffdedb527288a7e24ed953f5c2680c70d6ff741f547a6416000000557aa888537a7cae7cac631f000000537acd9f6972ae7cac00c0", "address": "smart contract", "asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": 1000, "type": "control"}, {"utxo_id": "f8cfbb692db1963be88b09c314adcc9e19d91c6c019aa556fb7cb76ba8ffa1fa", "script": "00142cda4f99ea8112e6fa61cdd26157ed6dc408332a", "address": "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": 2439999000, "type": "control"}], "fee": 10000000, "balances": [{"asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": "-10001000"}], "types": ["ordinary"]}
+        """
+        if self.transaction is None:
+            raise ValueError("transaction is none, build transaction first.")
+        return self.transaction["tx"]
+
     # Transaction raw
     def raw(self) -> str:
         """
-        Get bytom transaction raw.
+        Bytom transaction raw.
 
-        :returns: str -- bytom transaction raw.
+        :returns: str -- Bytom transaction raw.
 
         >>> from pybytom.transaction import Transaction
         >>> transaction = Transaction(network="mainnet")
@@ -118,11 +178,25 @@ class Transaction:
             raise ValueError("transaction is none, build transaction first.")
         return self.transaction["raw_transaction"]
 
-    # Signing Instructions
-    def signing_instructions(self, detail=False) -> list:
-        unsigned_datas = list()
+    # Unsigned datas with instructions
+    def unsigned_datas(self, detail=False) -> list:
+        """
+        Bytom transaction json format.
+
+        :returns: dict -- Bytom transaction json format.
+
+        >>> from pybytom.transaction import Transaction
+        >>> transaction = Transaction(network="mainnet")
+        >>> transaction.build_transaction("f0ed6ddd-9d6b-49fd-8866-a52d1083a13b", inputs=[...], outputs=[...])
+        >>> transaction.unsigned_datas()
+        [{'datas': ['a7ba7ffd969e4150b36ea9f1f861d53c6f69226a3519023899d27bf1f85be3d9'], 'public_key': '91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e2', 'network': 'mainnet', 'path': 'm/44/153/1/0/1'}, {'datas': ['0dbf0e408099017711a941d9a9899541afa64eb31a7118815d37e6d603b7c329'], 'public_key': '91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e2', 'network': 'mainnet', 'path': 'm/44/153/1/0/1'}]
+        """
+
+        # Checking transaction
         if self.transaction is None:
             raise ValueError("transaction is none, build transaction first.")
+
+        unsigned_datas: list = []
         for signing_instruction in self.transaction["signing_instructions"]:
             unsigned_data = dict(datas=signing_instruction["sign_data"])
             if "pubkey" in signing_instruction and signing_instruction["pubkey"]:
@@ -159,7 +233,7 @@ class Transaction:
     def sign(self, xprivate_key: str, account=1,
              change=False, address=1, path=None, indexes=None):
         """
-        Sign bytom transaction.
+        Bytom sign transaction.
 
         :param xprivate_key: bytom xprivate key.
         :type xprivate_key: str
@@ -197,7 +271,7 @@ class Transaction:
 
         wallet = Wallet(network=self.network)
         wallet.from_xprivate_key(xprivate_key=xprivate_key)
-        for signing_instruction in self.signing_instructions(detail=True):
+        for signing_instruction in self.unsigned_datas(detail=True):
             signed_data: list = []
             unsigned_datas = signing_instruction["datas"]
             if signing_instruction["path"]:
@@ -210,9 +284,26 @@ class Transaction:
                 wallet.from_indexes(indexes)
             for unsigned_data in unsigned_datas:
                 signed_data.append(wallet.sign(unsigned_data))
-            self.signatures.append(signed_data)
+            self._signatures.append(signed_data)
             wallet.clean_derivation()
         return self
+
+    # Signed datas/signatures
+    def signatures(self) -> list:
+        """
+        Bytom signed datas/signatures.
+
+        :returns: list -- Bytom sign datas/signatures.
+
+        >>> from pybytom.transaction import Transaction
+        >>> transaction = Transaction(network="mainnet")
+        >>> transaction.build_transaction("f0ed6ddd-9d6b-49fd-8866-a52d1083a13b", inputs=[...], outputs=[...])
+        >>> transaction.sign(xprivate_key="3842e3fa2af2a687e7fd67655e7a02e85bbb4ca378d4338ff590dedc7ddff447797e1e781190835138c2d1a96d0e654b625a4c019cbc64f71100be7ad1b8d4ed")
+        >>> transaction.signatures()
+        [[...], ...]
+        """
+
+        return self._signatures
 
 
 # Normal transaction
@@ -220,33 +311,37 @@ class NormalTransaction(Transaction):
     """
     Bytom Normal transaction class.
 
-    :param network: bytom network, defaults to solonet.
+    :param network: Bytom network, defaults to solonet.
     :type network: str
 
-    :returns:  NormalTransaction -- bytom normal transaction instance.
+    :returns:  NormalTransaction -- Bytom normal transaction instance.
+
     .. note::
         Bytom has only three networks, ``mainnet``. ``solonet`` and ``testnet``.
     """
 
-    # Initialization transaction
+    # Init normal transaction
     def __init__(self, network="solonet"):
         # Transaction
         super().__init__(network)
 
-    # Building bytom transaction
-    def build_transaction(self, guid: str, recipients: dict, asset: str, amount: str, *args, **kwargs):
+    # Building bytom normal transaction
+    def build_transaction(self, guid: str, recipients: dict, asset: str,
+                          fee=config["fee"], confirmations=config["confirmations"]):
         """
-        Build bytom fund transaction.
+        Build bytom normal transaction.
 
-        :param wallet: bytom sender wallet.
-        :type wallet: bytom.wallet.Wallet
-        :param htlc: bytom hash time lock contract (HTLC).
-        :type htlc: bytom.htlc.HTLC
-        :param amount: bytom amount to fund.
-        :type amount: int
-        :param asset: bytom asset id, defaults to BTM asset.
+        :param guid: Bytom sender blockcenter guid.
+        :type guid: str
+        :param recipients: Recipients bytom address and amount.
+        :type recipients: dict
+        :param asset: Bytom asset id, defaults to BTM asset.
         :type asset: str
-        :returns: FundTransaction -- bytom fund transaction instance.
+        :param fee: Bytom transaction fee, defaults to 10000000.
+        :type fee: int
+        :param confirmations: Bytom transaction confirmations, defaults to 1.
+        :type confirmations: int
+        :returns: NormalTransaction -- Bytom normal transaction instance.
 
         >>> from pybytom.transaction import NormalTransaction
         >>> normal_transaction = NormalTransaction(network="mainnet")
@@ -255,42 +350,43 @@ class NormalTransaction(Transaction):
         """
 
         # Checking build transaction arguments instance
-        if not isinstance(wallet, Wallet):
-            raise TypeError("invalid wallet instance, only takes bytom Wallet class")
-        if not isinstance(htlc, HTLC):
-            raise TypeError("invalid htlc instance, only takes bytom HTLC class")
-        if not isinstance(amount, int):
-            raise TypeError("invalid amount instance, only takes integer type")
+        if not isinstance(guid, str):
+            raise TypeError("invalid guid instance, only takes bytom string type")
+        if not isinstance(recipients, dict):
+            raise TypeError("invalid recipients instance, only takes bytom dictionary type")
         if not isinstance(asset, str):
             raise TypeError("invalid asset instance, only takes string type")
-        # Setting wallet GUID
-        self.guid = wallet.guid()
         # Actions
         inputs, outputs = list(), list()
         # Input action
         inputs.append(
             spend_wallet_action(
                 asset=asset,
-                amount=amount
+                amount=sum(recipients.values())
             )
         )
         # Output action
-        outputs.append(
-            control_address_action(
-                asset=asset,
-                amount=amount,
-                address=address
+        for address, amount in recipients.items():
+            outputs.append(
+                control_address_action(
+                    asset=asset,
+                    amount=amount,
+                    address=address
+                )
             )
-        )
+        # Setting transaction fee and confirmations
+        self._fee, self._confirmations = fee, confirmations
         # Transaction
-        tx = dict(
-            guid=self.guid,
+        transaction = dict(
+            guid=guid,
             inputs=inputs,
             outputs=outputs,
-            fee=config["fee"], confirmations=config["confirmations"]
+            fee=self._fee,
+            confirmations=self._confirmations
         )
         # Building transaction
-        self.transaction = build_transaction(tx=tx, network=self.network)
+        self.transaction = build_transaction(
+            transaction=transaction, network=self.network)
         return self
 
     # Transaction json
@@ -310,4 +406,75 @@ class NormalTransaction(Transaction):
         if self.transaction is None:
             raise ValueError("transaction is none, build transaction first.")
         # return decode_tx_raw(tx_raw=self.transaction["raw_transaction"])
+        return self.transaction["tx"]
+
+
+# Advanced transaction
+class AdvancedTransaction(Transaction):
+    """
+    Bytom Advanced transaction class.
+
+    :param network: Bytom network, defaults to solonet.
+    :type network: str
+
+    :returns:  AdvancedTransaction -- Bytom advanced transaction instance.
+
+    .. note::
+        Bytom has only three networks, ``mainnet``. ``solonet`` and ``testnet``.
+    """
+
+    # Init advanced transaction
+    def __init__(self, network="solonet"):
+        # Transaction
+        super().__init__(network)
+
+    # Building bytom advanced transaction
+    def build_transaction(self, guid: str, inputs: list, outputs: list,
+                          fee=config["fee"], confirmations=config["confirmations"]):
+        """
+        Build bytom advanced transaction.
+
+        :param guid: Bytom blockcenter guid.
+        :type guid: str
+        :param inputs: Bytom transaction inputs.
+        :type inputs: list
+        :param outputs: Bytom transaction outputs.
+        :type outputs: list
+        :param fee: Bytom transaction fee, defaults to 10000000.
+        :type fee: int
+        :param confirmations: bytom transaction confirmations, defaults to 1.
+        :type confirmations: int
+        :returns:  AdvancedTransaction -- Bytom advanced transaction instance.
+
+        >>> from pybytom.transaction import AdvancedTransaction
+        >>> advanced_transaction = AdvancedTransaction(network="mainnet")
+        >>> advanced_transaction.build_transaction("f0ed6ddd-9d6b-49fd-8866-a52d1083a13b", [[...], ...], outputs=[[...], ...], 10000000, 3)
+        <pybytom.transaction.transaction.AdvancedTransaction object at 0x0409DAF0>
+        """
+
+        # Checking build transaction arguments instance
+        if not isinstance(guid, str):
+            raise TypeError("invalid guid instance, only takes string type")
+        if not isinstance(inputs, list):
+            raise TypeError("invalid inputs instance, only takes list type")
+        if not isinstance(outputs, list):
+            raise TypeError("invalid outputs instance, only takes list type")
+        if not isinstance(fee, int):
+            raise TypeError("invalid fee instance, only takes integer type")
+        if not isinstance(confirmations, int):
+            raise TypeError("invalid confirmations instance, only takes integer type")
+
+        # Setting transaction fee and confirmations
+        self._fee, self._confirmations = fee, confirmations
+        # Transaction
+        transaction = dict(
+            guid=guid,
+            inputs=inputs,
+            outputs=outputs,
+            fee=self._fee,
+            confirmations=self._confirmations
+        )
+        # Building transaction
+        self.transaction = build_transaction(
+            transaction=transaction, network=self.network)
         return self
