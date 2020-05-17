@@ -13,7 +13,7 @@ from ..libs.ed25519 import (
 )
 from ..signature import sign, verify
 from ..utils import get_mnemonic_language, is_mnemonic
-from ..rpc import account_create
+from ..rpc import config, account_create, get_balance
 from .tools import get_xpublic_key
 from .utils import (
     prune_root_scalar, prune_intermediate_scalar,
@@ -25,9 +25,9 @@ class Wallet:
     """
     Bytom wallet class.
 
-    :param network: bytom network, defaults to solonet.
+    :param network: Bytom network, defaults to solonet.
     :type network: str
-    :returns:  Wallet -- bytom wallet instance.
+    :returns:  Wallet -- Bytom wallet instance.
 
     .. note::
         Bytom has only three networks, ``mainnet``, ``solonet`` and ``testnet``.
@@ -49,7 +49,7 @@ class Wallet:
 
     def from_entropy(self, entropy, passphrase=None, language="english"):
         """
-        Initialize bytom wallet from entropy.
+        Initialize Bytom wallet from entropy.
 
         :param entropy: Entropy hex string.
         :type entropy: str.
@@ -91,7 +91,7 @@ class Wallet:
 
     def from_mnemonic(self, mnemonic, passphrase=None, language=None):
         """
-        Initialize bytom wallet from mnemonic.
+        Initialize Bytom wallet from mnemonic.
 
         :param mnemonic: 12 words mnemonic.
         :type mnemonic: str.
@@ -132,7 +132,7 @@ class Wallet:
 
     def from_seed(self, seed):
         """
-        Initialize bytom wallet from seed.
+        Initialize Bytom wallet from seed.
 
         :param seed: Mnemonic seed hex string.
         :type seed: str.
@@ -160,7 +160,7 @@ class Wallet:
 
     def from_xprivate_key(self, xprivate_key):
         """
-        Initialize bytom wallet from seed.
+        Initialize Bytom wallet from seed.
 
         :param xprivate_key: Bytom xprivate key.
         :type xprivate_key: str.
@@ -186,7 +186,7 @@ class Wallet:
 
     def from_indexes(self, indexes):
         """
-        Drive bytom wallet from indexes.
+        Drive Bytom wallet from indexes.
 
         :param indexes: Bytom derivation indexes.
         :type indexes: list.
@@ -208,7 +208,7 @@ class Wallet:
 
     def from_index(self, index, harden=False):
         """
-        Drive bytom wallet from index.
+        Drive Bytom wallet from index.
 
         :param index: Bytom derivation index.
         :type index: int.
@@ -239,11 +239,11 @@ class Wallet:
 
     def from_path(self, path):
         """
-        Drive bytom wallet from path.
+        Drive Bytom wallet from path.
 
         :param path: Bytom derivation path.
         :type path: str.
-        :returns:  Wallet -- bytom wallet instance.
+        :returns:  Wallet -- Bytom wallet instance.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
@@ -269,7 +269,7 @@ class Wallet:
         """
         Clean derivation indexes/path.
 
-        :returns:  Wallet -- bytom wallet instance.
+        :returns:  Wallet -- Bytom wallet instance.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
@@ -291,9 +291,9 @@ class Wallet:
     # Getting guid from blockcenter
     def guid(self):
         """
-        Get bytom wallet blockcenter guid.
+        Get Bytom wallet blockcenter guid.
 
-        :return: str -- bytom blockcenter guid.
+        :return: str -- Bytom blockcenter guid.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
@@ -384,7 +384,7 @@ class Wallet:
 
     def xprivate_key(self):
         """
-        Get bytom wallet xprivate key.
+        Get Bytom wallet xprivate key.
 
         :return: str -- Bytom xprivate key.
 
@@ -399,7 +399,7 @@ class Wallet:
 
     def xpublic_key(self):
         """
-        Get bytom wallet xpublic key.
+        Get Bytom wallet xpublic key.
 
         :return: str -- Bytom xpublic key.
 
@@ -419,7 +419,7 @@ class Wallet:
 
     def expand_xprivate_key(self):
         """
-        Get bytom wallet expand xprivate key.
+        Get Bytom wallet expand xprivate key.
 
         :return: str -- Bytom expand xprivate key.
 
@@ -440,7 +440,7 @@ class Wallet:
 
     def private_key(self):
         """
-        Get bytom wallet private key.
+        Get Bytom wallet private key.
 
         :return: str -- Bytom private key.
 
@@ -456,7 +456,7 @@ class Wallet:
 
     def public_key(self):
         """
-        Get bytom wallet public key.
+        Get Bytom wallet public key.
 
         :return: str -- Bytom public key.
 
@@ -472,7 +472,7 @@ class Wallet:
 
     def indexes(self):
         """
-        Get bytom wallet derivation indexes.
+        Get Bytom wallet derivation indexes.
 
         :return: list -- Bytom derivation indexes.
 
@@ -488,7 +488,7 @@ class Wallet:
 
     def path(self):
         """
-        Get bytom wallet derivation path.
+        Get Bytom wallet derivation path.
 
         :return: str -- Bytom derivation path.
 
@@ -511,7 +511,7 @@ class Wallet:
 
     def child_xprivate_key(self):
         """
-        Get bytom get child xprivate key.
+        Get Bytom get child xprivate key.
 
         :return: str -- Bytom child xprivate key.
 
@@ -552,7 +552,7 @@ class Wallet:
 
     def child_xpublic_key(self):
         """
-        Get bytom get child xpublic key.
+        Get Bytom get child xpublic key.
 
         :return: str -- Bytom child xpublic key.
 
@@ -591,7 +591,7 @@ class Wallet:
 
     def program(self):
         """
-        Get bytom wallet control program.
+        Get Bytom wallet control program.
 
         :return: str -- Bytom wallet control program.
 
@@ -614,9 +614,9 @@ class Wallet:
 
     def address(self, network=None):
         """
-        Get bytom wallet address.
+        Get Bytom wallet address.
 
-        :param network: bytom network, defaults to solonet.
+        :param network: Bytom network, defaults to solonet.
         :type network: str
         :return: str -- Bytom wallet address.
 
@@ -641,6 +641,23 @@ class Wallet:
             return encode("sm", 0, get_bytes(self.program()[4:]))
         elif network == "testnet":
             return encode("tm", 0, get_bytes(self.program()[4:]))
+
+    def balance(self, asset=config["BTM_ASSET"]):
+        """
+        Get Bytom wallet balance.
+
+        :param asset: Bytom asset, defaults to BTM asset.
+        :type asset: str
+        :return: int -- Bytom balance.
+
+        >>> from pybytom.wallet import Wallet
+        >>> wallet = Wallet(network="mainnet")
+        >>> wallet.from_mnemonic("indicate warm sock mistake code spot acid ribbon sing over taxi toast")
+        >>> wallet.balance()
+        2450000000
+        """
+
+        return get_balance(address=self.address(), asset=asset, network=self.network)
 
     def sign(self, message):
         """
@@ -693,7 +710,7 @@ class Wallet:
 
     def dumps(self):
         """
-        Get bytom all wallet information's
+        Get Bytom all wallet information's
 
         :return: dict -- Bytom all wallet information's.
 
