@@ -237,7 +237,7 @@ def decode_transaction_raw(transaction_raw, network=config["network"], timeout=c
     {...}
     """
 
-    url = str(config[network]["Bytom"]) + "/decode-raw-transaction"
+    url = str(config[network]["bytom"]) + "/decode-raw-transaction"
     response = requests.post(url=url, data=json.dumps(dict(raw_transaction=transaction_raw)),
                              headers=headers, timeout=timeout)
     if response.status_code == 400:
