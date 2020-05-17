@@ -13,7 +13,7 @@ with open("requirements.txt", "r") as _requirements:
 
 setup(
     name="pybytom",
-    version="0.2.1",
+    version="1.0.0a1",
     description="Python library with tools for Bytom blockchain.",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -31,7 +31,7 @@ setup(
         ]
     },
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
