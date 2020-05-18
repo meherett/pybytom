@@ -35,7 +35,7 @@ config = {
 
 
 # Get balance by address
-def get_balance(address, asset=config["BTM_ASSET"], network=config["network"], limit=1, page=1, timeout=config["timeout"]):
+def get_balance(address, asset=config["BTM_ASSET"], network=config["network"], timeout=config["timeout"]):
     """
     Get Bytom balance.
 
@@ -45,23 +45,17 @@ def get_balance(address, asset=config["BTM_ASSET"], network=config["network"], l
     :type asset: str
     :param network: Bytom network, defaults to solonet.
     :type network: str
-    :param limit: Bytom limit, defaults to 1.
-    :type limit: str
-    :param page: Bytom network, defaults to 1.
-    :type page: str
     :param timeout: request timeout, default to 15.
     :type timeout: int
-    :returns: int -- Bytom balance.
+    :returns: int -- Bytom asset balance.
 
     >>> from pybytom.rpc import get_balance
-    >>> get_balance(bytom_address, "mainnet")
-    25800000
+    >>> get_balance("bm1qzx7pjr6whcaxmh9u0thkjuavf2ynk3zkgshhle", "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "mainnet")
+    2580000000
     """
 
-    parameter = dict(limit=limit, page=page)
     url = f"{config[network]['blockmeta']}/address/{address}/asset"
-    response = requests.get(url=url, params=parameter,
-                            headers=headers, timeout=timeout)
+    response = requests.get(url=url, headers=headers, timeout=timeout)
     if response.status_code == 204:
         return 0
     for _asset in response.json():
@@ -105,7 +99,7 @@ def account_create(xpublic_key, label="1st address", email=None,
 # List addresses from blockcenter
 def list_address(guid, limit=10, network=config["network"], timeout=config["timeout"]):
     """
-    List address from blockcenter.
+    Get list address from blockcenter.
 
     :param guid: Bytom blockcenter guid.
     :type guid: str
@@ -139,7 +133,7 @@ def build_transaction(transaction, network=config["network"], timeout=config["ti
     :type transaction: dict
     :param network: Bytom network, defaults to solonet.
     :type network: str
-    :param timeout: request timeout, default to 15.
+    :param timeout: request timeout, default to 60.
     :type timeout: int
     :returns: dict -- Bytom built transaction.
 
@@ -167,9 +161,9 @@ def get_transaction(transaction_id, network=config["network"], timeout=config["t
     :type transaction_id: str
     :param network: Bytom network, defaults to solonet.
     :type network: str
-    :param timeout: request timeout, default to 15.
+    :param timeout: request timeout, default to 60.
     :type timeout: int
-    :returns: dict -- Bytom built transaction.
+    :returns: dict -- Bytom transaction detail.
 
     >>> from pybytom.rpc import get_transaction
     >>> get_transaction(transaction_id, "mainnet")
@@ -184,7 +178,7 @@ def get_transaction(transaction_id, network=config["network"], timeout=config["t
     return response.json()["result"]["data"]
 
 
-# Submit transaction raw from blockcenter
+# Submit transaction raw
 def submit_transaction_raw(guid, transaction_raw, signatures,
                            network, memo="mock", timeout=config["timeout"]):
     """
@@ -196,17 +190,17 @@ def submit_transaction_raw(guid, transaction_raw, signatures,
     :type transaction_raw: str
     :param signatures: Bytom signed datas.
     :type signatures: list
-    :param network: Bytom network, defaults to solonet.
-    :type network: str
     :param memo: memo, defaults to mock.
     :type memo: str
-    :param timeout: request timeout, default to 15.
+    :param network: Bytom network, defaults to solonet.
+    :type network: str
+    :param timeout: request timeout, default to 60.
     :type timeout: int
-    :returns: dict -- Bytom transaction id, fee, type and date.
+    :returns: dict -- Bytom transaction id/hash.
 
     >>> from pybytom.rpc import submit_transaction_raw
     >>> submit_transaction_raw("guid", transaction_raw, [[...], [...]], "mainent")
-    {...}
+    "2993414225f65390220730d0c1a356c14e91bca76db112d37366df93e364a492"
     """
     if not isinstance(signatures, list):
         raise TypeError("signatures must be list format")
@@ -222,13 +216,13 @@ def submit_transaction_raw(guid, transaction_raw, signatures,
 # Decode transaction raw
 def decode_transaction_raw(transaction_raw, network=config["network"], timeout=config["timeout"]):
     """
-    Get decoded transaction raw.
+    Get decode transaction raw.
 
     :param transaction_raw: Bytom transaction raw.
     :type transaction_raw: str
     :param network: Bytom network, defaults to solonet.
     :type network: str
-    :param timeout: request timeout, default to 15.
+    :param timeout: request timeout, default to 60.
     :type timeout: int
     :returns: dict -- Bytom decoded transaction raw.
 
