@@ -5,9 +5,9 @@ from ..rpc import get_transaction
 
 def find_contract_utxo_id(transaction_id, network):
     """
-    Find smart contract UTXO id.
+    Find Bytom smart contract UTXO id by transaction id/hash.
 
-    :param transaction_id: Bytom transaction id or hash.
+    :param transaction_id: Bytom transaction id/hash.
     :type transaction_id: str
     :param network: Bytom network.
     :type network: str
@@ -31,34 +31,34 @@ def find_contract_utxo_id(transaction_id, network):
 
 def spend_utxo_action(utxo):
     """
-    Get spend UTXO action
+    Get spend UTXO action.
 
     :param utxo: Bytom utxo id.
     :type utxo: str
     :returns: dict -- Bytom spend utxo action.
 
     >>> from pybytom.transaction.tools import spend_utxo_action
-    >>> spend_utxo_action(bytom_utxo_id)
-    {'type': 'spend_utxo, 'output_id': '...'}
+    >>> spend_utxo_action("169a45be47583f7240115c9059cd0d03e4d4fab70a41536cf298d6f261c0a1ac")
+    {'type': 'spend_utxo, 'output_id': '169a45be47583f7240115c9059cd0d03e4d4fab70a41536cf298d6f261c0a1ac'}
     """
 
     return dict(type=str("spend_utxo"), output_id=utxo)
 
 
-def contract_arguments(amount, address, value=None):
+def contract_arguments_action(amount, address, value=None):
     """
-    Get contract arguments.
+    Get contract arguments action.
 
     :param amount: Bytom amount.
     :type amount: int
     :param address: Bytom address.
     :type address: str
-    :param value: value, default to None.
+    :param value: Data value, default to None.
     :type value: str
     :returns: list -- Bytom contract arguments.
 
-    >>> from pybytom.transaction.tools import contract_arguments
-    >>> contract_arguments(bytom_amount, bytom_address)
+    >>> from pybytom.transaction.tools import contract_arguments_action
+    >>> contract_arguments_action(bytom_amount, bytom_address)
     [{'integer': 100}, {'address': '...'}, {'data': ''}]
     """
 
@@ -80,8 +80,8 @@ def spend_wallet_action(amount, asset):
     :returns: dict -- Bytom spend wallet action.
 
     >>> from pybytom.transaction.tools import spend_wallet_action
-    >>> spend_wallet_action(bytom_amount, bytom_asset)
-    {'type': 'spend_wallet', 'amount': 100, 'asset': '...'}
+    >>> spend_wallet_action(100000000, "41536cf298d6f261c0a1ac169a45be47583f7240115c9059cd0d03e4d4fab70a")
+    {'type': 'spend_wallet', 'amount': 100000000, 'asset': '41536cf298d6f261c0a1ac169a45be47583f7240115c9059cd0d03e4d4fab70a'}
     """
 
     return dict(
@@ -104,7 +104,7 @@ def spend_account_action(account, amount, asset):
 
     >>> from pybytom.transaction.tools import spend_account_action
     >>> spend_account_action(bytom_account, bytom_amount, bytom_asset)
-    {type: 'spend_account', account='...', amount=1000, asset='...'}
+    {'type': 'spend_account', account='...', 'amount'=1000, 'asset'='...'}
     """
 
     return dict(type=str("spend_account"),
@@ -124,8 +124,8 @@ def control_program_action(amount, asset, control_program):
     :returns: dict -- Bytom control program action.
 
     >>> from pybytom.transaction.tools import control_program_action
-    >>> control_program_action(bytom_amount, bytom_asset, bytom_control_program)
-    {'type': 'control_program', 'amount': 100, 'asset': '...', 'control_program': '...'}
+    >>> control_program_action(100, "41536cf298d6f261c0a1ac169a45be47583f7240115c9059cd0d03e4d4fab70a", bytom_control_program)
+    {'type': 'control_program', 'amount': 100, 'asset': '41536cf298d6f261c0a1ac169a45be47583f7240115c9059cd0d03e4d4fab70a', 'control_program': '...'}
     """
 
     return dict(
@@ -148,8 +148,8 @@ def control_address_action(amount, asset, address):
     :returns: dict -- Bytom control address action.
 
     >>> from pybytom.transaction.tools import control_address_action
-    >>> control_address_action(bytom_amount, bytom_asset, bytom_address)
-    {'type': 'control_address', 'amount': 10000000, 'asset': '...', 'address': '...'}
+    >>> control_address_action(10000000, "41536cf298d6f261c0a1ac169a45be47583f7240115c9059cd0d03e4d4fab70a", "bm1qzx7pjr6whcaxmh9u0thkjuavf2ynk3zkgshhle")
+    {'type': 'control_address', 'amount': 10000000, 'asset': '41536cf298d6f261c0a1ac169a45be47583f7240115c9059cd0d03e4d4fab70a', 'address': 'bm1qzx7pjr6whcaxmh9u0thkjuavf2ynk3zkgshhle'}
     """
 
     return dict(
