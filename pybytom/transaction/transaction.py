@@ -38,20 +38,20 @@ class Transaction:
         self._fee, self._signatures, self._confirmations = \
             config["fee"], [], config["confirmations"]
 
-    # Building bytom transaction
+    # Building Bytom transaction
     def build_transaction(self, **kwargs):
         """
-        Bytom build transaction.
+        Build Bytom transaction.
 
         :param kwargs: Arbitrary keyword arguments. If you do accept ``**kwargs``, make sure
         you link to documentation that describes what keywords are accepted,
         or list the keyword arguments as a definition list:
-        ``guid`` (str) bytom blockcenter guid.
-        ``inputs`` (list) bytom blockcenter inputs.
-        ``outputs`` (list) bytom blockcenter outputs.
-        ``fee`` (int) bytom transaction fee, defaults to 10000000.
-        ``confirmations`` (int) confirmations: bytom transaction confirmations, defaults to 1.
-        :returns:  Transaction -- Bytom transaction instance.
+        ``guid`` (str) Bytom blockcenter guid.
+        ``inputs`` (list) Bytom transaction inputs.
+        ``outputs`` (list) Bytom transaction outputs.
+        ``fee`` (int) Bytom transaction fee, defaults to 10000000.
+        ``confirmations`` (int) confirmations: Bytom transaction confirmations, defaults to 1.
+        :returns:  Transaction -- Bytom transaction class instance.
 
         >>> from pybytom.transaction import Transaction
         >>> transaction = Transaction(network="mainnet")
@@ -98,7 +98,7 @@ class Transaction:
         """
         Bytom transaction fee.
 
-        :returns: list -- Bytom transaction fee.
+        :returns: int -- Bytom transaction fee.
 
         >>> from pybytom.transaction import Transaction
         >>> transaction = Transaction(network="mainnet")
@@ -154,7 +154,7 @@ class Transaction:
         >>> transaction = Transaction(network="mainnet")
         >>> transaction.build_transaction("f0ed6ddd-9d6b-49fd-8866-a52d1083a13b", inputs=[...], outputs=[...])
         >>> transaction.json()
-        {"hash": "2993414225f65390220730d0c1a356c14e91bca76db112d37366df93e364a492", "status_fail": false, "size": 379, "submission_timestamp": 0, "memo": "", "inputs": [{"script": "00142cda4f99ea8112e6fa61cdd26157ed6dc408332a", "address": "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": 2450000000, "type": "spend"}], "outputs": [{"utxo_id": "5edccebe497893c289121f9e365fdeb34c97008b9eb5a9960fe9541e7923aabc", "script": "01642091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e220ac13c0bb1445423a641754182d53f0677cd4351a0e743e6f10b35122c3d7ea01202b9a5949f5546f63a253e41cda6bffdedb527288a7e24ed953f5c2680c70d6ff741f547a6416000000557aa888537a7cae7cac631f000000537acd9f6972ae7cac00c0", "address": "smart contract", "asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": 1000, "type": "control"}, {"utxo_id": "f8cfbb692db1963be88b09c314adcc9e19d91c6c019aa556fb7cb76ba8ffa1fa", "script": "00142cda4f99ea8112e6fa61cdd26157ed6dc408332a", "address": "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": 2439999000, "type": "control"}], "fee": 10000000, "balances": [{"asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": "-10001000"}], "types": ["ordinary"]}
+        {'hash': '2993414225f65390220730d0c1a356c14e91bca76db112d37366df93e364a492', 'status_fail': false, 'size': 379, 'submission_timestamp': 0, 'memo': "", 'inputs': [{'script': '00142cda4f99ea8112e6fa61cdd26157ed6dc408332a', 'address': 'bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7', 'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': 2450000000, 'type': 'spend'}], 'outputs': [{'utxo_id': '5edccebe497893c289121f9e365fdeb34c97008b9eb5a9960fe9541e7923aabc', 'script': '01642091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e220ac13c0bb1445423a641754182d53f0677cd4351a0e743e6f10b35122c3d7ea01202b9a5949f5546f63a253e41cda6bffdedb527288a7e24ed953f5c2680c70d6ff741f547a6416000000557aa888537a7cae7cac631f000000537acd9f6972ae7cac00c0', 'address': 'smart contract', 'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': 1000, 'type': 'control'}, {'utxo_id': 'f8cfbb692db1963be88b09c314adcc9e19d91c6c019aa556fb7cb76ba8ffa1fa', 'script': '00142cda4f99ea8112e6fa61cdd26157ed6dc408332a', 'address': 'bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7', 'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': 2439999000, 'type': 'control'}], 'fee': 10000000, 'balances': [{'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': '-10001000'}], 'types': ['ordinary']}
         """
         if self.transaction is None:
             raise ValueError("transaction is none, build transaction first.")
@@ -181,7 +181,7 @@ class Transaction:
     # Unsigned datas with instructions
     def unsigned_datas(self, detail=False) -> list:
         """
-        Bytom transaction json format.
+        Bytom unsigned transaction datas with signing instructions.
 
         :returns: dict -- Bytom transaction json format.
 
@@ -233,21 +233,21 @@ class Transaction:
     def sign(self, xprivate_key: str, account=1,
              change=False, address=1, path=None, indexes=None):
         """
-        Bytom sign transaction.
+        Bytom sign unsigned transaction datas.
 
-        :param xprivate_key: bytom xprivate key.
+        :param xprivate_key: Bytom xprivate key.
         :type xprivate_key: str
-        :param account: bytom derivation account, defaults to 1.
+        :param account: Bytom derivation account, defaults to 1.
         :type account: int
-        :param change: bytom derivation change, defaults to False.
+        :param change: Bytom derivation change, defaults to False.
         :type change: bool
-        :param address: bytom derivation address, defaults to 1.
+        :param address: Bytom derivation address, defaults to 1.
         :type address: int
         :param path: Bytom derivation path, default to None.
         :type path: str.
         :param indexes: Bytom derivation indexes, default to None.
         :type indexes: list.
-        :returns: Transaction -- bytom transaction instance.
+        :returns: Transaction -- Bytom transaction instance.
 
         >>> from pybytom.transaction import Transaction
         >>> transaction = Transaction(network="mainnet")
@@ -325,15 +325,15 @@ class NormalTransaction(Transaction):
         # Transaction
         super().__init__(network)
 
-    # Building bytom normal transaction
+    # Building Bytom normal transaction
     def build_transaction(self, guid: str, recipients: dict, asset: str,
                           fee=config["fee"], confirmations=config["confirmations"]):
         """
-        Build bytom normal transaction.
+        Build Bytom normal transaction.
 
         :param guid: Bytom sender blockcenter guid.
         :type guid: str
-        :param recipients: Recipients bytom address and amount.
+        :param recipients: Recipients Bytom address and amount.
         :type recipients: dict
         :param asset: Bytom asset id, defaults to BTM asset.
         :type asset: str
@@ -345,15 +345,15 @@ class NormalTransaction(Transaction):
 
         >>> from pybytom.transaction import NormalTransaction
         >>> normal_transaction = NormalTransaction(network="mainnet")
-        >>> normal_transaction.build_transaction("f0ed6ddd-9d6b-49fd-8866-a52d1083a13b", inputs=[...], outputs=[...])
+        >>> normal_transaction.build_transaction("f0ed6ddd-9d6b-49fd-8866-a52d1083a13b", {"bm1qzx7pjr6whcaxmh9u0thkjuavf2ynk3zkgshhle": 10_000_000_000}, "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
         <pybytom.transaction.transaction.NormalTransaction object at 0x0409DAF0>
         """
 
         # Checking build transaction arguments instance
         if not isinstance(guid, str):
-            raise TypeError("invalid guid instance, only takes bytom string type")
+            raise TypeError("invalid guid instance, only takes Bytom string type")
         if not isinstance(recipients, dict):
-            raise TypeError("invalid recipients instance, only takes bytom dictionary type")
+            raise TypeError("invalid recipients instance, only takes Bytom dictionary type")
         if not isinstance(asset, str):
             raise TypeError("invalid asset instance, only takes string type")
         # Actions
@@ -389,25 +389,6 @@ class NormalTransaction(Transaction):
             transaction=transaction, network=self.network)
         return self
 
-    # Transaction json
-    def json(self) -> any:
-        """
-        Get bytom normal transaction json format.
-
-        :returns: dict -- bytom normal transaction json format.
-
-        >>> from pybytom.transaction import NormalTransaction
-        >>> normal_transaction = NormalTransaction(network="mainnet")
-        >>> normal_transaction.build_transaction("f0ed6ddd-9d6b-49fd-8866-a52d1083a13b", inputs=[...], outputs=[...])
-        >>> normal_transaction.json()
-        {"hash": "2993414225f65390220730d0c1a356c14e91bca76db112d37366df93e364a492", "status_fail": false, "size": 379, "submission_timestamp": 0, "memo": "", "inputs": [{"script": "00142cda4f99ea8112e6fa61cdd26157ed6dc408332a", "address": "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": 2450000000, "type": "spend"}], "outputs": [{"utxo_id": "5edccebe497893c289121f9e365fdeb34c97008b9eb5a9960fe9541e7923aabc", "script": "01642091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e220ac13c0bb1445423a641754182d53f0677cd4351a0e743e6f10b35122c3d7ea01202b9a5949f5546f63a253e41cda6bffdedb527288a7e24ed953f5c2680c70d6ff741f547a6416000000557aa888537a7cae7cac631f000000537acd9f6972ae7cac00c0", "address": "smart contract", "asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": 1000, "type": "control"}, {"utxo_id": "f8cfbb692db1963be88b09c314adcc9e19d91c6c019aa556fb7cb76ba8ffa1fa", "script": "00142cda4f99ea8112e6fa61cdd26157ed6dc408332a", "address": "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": 2439999000, "type": "control"}], "fee": 10000000, "balances": [{"asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": "-10001000"}], "types": ["ordinary"]}
-        """
-
-        if self.transaction is None:
-            raise ValueError("transaction is none, build transaction first.")
-        # return decode_tx_raw(tx_raw=self.transaction["raw_transaction"])
-        return self.transaction["tx"]
-
 
 # Advanced transaction
 class AdvancedTransaction(Transaction):
@@ -428,11 +409,11 @@ class AdvancedTransaction(Transaction):
         # Transaction
         super().__init__(network)
 
-    # Building bytom advanced transaction
+    # Building Bytom advanced transaction
     def build_transaction(self, guid: str, inputs: list, outputs: list,
                           fee=config["fee"], confirmations=config["confirmations"]):
         """
-        Build bytom advanced transaction.
+        Build Bytom advanced transaction.
 
         :param guid: Bytom blockcenter guid.
         :type guid: str
@@ -442,7 +423,7 @@ class AdvancedTransaction(Transaction):
         :type outputs: list
         :param fee: Bytom transaction fee, defaults to 10000000.
         :type fee: int
-        :param confirmations: bytom transaction confirmations, defaults to 1.
+        :param confirmations: Bytom transaction confirmations, defaults to 1.
         :type confirmations: int
         :returns:  AdvancedTransaction -- Bytom advanced transaction instance.
 
