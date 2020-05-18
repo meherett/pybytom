@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-from dataclasses import dataclass
 
-
-@dataclass()
 class ClientError(Exception):
-    error_message: str
-    error_detail: str = None
+
+    def __init__(self, error_message, error_detail=None):
+        self.error_message = error_message
+        self.error_detail = error_detail
 
     def __str__(self):
         if self.error_detail:
@@ -16,10 +15,11 @@ class ClientError(Exception):
             return f"{self.error_message}"
 
 
-@dataclass()
 class APIError(Exception):
-    error_message: str
-    status_code: int = None
+
+    def __init__(self, error_message, status_code=None):
+        self.status_code = status_code
+        self.error_message = error_message
 
     def __str__(self):
         if self.status_code:
@@ -28,18 +28,20 @@ class APIError(Exception):
             return f"{self.error_message}"
 
 
-@dataclass()
 class InvalidURLError(Exception):
-    error_message: str
+
+    def __init__(self, error_message):
+        self.error_message = error_message
 
     def __str__(self):
         return f"{self.error_message}"
 
 
-@dataclass()
 class NotFoundError(Exception):
-    error_message: str
-    error_detail: str = None
+
+    def __init__(self, error_message, error_detail=None):
+        self.error_message = error_message
+        self.error_detail = error_detail
 
     def __str__(self):
         if self.error_detail:
@@ -48,10 +50,11 @@ class NotFoundError(Exception):
             return f"{self.error_message}"
 
 
-@dataclass()
 class AddressError(Exception):
-    error_message: str
-    error_detail: str = None
+
+    def __init__(self, error_message, error_detail=None):
+        self.error_message = error_message
+        self.error_detail = error_detail
 
     def __str__(self):
         if self.error_detail:
@@ -59,10 +62,11 @@ class AddressError(Exception):
         return f"{self.error_message}"
 
 
-@dataclass()
 class BalanceError(Exception):
-    error_message: str
-    error_detail: str = None
+
+    def __init__(self, error_message, error_detail=None):
+        self.error_message = error_message
+        self.error_detail = error_detail
 
     def __str__(self):
         if self.error_detail:
@@ -70,10 +74,11 @@ class BalanceError(Exception):
         return f"{self.error_message}"
 
 
-@dataclass()
 class NetworkError(Exception):
-    error_message: str
-    error_detail: str = None
+
+    def __init__(self, error_message, error_detail=None):
+        self.error_message = error_message
+        self.error_detail = error_detail
 
     def __str__(self):
         if self.error_detail:
