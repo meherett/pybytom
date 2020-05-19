@@ -708,10 +708,12 @@ class Wallet:
 
         return verify(self.public_key(), message, signature)
 
-    def dumps(self):
+    def dumps(self, guid=False):
         """
         Get Bytom all wallet information's
 
+        :param guid: Get GUID, default to False.
+        :type guid: bool.
         :return: dict -- Bytom all wallet information's.
 
         >>> from pybytom.wallet import Wallet
@@ -719,7 +721,7 @@ class Wallet:
         >>> wallet.from_mnemonic("indicate warm sock mistake code spot acid ribbon sing over taxi toast")
         >>> wallet.from_indexes(["2c000000", "99000000", "01000000", "00000000", "01000000"])
         >>> wallet.dumps()
-        {'entropy': None, 'mnemonic': 'indicate warm sock mistake code spot acid ribbon sing over taxi toast', 'language': 'english', 'passphrase': None, 'seed': 'baff3e1fe60e1f2a2d840d304acc98d1818140c79354a353b400fb019bfb256bc392d7aa9047adff1f14bce0342e14605c6743a6c08e02150588375eb2eb7d49', 'xprivate_key': '205b15f70e253399da90b127b074ea02904594be9d54678207872ec1ba31ee51ef4490504bd2b6f997113671892458830de09518e6bd5958d5d5dd97624cfa4b', 'xpublic_key': '16476b7fd68ca2acd92cfc38fa353e75d6103f828276f44d587e660a6bd7a5c5ef4490504bd2b6f997113671892458830de09518e6bd5958d5d5dd97624cfa4b', 'expand_xprivate_key': '205b15f70e253399da90b127b074ea02904594be9d54678207872ec1ba31ee5102416c643cfb46ab1ae5a524c8b4aaa002eb771d0d9cfc7490c0c3a8177e053e', 'indexes': ['2c000000', '99000000', '01000000', '00000000', '01000000'], 'path': 'm/44/153/1/0/1', 'child_xprivate_key': 'e07af52746e7cccd0a7d1fba6651a6f474bada481f34b1c5bab5e2d71e36ee515803ee0a6682fb19e279d8f4f7acebee8abd0fc74771c71565f9a9643fd77141', 'child_xpublic_key': '91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e25803ee0a6682fb19e279d8f4f7acebee8abd0fc74771c71565f9a9643fd77141', 'private_key': 'e07af52746e7cccd0a7d1fba6651a6f474bada481f34b1c5bab5e2d71e36ee515803ee0a6682fb19e279d8f4f7acebee8abd0fc74771c71565f9a9643fd77141', 'public_key': '91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e2', 'program': '00142cda4f99ea8112e6fa61cdd26157ed6dc408332a', 'address': {'mainnet': 'bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7', 'solonet': 'sm1q9ndylx02syfwd7npehfxz4lddhzqsve2gdsdcs', 'testnet': 'tm1q9ndylx02syfwd7npehfxz4lddhzqsve2d2mgc0'}}
+        {'entropy': None, 'mnemonic': 'indicate warm sock mistake code spot acid ribbon sing over taxi toast', 'language': 'english', 'passphrase': None, 'seed': 'baff3e1fe60e1f2a2d840d304acc98d1818140c79354a353b400fb019bfb256bc392d7aa9047adff1f14bce0342e14605c6743a6c08e02150588375eb2eb7d49', 'xprivate_key': '205b15f70e253399da90b127b074ea02904594be9d54678207872ec1ba31ee51ef4490504bd2b6f997113671892458830de09518e6bd5958d5d5dd97624cfa4b', 'xpublic_key': '16476b7fd68ca2acd92cfc38fa353e75d6103f828276f44d587e660a6bd7a5c5ef4490504bd2b6f997113671892458830de09518e6bd5958d5d5dd97624cfa4b', 'expand_xprivate_key': '205b15f70e253399da90b127b074ea02904594be9d54678207872ec1ba31ee5102416c643cfb46ab1ae5a524c8b4aaa002eb771d0d9cfc7490c0c3a8177e053e', 'guid': None, 'indexes': ['2c000000', '99000000', '01000000', '00000000', '01000000'], 'path': 'm/44/153/1/0/1', 'child_xprivate_key': 'e07af52746e7cccd0a7d1fba6651a6f474bada481f34b1c5bab5e2d71e36ee515803ee0a6682fb19e279d8f4f7acebee8abd0fc74771c71565f9a9643fd77141', 'child_xpublic_key': '91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e25803ee0a6682fb19e279d8f4f7acebee8abd0fc74771c71565f9a9643fd77141', 'private_key': 'e07af52746e7cccd0a7d1fba6651a6f474bada481f34b1c5bab5e2d71e36ee515803ee0a6682fb19e279d8f4f7acebee8abd0fc74771c71565f9a9643fd77141', 'public_key': '91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e2', 'program': '00142cda4f99ea8112e6fa61cdd26157ed6dc408332a', 'address': {'mainnet': 'bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7', 'solonet': 'sm1q9ndylx02syfwd7npehfxz4lddhzqsve2gdsdcs', 'testnet': 'tm1q9ndylx02syfwd7npehfxz4lddhzqsve2d2mgc0'}}
         """
 
         return dict(
@@ -731,6 +733,7 @@ class Wallet:
             xprivate_key=self.xprivate_key(),
             xpublic_key=self.xpublic_key(),
             expand_xprivate_key=self.expand_xprivate_key(),
+            guid=self.guid() if guid else None,
             indexes=self.indexes(),
             path=self.path(),
             child_xprivate_key=self.child_xprivate_key(),
