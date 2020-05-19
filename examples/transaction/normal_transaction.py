@@ -7,11 +7,11 @@ from pybytom.wallet import Wallet
 import json
 
 # Bytom network
-NETWORK = "mainnet"  # mainnet, solonet & testnet
+NETWORK = "mainnet"  # Choose mainnet, solonet or testnet
 # 12 word mnemonic seed
 MNEMONIC = "indicate warm sock mistake code spot acid ribbon sing over taxi toast"
 # Bytom asset id
-ASSET = "f37dea62efd2965174b84bbb59a0bd0a671cf5fb2857303ffd77c1b482b84bdf"
+ASSET_ID = "f37dea62efd2965174b84bbb59a0bd0a671cf5fb2857303ffd77c1b482b84bdf"
 
 # Initializing wallet
 wallet = Wallet(network=NETWORK)
@@ -28,7 +28,7 @@ unsigned_normal_transaction.build_transaction(
     recipients={
         "bm1qzx7pjr6whcaxmh9u0thkjuavf2ynk3zkgshhle": 10_000_000_000
     },
-    asset=ASSET
+    asset=ASSET_ID
 )
 
 print("Unsigned Normal Transaction Fee:", unsigned_normal_transaction.fee())
@@ -60,7 +60,7 @@ print("Signed Normal Transaction Unsigned Datas:",
 print("Signed Normal Transaction Signatures:", json.dumps(signed_normal_transaction.signatures(), indent=4))
 
 # Submitting transaction raw
-print("Bytom Blockchain Transaction Hash:", submit_transaction_raw(
+print("Submitted Bytom Blockchain Transaction Hash:", submit_transaction_raw(
     guid=wallet.guid(),
     transaction_raw=signed_normal_transaction.raw(),
     signatures=signed_normal_transaction.signatures(),

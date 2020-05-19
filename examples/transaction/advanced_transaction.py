@@ -21,7 +21,7 @@ wallet.from_mnemonic(mnemonic=MNEMONIC)
 # Derivation from path
 wallet.from_path("m/44/153/1/0/1")
 
-# Initializing AdvancedTransaction
+# Initializing advanced transaction
 unsigned_advanced_transaction = AdvancedTransaction(network=NETWORK)
 # Building advanced transaction
 unsigned_advanced_transaction.build_transaction(
