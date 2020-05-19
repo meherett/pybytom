@@ -61,7 +61,7 @@ signed_transaction = unsigned_transaction.sign(
     change=False,  # Addresses for change False(0)/True(1), default to False(0)
     address=1,  # Address index, default to 1
     path=None,  # Derivation from path, default to None
-    indexes=['2c000000', '99000000', '01000000', '00000000', '01000000']  # Derivation from indexes, default to None
+    indexes=["2c000000", "99000000", "01000000", "00000000", "01000000"]  # Derivation from indexes, default to None
 )
 
 print("\nSigned Transaction Fee:", signed_transaction.fee())
