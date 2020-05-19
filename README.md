@@ -278,6 +278,7 @@ advanced_transaction = AdvancedTransaction(network=NETWORK).build_transaction(
     confirmations=1
 )
 
+# Print transaction info's
 print(f"Advanced Transaction Fee: {advanced_transaction.fee()}")
 print(f"Advanced Transaction Confirmations: {advanced_transaction.confirmations()}")
 print(f"Advanced Transaction Hash: {advanced_transaction.hash()}")
@@ -285,14 +286,14 @@ print(f"Advanced Transaction Raw: {advanced_transaction.raw()}")
 print(f"Advanced Transaction Json: {advanced_transaction.json()}")
 print(f"Advanced Transaction Unsigned Datas: {advanced_transaction.unsigned_datas(detail=False)}")
 
-# Before signing transaction signatures
+# Print before signing transaction signatures
 print(f"\nBefore Signing Advanced Transaction Signatures: {advanced_transaction.signatures()}")
-# Singing data
+# Singing datas
 advanced_transaction.sign(
     xprivate_key=wallet.xprivate_key(),
     indexes=["2c000000", "99000000", "01000000", "00000000", "01000000"]
 )
-# After signing transaction signatures
+# Print after signed transaction signatures
 print(f"After Signed Advanced Transaction Signatures: {advanced_transaction.signatures()}")
 
 # Submitting transaction raw
