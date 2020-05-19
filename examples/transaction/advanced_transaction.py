@@ -74,9 +74,9 @@ print("Signed Advanced Transaction Unsigned Datas:",
 print("Signed Advanced Transaction Signatures:", json.dumps(signed_advanced_transaction.signatures(), indent=4))
 
 # Submitting transaction raw
-print("\nSubmitted Bytom Blockchain Transaction Hash:", submit_transaction_raw(
-    guid=wallet.guid(),
-    transaction_raw=signed_advanced_transaction.raw(),
-    signatures=signed_advanced_transaction.signatures(),
-    network=NETWORK
-))
+# print("\nSubmitted Bytom Blockchain Transaction Hash:", submit_transaction_raw(
+#     guid=wallet.guid(),
+#     transaction_raw=signed_advanced_transaction.raw(),
+#     signatures=signed_advanced_transaction.signatures(),
+#     network=NETWORK
+# ))
