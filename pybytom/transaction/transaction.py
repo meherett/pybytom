@@ -269,6 +269,7 @@ class Transaction:
         if indexes and not isinstance(indexes, list):
             raise TypeError("invalid indexes instance, only takes list type")
 
+        self._signatures.clear()
         wallet = Wallet(network=self.network)
         wallet.from_xprivate_key(xprivate_key=xprivate_key)
         for signing_instruction in self.unsigned_datas(detail=True):
