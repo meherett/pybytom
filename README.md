@@ -38,7 +38,7 @@ PASSPHRASE = None  # str("meherett")
 LANGUAGE = "chinese_traditional"  # default is english
 
 # Initialize wallet
-wallet = Wallet()
+wallet = Wallet(network="mainnet")
 # Get Bytom wallet from entropy
 wallet.from_entropy(entropy=ENTROPY, passphrase=PASSPHRASE, language=LANGUAGE)
 
@@ -54,7 +54,7 @@ wallet.from_index(89)
 # wallet.from_indexes(["2c000000", "99000000", "2f000000", "3d000000", "59000000"])
 
 # Print all wallet information's
-print(json.dumps(wallet.dumps(), indent=4, ensure_ascii=False))
+print(json.dumps(wallet.dumps(guid=True), indent=4, ensure_ascii=False))
 ```
 
 <details>
@@ -62,25 +62,26 @@ print(json.dumps(wallet.dumps(), indent=4, ensure_ascii=False))
 
 ```json5
 {
-    "entropy": "3c091018b2ab6979f9abfe92a00db76d",
-    "mnemonic": "包 輕 種 脫 漁 尋 紳 哈 贊 在 染 咬",
+    "entropy": "bd616c3c32046eceb490cc79730176b4",
+    "mnemonic": "恐 體 那 訓 魚 謂 襲 設 苗 嘴 刻 鐘",
     "language": "chinese_traditional",
     "passphrase": null,
-    "seed": "19fd77fad2e1a487c9b24402b3165edafaadcfb7355481ddb5bf7bdca9bb064370c60b47cdd105436ed096a65049f8e38350c9385b4f5126ad25932e78dd2727",
-    "xprivate_key": "880e69c2343398c944609e2d741035c22c4d7d4a17074ec633445c99b31fed53b56e17e0103e0f8c8d4d5b4ba11721b901eee8f873a27ea70a59fd2f11f107cf",
-    "xpublic_key": "9840c0787fa20b46ff26000e529100275ddc9facf978a57c2e0853687d18efe0b56e17e0103e0f8c8d4d5b4ba11721b901eee8f873a27ea70a59fd2f11f107cf",
-    "expand_xprivate_key": "880e69c2343398c944609e2d741035c22c4d7d4a17074ec633445c99b31fed53f2aa8d931488aaecec9fa4554ee67b13aee298b12344d2541a501b37458775ad",
+    "seed": "8caf7c485297a6618db6cdaa2e701d787768a84f1fc004cabc9628dec6d00560d7a7955e371392272e032bed5ffc368359e5b1f396c609820791e1b367ec9f6d",
+    "xprivate_key": "28ec473e78705d3ea4d95f5671f98a64b788b6155553df3e723a7157cadf6453a9d90389fa964b9bad8741647a7a3d783681514fa24e21d17afc3aa1d84de959",
+    "xpublic_key": "76436d956e5d2d81633b4fe201c99c9b270dcb962bf8d22e1bb43c8c38413ef5a9d90389fa964b9bad8741647a7a3d783681514fa24e21d17afc3aa1d84de959",
+    "expand_xprivate_key": "28ec473e78705d3ea4d95f5671f98a64b788b6155553df3e723a7157cadf64535dee8b97f73c512fac7b11d3caf72c67d5250d1f73f017212e89f9dac33f5515",
+    "guid": "22a71cb7-bfee-48bf-93e9-756bbe194737",
     "indexes": ["2c000000", "99000000", "2f000000", "3d000000", "59000000"],
     "path": "m/44/153/47/61/89",
-    "child_xprivate_key": "2075790b2ad2c970926303d843973487e7dd731b0c2f5427280d04e39e24ed53cfc5ba27faa74cce710425d6542707e2ce6a43a914bd50cb9296bd236203a73e",
-    "child_xpublic_key": "6788030d4c88ce2c460bc93839baa3b97ee21a6e48b0b6e4ba79de8667be6200cfc5ba27faa74cce710425d6542707e2ce6a43a914bd50cb9296bd236203a73e",
-    "private_key": "2075790b2ad2c970926303d843973487e7dd731b0c2f5427280d04e39e24ed53cfc5ba27faa74cce710425d6542707e2ce6a43a914bd50cb9296bd236203a73e",
-    "public_key": "6788030d4c88ce2c460bc93839baa3b97ee21a6e48b0b6e4ba79de8667be6200",
-    "program": "00143ba4efd026eb3a5123964be1d68374ce15d03ecb",
+    "child_xprivate_key": "103ff6f6da30d868dcec4b14538501c0ea2cdc878c0522697261b10218e46453bbbb0601dd6625749235b02625150ee6d363ce67c07b6d3987d92957433a140d",
+    "child_xpublic_key": "5b5a06f6fbcb74b58ebb42293808fec6222234df6c97d7c1cff6d857a6024dc2bbbb0601dd6625749235b02625150ee6d363ce67c07b6d3987d92957433a140d",
+    "private_key": "103ff6f6da30d868dcec4b14538501c0ea2cdc878c0522697261b10218e46453bbbb0601dd6625749235b02625150ee6d363ce67c07b6d3987d92957433a140d",
+    "public_key": "5b5a06f6fbcb74b58ebb42293808fec6222234df6c97d7c1cff6d857a6024dc2",
+    "program": "0014875240ba66646d900c59dd20d843351c2fcbeedc",
     "address": {
-        "mainnet": "bm1q8wjwl5pxava9zgukf0sadqm5ec2aq0kt84hpxn",
-        "solonet": "sm1q8wjwl5pxava9zgukf0sadqm5ec2aq0ktxyaqxa",
-        "testnet": "tm1q8wjwl5pxava9zgukf0sadqm5ec2aq0ktrrk9xz"
+        "mainnet": "bm1qsafypwnxv3keqrzem5sdsse4rshuhmku7kpnxq",
+        "solonet": "sm1qsafypwnxv3keqrzem5sdsse4rshuhmkul8tjxw",
+        "testnet": "tm1qsafypwnxv3keqrzem5sdsse4rshuhmku6qqhx3"
     }
 }
 ```
@@ -179,7 +180,7 @@ from pybytom.transaction import NormalTransaction
 from pybytom.rpc import submit_transaction_raw
 from pybytom.wallet import Wallet
 
-# Bytom network and 12 word mnemonic seed
+# Bytom network and 12 word mnemonic
 NETWORK, MNEMONIC = "mainnet", "indicate warm sock mistake code spot acid ribbon sing over taxi toast"
 
 # Initializing sender wallet from mnemonic and derivation from path
@@ -214,7 +215,7 @@ print(f"After Signed Normal Transaction Signatures: {normal_transaction.signatur
 
 # Submitting transaction raw
 print("\nSubmitted Bytom Blockchain Transaction Hash:", submit_transaction_raw(
-    guid=wallet.guid(),
+    guid=wallet.guid(), 
     transaction_raw=normal_transaction.raw(),
     signatures=normal_transaction.signatures(),
     network=NETWORK
@@ -236,6 +237,88 @@ Before Signing Normal Transaction Signatures: []
 After Signed Normal Transaction Signatures: [['1648308c6961ed17d27bddeb0fd5289b56b2abe1c9511fe3a535fd75d4319ad8aeefbf859015cc242707c1377ad5c45de0d8de6201d86d0bff773f9079474706']]
 
 Submitted Bytom Blockchain Transaction Hash: 72868fe4134bb2e58c67e1c67a71c5bbed5bf8259e8405203d95a70294ea0629
+```
+</details>
+
+bytom advanced transaction
+
+```python
+#!/usr/bin/env python3
+
+from pybytom.transaction import AdvancedTransaction
+from pybytom.transaction.tools import find_contract_utxo_id, spend_utxo_action, control_address_action
+from pybytom.rpc import submit_transaction_raw
+from pybytom.wallet import Wallet
+
+# Bytom network and 12 word mnemonic
+NETWORK, MNEMONIC = "mainnet", "indicate warm sock mistake code spot acid ribbon sing over taxi toast"
+
+# Initializing sender wallet from mnemonic and driving from path
+wallet = Wallet(network=NETWORK).from_mnemonic(mnemonic=MNEMONIC).from_path(path="m/44/153/1/0/1")
+
+# Initializing advanced transaction and building transaction
+advanced_transaction = AdvancedTransaction(network=NETWORK).build_transaction(
+    guid=wallet.guid(),
+    inputs=[
+        spend_utxo_action(
+            utxo=find_contract_utxo_id(
+                transaction_id="338cf2a29f055289132dd0f75d2d82777d2db1c7dbe64700cd24b03912e5d8e3",
+                network=NETWORK
+            )
+        )
+    ],
+    outputs=[
+        control_address_action(
+            asset="f37dea62efd2965174b84bbb59a0bd0a671cf5fb2857303ffd77c1b482b84bdf",
+            amount=100,
+            address=wallet.address()
+        )
+    ],
+    fee=10_000_000,
+    confirmations=1
+)
+
+print(f"Advanced Transaction Fee: {advanced_transaction.fee()}")
+print(f"Advanced Transaction Confirmations: {advanced_transaction.confirmations()}")
+print(f"Advanced Transaction Hash: {advanced_transaction.hash()}")
+print(f"Advanced Transaction Raw: {advanced_transaction.raw()}")
+print(f"Advanced Transaction Json: {advanced_transaction.json()}")
+print(f"Advanced Transaction Unsigned Datas: {advanced_transaction.unsigned_datas(detail=False)}")
+
+# Before signing transaction signatures
+print(f"\nBefore Signing Advanced Transaction Signatures: {advanced_transaction.signatures()}")
+# Singing data
+advanced_transaction.sign(
+    xprivate_key=wallet.xprivate_key(),
+    indexes=["2c000000", "99000000", "01000000", "00000000", "01000000"]
+)
+# After signing transaction signatures
+print(f"After Signed Advanced Transaction Signatures: {advanced_transaction.signatures()}")
+
+# Submitting transaction raw
+print("\nSubmitted Bytom Blockchain Transaction Hash:", submit_transaction_raw(
+    guid=wallet.guid(), 
+    transaction_raw=advanced_transaction.raw(),
+    signatures=advanced_transaction.signatures(),
+    network=NETWORK
+))
+```
+
+<details>
+  <summary>Output</summary><br/>
+
+```shell script
+Advanced Transaction Fee: 10000000
+Advanced Transaction Confirmations: 1
+Advanced Transaction Hash: 70c4af34a360a9e4e88d4bd77883df4ab381e67d9c7960919bb118cb4b91bafc
+Advanced Transaction Raw: 0701000201d00101cd0139630abd345a77b9112aac3c554a788a28cfb3e3015222ba058cfc751cbefa90f37dea62efd2965174b84bbb59a0bd0a671cf5fb2857303ffd77c1b482b84bdf640001880101642091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e220ac13c0bb1445423a641754182d53f0677cd4351a0e743e6f10b35122c3d7ea01203a26da82ead15a80533a02696656b14b5dbfd84eb14790f2e1be5e9e45820eeb741f547a6416000000557aa888537a7cae7cac631f000000537acd9f6972ae7cac00c001000160015e39630abd345a77b9112aac3c554a788a28cfb3e3015222ba058cfc751cbefa90fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0e2d4df0802011600142cda4f99ea8112e6fa61cdd26157ed6dc408332a22012091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e2020139f37dea62efd2965174b84bbb59a0bd0a671cf5fb2857303ffd77c1b482b84bdf64011600142cda4f99ea8112e6fa61cdd26157ed6dc408332a00013dfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0b5f2da08011600142cda4f99ea8112e6fa61cdd26157ed6dc408332a00
+Advanced Transaction Json: {'hash': '70c4af34a360a9e4e88d4bd77883df4ab381e67d9c7960919bb118cb4b91bafc', 'status_fail': False, 'size': 475, 'submission_timestamp': 0, 'memo': '', 'inputs': [{'script': '01642091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e220ac13c0bb1445423a641754182d53f0677cd4351a0e743e6f10b35122c3d7ea01203a26da82ead15a80533a02696656b14b5dbfd84eb14790f2e1be5e9e45820eeb741f547a6416000000557aa888537a7cae7cac631f000000537acd9f6972ae7cac00c0', 'address': 'smart contract', 'asset': 'f37dea62efd2965174b84bbb59a0bd0a671cf5fb2857303ffd77c1b482b84bdf', 'amount': 100, 'type': 'spend'}, {'script': '00142cda4f99ea8112e6fa61cdd26157ed6dc408332a', 'address': 'bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7', 'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': 2348102000, 'type': 'spend'}], 'outputs': [{'utxo_id': '4f871cbbfdfecdbed4075fe027e39850f80797f23b5036168d393739ca0e95a1', 'script': '00142cda4f99ea8112e6fa61cdd26157ed6dc408332a', 'address': 'bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7', 'asset': 'f37dea62efd2965174b84bbb59a0bd0a671cf5fb2857303ffd77c1b482b84bdf', 'amount': 100, 'type': 'control'}, {'utxo_id': 'fb72ff773c6b5274acad7a6794d77204be94857f159d4ba3d03a0381c645cc6e', 'script': '00142cda4f99ea8112e6fa61cdd26157ed6dc408332a', 'address': 'bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7', 'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': 2338102000, 'type': 'control'}], 'fee': 10000000, 'balances': [{'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': '-10000000'}, {'asset': 'f37dea62efd2965174b84bbb59a0bd0a671cf5fb2857303ffd77c1b482b84bdf', 'amount': '100'}], 'types': ['ordinary']}
+Advanced Transaction Unsigned Datas: [{'datas': ['6eeef43c62eb90d2585e4e0128a671d6b5efe6f0645c288372e5335696d3db2a'], 'network': 'mainnet', 'path': None}, {'datas': ['eab36e3689be0fd72f0c11f44a2260b2676bf3f3b27f3d4d8ffb893278ed90ca'], 'public_key': '91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e2', 'network': 'mainnet', 'path': 'm/44/153/1/0/1'}]
+
+Before Signing Advanced Transaction Signatures: []
+After Signed Advanced Transaction Signatures: [['efcb400b08eec8e263e18f449d0104ec04917baced977795660f75a12ee5b7bab16c4b5df4918388f5dec0a82f23564d0fc6aa9fee4ad0858117077b5b06330d'], ['004f39908afeedadc107d0deb6da2a250292bfbad1a94c3ae23de641a90cce32210c2ba549240752f4b503438b167331bfc311d3257c78f00ca4137acc83290d']]
+
+Submitted Bytom Blockchain Transaction Hash: 70c4af34a360a9e4e88d4bd77883df4ab381e67d9c7960919bb118cb4b91bafc
 ```
 </details>
 
