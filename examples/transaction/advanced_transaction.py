@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 
-from pybytom.transaction import Transaction, AdvancedTransaction
-from pybytom.transaction.tools import spend_utxo_action, control_address_action
+from pybytom.transaction import AdvancedTransaction
+from pybytom.transaction.tools import find_contract_utxo_id, spend_utxo_action, control_address_action
 from pybytom.rpc import submit_transaction_raw
 from pybytom.wallet import Wallet
 
 import json
 
 # Bytom network
-NETWORK = "mainnet"  # mainnet, solonet & testnet
+NETWORK = "mainnet"  # Choose mainnet, solonet or testnet
 # 12 word mnemonic seed
 MNEMONIC = "indicate warm sock mistake code spot acid ribbon sing over taxi toast"
 # Bytom asset id
@@ -21,26 +21,28 @@ wallet.from_mnemonic(mnemonic=MNEMONIC)
 # Derivation from path
 wallet.from_path("m/44/153/1/0/1")
 
-# Initializing Transaction/AdvancedTransaction
-# unsigned_advanced_transaction = Transaction(network=NETWORK)
+# Initializing AdvancedTransaction
 unsigned_advanced_transaction = AdvancedTransaction(network=NETWORK)
 # Building advanced transaction
 unsigned_advanced_transaction.build_transaction(
-    guid=wallet.guid(),
-    inputs=[
+    wallet.guid(),  # guid
+    [
         spend_utxo_action(
-            utxo="d89449d3ec2117e4d2ad0f964f34a578cf8c980d049c273cb711f42378d734a3"
+            utxo=find_contract_utxo_id(
+                transaction_id="338cf2a29f055289132dd0f75d2d82777d2db1c7dbe64700cd24b03912e5d8e3",
+                network=NETWORK
+            )
         )
-    ],
-    outputs=[
+    ],  # inputs
+    [
         control_address_action(
             asset=ASSET,
             amount=100,
             address=wallet.address()
         )
-    ],
-    fee=10_000_000,
-    confirmations=1
+    ],  # outputs
+    10_000_000,  # fee
+    1  # confirmations
 )
 
 print("Unsigned Advanced Transaction Fee:", unsigned_advanced_transaction.fee())
@@ -72,7 +74,7 @@ print("Signed Advanced Transaction Unsigned Datas:",
 print("Signed Advanced Transaction Signatures:", json.dumps(signed_advanced_transaction.signatures(), indent=4))
 
 # Submitting transaction raw
-print("Bytom Blockchain Transaction Hash:", submit_transaction_raw(
+print("\nSubmitted Bytom Blockchain Transaction Hash:", submit_transaction_raw(
     guid=wallet.guid(),
     transaction_raw=signed_advanced_transaction.raw(),
     signatures=signed_advanced_transaction.signatures(),
