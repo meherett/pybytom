@@ -336,3 +336,33 @@ def get_address(program, network="solonet"):
         return encode("sm", 0, get_bytes(program[4:]))
     elif network == "testnet":
         return encode("tm", 0, get_bytes(program[4:]))
+
+
+def get_vapor_address(program, network="solonet"):
+    """
+    Get bytom vapor address from program.
+
+    :param program: Bytom control program.
+    :type program: str.
+    :param network: Bytom network, default to solonet.
+    :type network: str.
+    :return: str -- Bytom vapor address.
+
+    >>> from pybytom.wallet.tools import get_vapor_address
+    >>> get_vapor_address("00142cda4f99ea8112e6fa61cdd26157ed6dc408332a", "mainnet")
+    "vp1q9ndylx02syfwd7npehfxz4lddhzqsve2za23ag"
+    """
+
+    if not isinstance(program, str):
+        raise TypeError("program must be string format")
+    if not isinstance(network, str):
+        raise TypeError("network must be string format")
+
+    if network not in "mainnet/solonet/testnet".split("/"):
+        raise ValueError("invalid network option, choose only mainnet, solonet and testnet network")
+    elif network == "mainnet":
+        return encode("vp", 0, get_bytes(program[4:]))
+    elif network == "solonet":
+        return encode("sp", 0, get_bytes(program[4:]))
+    elif network == "testnet":
+        return encode("tp", 0, get_bytes(program[4:]))
