@@ -82,6 +82,11 @@ print(json.dumps(wallet.dumps(guid=True), indent=4, ensure_ascii=False))
         "mainnet": "bm1qsafypwnxv3keqrzem5sdsse4rshuhmku7kpnxq",
         "solonet": "sm1qsafypwnxv3keqrzem5sdsse4rshuhmkul8tjxw",
         "testnet": "tm1qsafypwnxv3keqrzem5sdsse4rshuhmku6qqhx3"
+    },
+    "vapor_address": {
+        "mainnet": "vp1qsafypwnxv3keqrzem5sdsse4rshuhmku4h3wrk",
+        "solonet": "sp1qsafypwnxv3keqrzem5sdsse4rshuhmkuajnxra",
+        "testnet": "tp1qsafypwnxv3keqrzem5sdsse4rshuhmkuc4crrz"
     }
 }
 ```
