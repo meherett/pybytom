@@ -82,8 +82,6 @@ def test_wallet_errors():
     # address
     with pytest.raises(TypeError, match="network must be string format"):
         Wallet("solonet").address(int())
-    with pytest.raises(ValueError, match=r"invalid network option, .*"):
-        Wallet("solonet").address("unknown_network")
     # sign
     with pytest.raises(TypeError, match="message must be string format"):
         Wallet("solonet").sign(int())

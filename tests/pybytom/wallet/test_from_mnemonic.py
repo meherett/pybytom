@@ -56,6 +56,11 @@ def test_from_mnemonic():
             "mainnet": "bm1q7yqyhnxpww2qnpz64gg4a727eqtezc4wluym00",
             "solonet": "sm1q7yqyhnxpww2qnpz64gg4a727eqtezc4w7dw60p",
             "testnet": "tm1q7yqyhnxpww2qnpz64gg4a727eqtezc4wm29l07"
+        },
+        "vapor_address": {
+            "mainnet": "vp1q7yqyhnxpww2qnpz64gg4a727eqtezc4w5a5x2e",
+            "solonet": "sp1q7yqyhnxpww2qnpz64gg4a727eqtezc4wuckw2j",
+            "testnet": "tp1q7yqyhnxpww2qnpz64gg4a727eqtezc4welat2d"
         }
     }
 
