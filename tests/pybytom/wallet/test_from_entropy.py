@@ -34,6 +34,9 @@ def test_from_entropy():
     assert wallet.public_key() == "3ed490f59aba816bf3ffb6ed14dc6bb8720597a3ad4a9ad093062cd0fd983b8d"
     assert wallet.program() == "0014f1004bccc1739409845aaa115ef95ec8179162ae"
     assert wallet.address() == "sm1q7yqyhnxpww2qnpz64gg4a727eqtezc4w7dw60p"
+    wallet.network = "mainnet"
+    assert isinstance(wallet.balance(), int)
+    assert isinstance(wallet.guid(), str)
 
     assert wallet.dumps() == {
         "entropy": "50f002376c81c96e430b48f1fe71df57",
