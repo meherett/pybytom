@@ -6,15 +6,16 @@ from mnemonic import Mnemonic
 import hmac
 import hashlib
 
-from ..libs.segwit import encode, decode
-from ..libs.ed25519 import (
-    encodeint, encodepoint, decodeint, decodepoint,
-    scalarmultbase, edwards_double, edwards_add
-)
 from ..signature import sign, verify
 from ..utils import get_mnemonic_language, is_mnemonic
 from ..rpc import config, account_create, get_balance
-from .tools import get_xpublic_key
+from .tools import (
+    get_xpublic_key, get_address,
+    get_vapor_address, get_program,
+    get_child_xpublic_key, get_child_xprivate_key,
+    get_private_key, get_public_key,
+    get_expand_xprivate_key
+)
 from .utils import (
     prune_root_scalar, prune_intermediate_scalar,
     get_bytes, bad_seed_checker
@@ -410,12 +411,7 @@ class Wallet:
         "16476b7fd68ca2acd92cfc38fa353e75d6103f828276f44d587e660a6bd7a5c5ef4490504bd2b6f997113671892458830de09518e6bd5958d5d5dd97624cfa4b"
         """
 
-        xprivate_bytes = get_bytes(self.xprivate_key())
-        scalar = decodeint(xprivate_bytes[:len(xprivate_bytes) // 2])
-        buf = encodepoint(scalarmultbase(scalar))
-        xpublic_key = buf + xprivate_bytes[len(xprivate_bytes) // 2:]
-        self._xpublic_key = xpublic_key.hex()
-        return self._xpublic_key
+        return get_xpublic_key(xprivate_key=self.xprivate_key())
 
     def expand_xprivate_key(self):
         """
@@ -430,13 +426,7 @@ class Wallet:
         "205b15f70e253399da90b127b074ea02904594be9d54678207872ec1ba31ee5102416c643cfb46ab1ae5a524c8b4aaa002eb771d0d9cfc7490c0c3a8177e053e"
         """
 
-        i = hmac.HMAC(b"Expand", get_bytes(self._xprivate_key),
-                      digestmod=hashlib.sha512).hexdigest()
-        il, ir = i[:64], i[64:]
-        bad_seed_checker(ir, True)
-
-        expand_xprivate = self._xprivate_key[:64] + ir
-        return expand_xprivate
+        return get_expand_xprivate_key(xprivate_key=self.xprivate_key())
 
     def private_key(self):
         """
@@ -452,7 +442,7 @@ class Wallet:
         "e07af52746e7cccd0a7d1fba6651a6f474bada481f34b1c5bab5e2d71e36ee515803ee0a6682fb19e279d8f4f7acebee8abd0fc74771c71565f9a9643fd77141"
         """
 
-        return self.child_xprivate_key()
+        return get_private_key(xprivate_key=self.xprivate_key(), indexes=self.indexes())
 
     def public_key(self):
         """
@@ -468,7 +458,7 @@ class Wallet:
         "91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e2"
         """
 
-        return self.child_xpublic_key()[:64]
+        return get_public_key(xpublic_key=self.xpublic_key(), indexes=self.indexes())
 
     def indexes(self):
         """
@@ -523,32 +513,7 @@ class Wallet:
         "e07af52746e7cccd0a7d1fba6651a6f474bada481f34b1c5bab5e2d71e36ee515803ee0a6682fb19e279d8f4f7acebee8abd0fc74771c71565f9a9643fd77141"
         """
 
-        xprivate_key = self.xprivate_key()
-        for index in range(len(self._indexes)):
-            index_bytes = get_bytes(self._indexes[index])
-            xpublic_key = get_xpublic_key(xprivate_key=xprivate_key)
-            xpublic_bytes = get_bytes(xpublic_key)
-            xprivate_bytes = get_bytes(xprivate_key)
-            i = bytearray(hmac.HMAC(xpublic_bytes[32:],
-                                    b"N" + xpublic_bytes[:32] + index_bytes,
-                                    digestmod=hashlib.sha512).digest())
-            il, ir = i[:32], i[32:]
-            bad_seed_checker(il)
-
-            i = prune_intermediate_scalar(il)[:32] + ir
-
-            carry = 0
-            total = 0
-            for _i in range(32):
-                total = xprivate_bytes[_i] + i[_i] + carry
-                i[_i] = total & 0xff
-                carry = total >> 8
-            if (total >> 8) != 0:
-                print("sum does not fit in 256-bit int")
-            xprivate_key = i.hex()
-
-        child_xprivate = xprivate_key
-        return child_xprivate
+        return get_child_xprivate_key(xprivate_key=self.xprivate_key(), indexes=self.indexes())
 
     def child_xpublic_key(self):
         """
@@ -564,30 +529,7 @@ class Wallet:
         "91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e25803ee0a6682fb19e279d8f4f7acebee8abd0fc74771c71565f9a9643fd77141"
         """
 
-        xpublic_key = self.xpublic_key()
-        for index in range(len(self._indexes)):
-            index_bytes = get_bytes(self._indexes[index])
-            xpublic_bytes = get_bytes(xpublic_key)
-            i = bytearray(hmac.HMAC(xpublic_bytes[32:],
-                                    b"N" + xpublic_bytes[:32] + index_bytes,
-                                    digestmod=hashlib.sha512).digest())
-
-            il, ir = i[:32], i[32:]
-            bad_seed_checker(il)
-
-            f = bytes(prune_intermediate_scalar(il))
-            scalar = decodeint(f)
-            f = scalarmultbase(scalar)
-
-            p = decodepoint(xpublic_bytes[:32])
-            p = edwards_add(p, f)
-            public_key = encodepoint(p)
-
-            xpublic_bytes = public_key[:32] + ir
-            xpublic_key = xpublic_bytes.hex()
-
-        child_xpublic = xpublic_key
-        return child_xpublic
+        return get_child_xpublic_key(xpublic_key=self.xpublic_key(), indexes=self.indexes())
 
     def program(self):
         """
@@ -603,14 +545,7 @@ class Wallet:
         "00142cda4f99ea8112e6fa61cdd26157ed6dc408332a"
         """
 
-        public = self.public_key()
-        public_byte = get_bytes(public)
-
-        ripemd160 = hashlib.new("ripemd160")
-        ripemd160.update(public_byte)
-        public_hash = ripemd160.hexdigest()
-        program = "0014" + public_hash
-        return program
+        return get_program(public_key=self.public_key())
 
     def address(self, network=None):
         """
@@ -633,14 +568,30 @@ class Wallet:
         if not isinstance(network, str):
             raise TypeError("network must be string format")
 
-        if network not in "mainnet/solonet/testnet".split("/"):
-            raise ValueError("invalid network option, choose only mainnet, solonet and testnet network")
-        elif network == "mainnet":
-            return encode("bm", 0, get_bytes(self.program()[4:]))
-        elif network == "solonet":
-            return encode("sm", 0, get_bytes(self.program()[4:]))
-        elif network == "testnet":
-            return encode("tm", 0, get_bytes(self.program()[4:]))
+        return get_address(program=self.program(), network=network)
+
+    def vapor_address(self, network=None):
+        """
+        Get Bytom wallet vapor address.
+
+        :param network: Bytom network, defaults to solonet.
+        :type network: str
+        :return: str -- Bytom wallet vapor address.
+
+        >>> from pybytom.wallet import Wallet
+        >>> wallet = Wallet(network="mainnet")
+        >>> wallet.from_mnemonic("indicate warm sock mistake code spot acid ribbon sing over taxi toast")
+        >>> wallet.from_indexes(["2c000000", "99000000", "01000000", "00000000", "01000000"])
+        >>> wallet.vapor_address()
+        "vp1q9ndylx02syfwd7npehfxz4lddhzqsve2za23ag"
+        """
+
+        if network is None:
+            network = self.network
+        if not isinstance(network, str):
+            raise TypeError("network must be string format")
+
+        return get_vapor_address(program=self.program(), network=network)
 
     def balance(self, asset=config["BTM_ASSET"]):
         """
@@ -745,5 +696,10 @@ class Wallet:
                 mainnet=self.address(network="mainnet"),
                 solonet=self.address(network="solonet"),
                 testnet=self.address(network="testnet")
+            ),
+            vapor_address=dict(
+                mainnet=self.vapor_address(network="mainnet"),
+                solonet=self.vapor_address(network="solonet"),
+                testnet=self.vapor_address(network="testnet")
             )
         )
