@@ -35,7 +35,8 @@ config = {
 
 
 # Get balance by address
-def get_balance(address, asset=config["BTM_ASSET"], network=config["network"], timeout=config["timeout"]):
+def get_balance(address, asset=config["BTM_ASSET"],
+                network=config["network"], timeout=config["timeout"]):
     """
     Get Bytom balance.
 
@@ -56,12 +57,12 @@ def get_balance(address, asset=config["BTM_ASSET"], network=config["network"], t
 
     url = f"{config[network]['blockmeta']}/address/{address}/asset"
     response = requests.get(url=url, headers=headers, timeout=timeout)
-    if response.status_code == 204:
+    if response.json() is None:
         return 0
     for _asset in response.json():
         if asset == _asset["asset_id"]:
             return _asset["balance"]
-    return None
+    return 0
 
 
 # Create account in blockcenter
