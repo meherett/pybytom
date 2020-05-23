@@ -30,6 +30,8 @@ disclose data to an attacker.  We rely on Python's long-integer
 arithmetic, so we cannot handle secrets without risking their disclosure.
 """
 
+from binascii import hexlify, unhexlify
+
 import hashlib
 import operator
 import sys
@@ -273,6 +275,34 @@ def decodepoint(s):
     if not isoncurve(P):
         raise ValueError("decoding point that is not on curve")
     return P
+
+
+def hex2int(_hex):
+    unhex = unhexlify(_hex)
+    s = 0
+    for i in range(len(unhex)):
+        s += 256 ** i * unhex[i]
+    return s
+
+
+def int2hex(_int):
+    return hexlify(encodeint(_int))
+
+
+def sc_reduce32(inputs):
+    _int = hex2int(inputs)
+    modulo = _int % l
+    return int2hex(modulo)
+
+
+def sc_muladd(a, _b, c):
+    a_int = hex2int(a)
+    b_int = hex2int(_b)
+    c_int = hex2int(c)
+
+    s = a_int * b_int + c_int
+    modulo = s % l
+    return int2hex(modulo)
 
 
 class SignatureMismatch(Exception):
