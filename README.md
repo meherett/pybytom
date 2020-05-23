@@ -30,15 +30,15 @@ from pybytom.utils import generate_entropy
 
 import json
 
-# 128 strength entropy
-ENTROPY = generate_entropy(strength=128)
-# Secret passphrase
+# Choose strength 128, 160, 192, 224 or 256
+ENTROPY = generate_entropy(strength=128)  # Default is 128
+# Secret password/passphrase
 PASSPHRASE = None  # str("meherett")
-# Choose language english, french, italian, spanish, chinese_simplified, chinese_traditional, japanese & korean
-LANGUAGE = "chinese_traditional"  # default is english
+# Choose language english, french, italian, spanish, chinese_simplified, chinese_traditional, japanese or korean
+LANGUAGE = "chinese_traditional"  # Default is english
 
 # Initialize wallet
-wallet = Wallet(network="mainnet")
+wallet = Wallet(network="mainnet")  # Choose network mainnet, solonet or testnet 
 # Get Bytom wallet from entropy
 wallet.from_entropy(entropy=ENTROPY, passphrase=PASSPHRASE, language=LANGUAGE)
 
@@ -101,7 +101,7 @@ from pybytom.wallet import Wallet
 from pybytom.utils import generate_mnemonic
 
 # Initialize wallet
-wallet = Wallet(network="mainnet")  # mainnet, solonet & testnet
+wallet = Wallet(network="mainnet")  # Choose network mainnet, solonet or testnet 
 # Get Bytom wallet from mnemonic
 wallet.from_mnemonic(mnemonic=generate_mnemonic(language="spanish"), passphrase=None)
 
