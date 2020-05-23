@@ -9,10 +9,10 @@ import json
 MNEMONIC = "indicate warm sock mistake code spot acid ribbon sing over taxi toast"
 # Or generate mnemonic
 # MNEMONIC = generate_mnemonic(language="korean", strength=128)
-# Secret passphrase
+# Secret password/passphrase
 PASSPHRASE = None  # str("meherett")
-# Choose language english, french, italian, spanish, chinese_simplified, chinese_traditional, japanese & korean
-LANGUAGE = "english"  # default is english
+# Choose language english, french, italian, spanish, chinese_simplified, chinese_traditional, japanese or korean
+LANGUAGE = "english"  # Default is english
 
 # Message data
 MESSAGE = "a0841d35364046649ab8fc4af5a6266245890778f6cf7304696c4ab8edd86242"
@@ -22,7 +22,7 @@ assert is_mnemonic(mnemonic=MNEMONIC, language=LANGUAGE), \
       "Invalid %s 12 word mnemonic seed." % LANGUAGE
 
 # Initialize wallet
-wallet = Wallet(network="mainnet")
+wallet = Wallet(network="mainnet")  # Choose network mainnet, solonet or testnet
 # Get Bytom wallet from mnemonic
 wallet.from_mnemonic(mnemonic=MNEMONIC, passphrase=PASSPHRASE, language=LANGUAGE)
 

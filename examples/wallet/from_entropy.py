@@ -8,17 +8,17 @@ import json
 # 128 strength entropy
 ENTROPY = "50f002376c81c96e430b48f1fe71df57"
 # Or generate entropy
-# ENTROPY = generate_entropy(strength=128)
-# Secret passphrase
+# ENTROPY = generate_entropy(strength=128)  # Choose strength 128, 160, 192, 224 or 256
+# Secret password/passphrase
 PASSPHRASE = None  # str("meherett")
-# Choose language english, french, italian, spanish, chinese_simplified, chinese_traditional, japanese & korean
-LANGUAGE = "korean"  # default is english
+# Choose language english, french, italian, spanish, chinese_simplified, chinese_traditional, japanese or korean
+LANGUAGE = "korean"  # Default is english
 
 # Message data
 MESSAGE = "a0841d35364046649ab8fc4af5a6266245890778f6cf7304696c4ab8edd86242"
 
 # Initialize wallet
-wallet = Wallet(network="mainnet")
+wallet = Wallet(network="mainnet")  # Choose network mainnet, solonet or testnet
 # Get Bytom wallet from entropy
 wallet.from_entropy(entropy=ENTROPY, passphrase=PASSPHRASE, language=LANGUAGE)
 
