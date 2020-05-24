@@ -54,7 +54,7 @@ def get_p2wpkh_program(public_key_hash: str) -> str:
 
     :param public_key_hash: Bytom public key hash.
     :type public_key_hash: str
-    :return: program -- Public key hash program.
+    :return: program -- Bytom Public key hash program.
 
     >>> from pybytom.script import get_p2wpkh_program
     >>> get_p2wpkh_program("875240ba66646d900c59dd20d843351c2fcbeedc")
@@ -76,7 +76,7 @@ def get_p2wsh_program(script_hash: str) -> str:
 
     :param script_hash: Bytom contract program(bytecode) script hash.
     :type script_hash: str
-    :return: program -- Script hash program.
+    :return: program -- Bytom script hash program.
 
     >>> from pybytom.script import get_p2wsh_program
     >>> get_p2wsh_program("e47eaf5e3a7898197068e2dd7c0209331b36a1b7a73aeb8090df816a3ce5b7d3")
