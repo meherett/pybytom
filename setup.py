@@ -23,7 +23,7 @@ setup(
     author_email="meherett@zoho.com",
     url="https://github.com/meherett/pybytom",
     packages=find_packages(),
-    python_requires=">=3.8,<4",
+    python_requires=">=3.6,<4",
     install_requires=requirements,
     extras_require={
         "tests": [
@@ -34,6 +34,8 @@ setup(
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Topic :: Software Development :: Libraries :: Python Modules"
     ],
