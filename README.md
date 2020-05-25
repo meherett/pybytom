@@ -18,7 +18,7 @@ Or clone it locally, and run:
 $ pip install -e .[tests] -r requirements.txt
 ```
 
-### Quick Usage
+### Quick Start
 
 bytom wallet
 
