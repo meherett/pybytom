@@ -6,8 +6,8 @@ from ..wallet.tools import (
     indexes_to_path, get_program, get_address
 )
 from ..rpc import build_transaction
-from .tools import spend_wallet_action, control_address_action
 from ..exceptions import ClientError, NetworkError
+from .actions import spend_wallet, control_address
 
 
 # Byrom transaction
@@ -361,7 +361,7 @@ class NormalTransaction(Transaction):
         inputs, outputs = list(), list()
         # Input action
         inputs.append(
-            spend_wallet_action(
+            spend_wallet(
                 asset=asset,
                 amount=sum(recipients.values())
             )
@@ -369,7 +369,7 @@ class NormalTransaction(Transaction):
         # Output action
         for address, amount in recipients.items():
             outputs.append(
-                control_address_action(
+                control_address(
                     asset=asset,
                     amount=amount,
                     address=address
