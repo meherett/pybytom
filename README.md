@@ -251,7 +251,8 @@ bytom advanced transaction
 #!/usr/bin/env python3
 
 from pybytom.transaction import AdvancedTransaction
-from pybytom.transaction.tools import find_contract_utxo_id, spend_utxo_action, control_address_action
+from pybytom.transaction.tools import find_contract_utxo_id
+from pybytom.transaction.actions import spend_utxo, control_address
 from pybytom.rpc import submit_transaction_raw
 from pybytom.wallet import Wallet
 
@@ -265,7 +266,7 @@ wallet = Wallet(network=NETWORK).from_mnemonic(mnemonic=MNEMONIC).from_path(path
 advanced_transaction = AdvancedTransaction(network=NETWORK).build_transaction(
     guid=wallet.guid(),
     inputs=[
-        spend_utxo_action(
+        spend_utxo(
             utxo=find_contract_utxo_id(
                 transaction_id="338cf2a29f055289132dd0f75d2d82777d2db1c7dbe64700cd24b03912e5d8e3",
                 network=NETWORK
@@ -273,7 +274,7 @@ advanced_transaction = AdvancedTransaction(network=NETWORK).build_transaction(
         )
     ],
     outputs=[
-        control_address_action(
+        control_address(
             asset="f37dea62efd2965174b84bbb59a0bd0a671cf5fb2857303ffd77c1b482b84bdf",
             amount=100,
             address=wallet.address()
