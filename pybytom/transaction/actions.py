@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 
-def spend_utxo(utxo):
+def spend_utxo(utxo: str) -> dict:
     """
     Get spend UTXO action.
 
@@ -17,7 +17,7 @@ def spend_utxo(utxo):
     return dict(type=str("spend_utxo"), output_id=utxo)
 
 
-def spend_wallet(amount, asset):
+def spend_wallet(amount: int, asset: str) -> dict:
     """
     Get spend wallet action.
 
@@ -38,7 +38,7 @@ def spend_wallet(amount, asset):
     )
 
 
-def control_program(amount, asset, program):
+def control_program(amount: int, asset: str, program: str) -> dict:
     """
     Get control program action.
 
@@ -62,7 +62,7 @@ def control_program(amount, asset, program):
     )
 
 
-def control_address(amount, asset, address):
+def control_address(amount: int, asset: str, address: str) -> dict:
     """
     Get control address action.
 
