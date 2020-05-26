@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 from pybytom.transaction import AdvancedTransaction
-from pybytom.transaction.tools import find_contract_utxo_id, spend_utxo_action, control_address_action
+from pybytom.transaction.tools import find_smart_contract_utxo
+from pybytom.transaction.actions import spend_utxo, control_address
 from pybytom.rpc import submit_transaction_raw
 from pybytom.wallet import Wallet
 
@@ -27,15 +28,15 @@ unsigned_advanced_transaction = AdvancedTransaction(network=NETWORK)
 unsigned_advanced_transaction.build_transaction(
     wallet.guid(),  # guid
     [
-        spend_utxo_action(
-            utxo=find_contract_utxo_id(
+        spend_utxo(
+            utxo=find_smart_contract_utxo(
                 transaction_id="338cf2a29f055289132dd0f75d2d82777d2db1c7dbe64700cd24b03912e5d8e3",
                 network=NETWORK
             )
         )
     ],  # inputs
     [
-        control_address_action(
+        control_address(
             asset=ASSET,
             amount=100,
             address=wallet.address()
