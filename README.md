@@ -251,7 +251,7 @@ bytom advanced transaction
 #!/usr/bin/env python3
 
 from pybytom.transaction import AdvancedTransaction
-from pybytom.transaction.tools import find_contract_utxo_id
+from pybytom.transaction.tools import find_p2wsh_utxo
 from pybytom.transaction.actions import spend_utxo, control_address
 from pybytom.rpc import submit_transaction_raw
 from pybytom.wallet import Wallet
@@ -267,7 +267,7 @@ advanced_transaction = AdvancedTransaction(network=NETWORK).build_transaction(
     guid=wallet.guid(),
     inputs=[
         spend_utxo(
-            utxo=find_contract_utxo_id(
+            utxo=find_p2wsh_utxo(
                 transaction_id="338cf2a29f055289132dd0f75d2d82777d2db1c7dbe64700cd24b03912e5d8e3",
                 network=NETWORK
             )
