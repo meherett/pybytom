@@ -2,7 +2,7 @@
 
 from pybytom.transaction import AdvancedTransaction
 from pybytom.transaction.actions import spend_utxo, control_address
-from pybytom.transaction.tools import find_contract_utxo_id
+from pybytom.transaction.tools import find_smart_contract_utxo
 
 NETWORK = "mainnet"
 
@@ -16,7 +16,7 @@ def test_advanced_transaction():
         guid="f0ed6ddd-9d6b-49fd-8866-a52d1083a13b",
         inputs=[
             spend_utxo(
-                utxo=find_contract_utxo_id(
+                utxo=find_smart_contract_utxo(
                     transaction_id="5268c5a52f22141521833d79ad69c27a2760e99cb0f8386c3e02cf5d1bb0832f",
                     network=NETWORK
                 )

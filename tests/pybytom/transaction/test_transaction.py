@@ -2,7 +2,7 @@
 
 from pybytom.transaction import Transaction
 from pybytom.transaction.actions import spend_utxo, control_address
-from pybytom.transaction.tools import find_contract_utxo_id
+from pybytom.transaction.tools import find_smart_contract_utxo, find_p2wsh_utxo
 
 NETWORK = "mainnet"
 
@@ -16,7 +16,7 @@ def test_transaction():
         guid="f0ed6ddd-9d6b-49fd-8866-a52d1083a13b",
         inputs=[
             spend_utxo(
-                utxo=find_contract_utxo_id(
+                utxo=find_smart_contract_utxo(
                     transaction_id="5268c5a52f22141521833d79ad69c27a2760e99cb0f8386c3e02cf5d1bb0832f",
                     network=NETWORK
                 )
@@ -59,3 +59,8 @@ def test_transaction():
     assert signed_transaction.json()
     assert signed_transaction.unsigned_datas(False)
     assert signed_transaction.signatures() != []
+
+    assert find_p2wsh_utxo(
+        transaction_id="52db181af506e97d595a02bea0d3bcd09ca1765abc7ca8e52ebe9b1653177a43",
+        network=NETWORK
+    )
