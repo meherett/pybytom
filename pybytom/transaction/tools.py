@@ -60,11 +60,9 @@ def find_p2wsh_utxo(transaction_id, network):
         transaction_id=transaction_id, network=network)
     contract_outputs = contract_transaction["outputs"]
     for contract_output in contract_outputs:
-        try:
-            _, address_hash = decode(hrp, contract_output["address"])
-        except TypeError:
-            continue
-        if len(unhexlify(address_hash)) == 32:  # deep
+        _, address_hash = decode(hrp, contract_output["address"])
+        if address_hash is not None and \
+                len(unhexlify(bytearray(address_hash).hex())) == 32:  # deep
             utxo_id = contract_output["utxo_id"]
             break
     return utxo_id
