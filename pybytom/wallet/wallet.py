@@ -40,7 +40,7 @@ class Wallet:
         if not isinstance(network, str):
             raise TypeError("network must be string format")
         if network not in "mainnet/solonet/testnet".split("/"):
-            raise ValueError("invalid network option, choose only mainnet, solonet and testnet network")
+            raise ValueError("invalid network option, choose only mainnet, solonet or testnet network")
         self.network = network
 
         self._entropy, self._mnemonic, self._passphrase, \
