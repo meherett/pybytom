@@ -50,7 +50,8 @@ class Builder:
                 OP_1 + number - 1
             )
             return self
-        return self.add_bytes(bytes(number))
+        return self.add_bytes(number.to_bytes(
+            8, byteorder="big", signed=True))
     
     def add_raw_bytes(self, data: str):
         self.program.append(
