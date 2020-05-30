@@ -51,7 +51,7 @@ def get_balance(address, asset=config["BTM_ASSET"],
     :returns: int -- Bytom asset balance.
 
     >>> from pybytom.rpc import get_balance
-    >>> get_balance("bm1qzx7pjr6whcaxmh9u0thkjuavf2ynk3zkgshhle", "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "mainnet")
+    >>> get_balance("bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "mainnet")
     2580000000
     """
 
@@ -61,7 +61,7 @@ def get_balance(address, asset=config["BTM_ASSET"],
         return 0
     for _asset in response.json():
         if asset == _asset["asset_id"]:
-            return _asset["balance"]
+            return int(_asset["balance"])
     return 0
 
 
