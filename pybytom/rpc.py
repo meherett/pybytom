@@ -181,7 +181,7 @@ def get_transaction(transaction_id, network=config["network"], timeout=config["t
 
 # Submit transaction raw
 def submit_transaction_raw(guid, transaction_raw, signatures,
-                           network, witness=None, memo="mock", timeout=config["timeout"]):
+                           network, memo="mock", timeout=config["timeout"]):
     """
      Submit transaction raw to Bytom blockchain.
 
@@ -191,8 +191,6 @@ def submit_transaction_raw(guid, transaction_raw, signatures,
     :type transaction_raw: str
     :param signatures: Bytom signed datas.
     :type signatures: list
-    :param witness: Bytom witness arguments, defaults to None.
-    :type witness: str
     :param memo: memo, defaults to mock.
     :type memo: str
     :param network: Bytom network, defaults to solonet.
@@ -208,9 +206,7 @@ def submit_transaction_raw(guid, transaction_raw, signatures,
     if not isinstance(signatures, list):
         raise TypeError("signatures must be list format")
     url = str(config[network]["blockcenter"]) + "/merchant/submit-payment"
-    data = dict(guid=guid, raw_transaction=transaction_raw,
-                witness_arguments=witness, signatures=signatures, memo=memo) \
-        if witness else dict(guid=guid, raw_transaction=transaction_raw, signatures=signatures, memo=memo)
+    data = dict(guid=guid, raw_transaction=transaction_raw, signatures=signatures, memo=memo)
     print(json.dumps(data, indent=4))
     response = requests.post(url=url, data=json.dumps(data),
                              headers=headers, timeout=timeout)
