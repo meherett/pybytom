@@ -207,7 +207,6 @@ def submit_transaction_raw(guid, transaction_raw, signatures,
         raise TypeError("signatures must be list format")
     url = str(config[network]["blockcenter"]) + "/merchant/submit-payment"
     data = dict(guid=guid, raw_transaction=transaction_raw, signatures=signatures, memo=memo)
-    print(json.dumps(data, indent=4))
     response = requests.post(url=url, data=json.dumps(data),
                              headers=headers, timeout=timeout)
     if response.json()["code"] != 200:
