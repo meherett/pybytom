@@ -346,7 +346,7 @@ class NormalTransaction(Transaction):
 
         >>> from pybytom.transaction import NormalTransaction
         >>> normal_transaction = NormalTransaction(network="mainnet")
-        >>> normal_transaction.build_transaction("f0ed6ddd-9d6b-49fd-8866-a52d1083a13b", {"bm1qzx7pjr6whcaxmh9u0thkjuavf2ynk3zkgshhle": 10_000_000_000}, "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
+        >>> normal_transaction.build_transaction("f0ed6ddd-9d6b-49fd-8866-a52d1083a13b", {"bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7": 10_000_000_000}, "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
         <pybytom.transaction.transaction.NormalTransaction object at 0x0409DAF0>
         """
 

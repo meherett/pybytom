@@ -75,8 +75,8 @@ def control_address(amount: int, asset: str, address: str) -> dict:
     :returns: dict -- Bytom control address action.
 
     >>> from pybytom.transaction.actions import control_address
-    >>> control_address(10000000, "41536cf298d6f261c0a1ac169a45be47583f7240115c9059cd0d03e4d4fab70a", "bm1qzx7pjr6whcaxmh9u0thkjuavf2ynk3zkgshhle")
-    {'type': 'control_address', 'amount': 10000000, 'asset': '41536cf298d6f261c0a1ac169a45be47583f7240115c9059cd0d03e4d4fab70a', 'address': 'bm1qzx7pjr6whcaxmh9u0thkjuavf2ynk3zkgshhle'}
+    >>> control_address(10000000, "41536cf298d6f261c0a1ac169a45be47583f7240115c9059cd0d03e4d4fab70a", "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7")
+    {'type': 'control_address', 'amount': 10000000, 'asset': '41536cf298d6f261c0a1ac169a45be47583f7240115c9059cd0d03e4d4fab70a', 'address': 'bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7'}
     """
 
     return dict(
