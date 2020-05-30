@@ -1,20 +1,19 @@
 #!/usr/bin/env python3
 
 from .script import (
-    get_public_key_hash, get_script_hash,
-    get_p2wpkh_program, get_p2wsh_program,
-    get_p2wpkh_address, get_p2wsh_address
+    public_key_hash, script_hash,
+    p2pkh_program, p2sh_program,
+    p2wpkh_program, p2wsh_program,
+    p2wpkh_address, p2wsh_address
 )
 
 
 __all__ = [
     # Hash
-    "get_public_key_hash",
-    "get_script_hash",
+    "public_key_hash", "script_hash",
     # Program
-    "get_p2wpkh_program",
-    "get_p2wsh_program",
+    "p2wpkh_program", "p2wsh_program",
+    "p2pkh_program", "p2sh_program",
     # Address
-    "get_p2wpkh_address",
-    "get_p2wsh_address"
+    "p2wpkh_address", "p2wsh_address"
 ]

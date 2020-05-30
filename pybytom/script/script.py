@@ -4,19 +4,22 @@ from binascii import unhexlify
 from hashlib import new, sha3_256
 
 from ..libs.segwit import encode
+from .opcode import (
+    OP_DUP, OP_HASH160, OP_SHA3, OP_EQUALVERIFY, OP_TXSIGHASH, OP_SWAP, OP_CHECKPREDICATE, OP_CHECKSIG
+)
 from .builder import Builder
 
 
-def get_public_key_hash(public_key: str) -> str:
+def public_key_hash(public_key: str) -> str:
     """
-    Get Bytom public key hash().
+    Bytom public key hash().
 
     :param public_key: Bytom contract program(bytecode).
     :type public_key: str
     :return: hash -- Public key ripemd160 hash.
 
-    >>> from pybytom.script import get_public_key_hash
-    >>> get_public_key_hash("5b5a06f6fbcb74b58ebb42293808fec6222234df6c97d7c1cff6d857a6024dc2")
+    >>> from pybytom.script import public_key_hash
+    >>> public_key_hash("5b5a06f6fbcb74b58ebb42293808fec6222234df6c97d7c1cff6d857a6024dc2")
     "875240ba66646d900c59dd20d843351c2fcbeedc"
     """
 
@@ -29,16 +32,16 @@ def get_public_key_hash(public_key: str) -> str:
     return public_hash
 
 
-def get_script_hash(bytecode: str) -> str:
+def script_hash(bytecode: str) -> str:
     """
-    Get Bytom smart contract program(bytecode) script hash(SHA3_256).
+    Bytom smart contract program(bytecode) script hash(SHA3_256).
 
     :param bytecode: Bytom contract program(bytecode).
     :type bytecode: str
     :return: hash -- Script SHA3-256 hash.
 
-    >>> from pybytom.script import get_script_hash
-    >>> get_script_hash("7baa8800c3c251547ac1")
+    >>> from pybytom.script import script_hash
+    >>> script_hash("7baa8800c3c251547ac1")
     "e47eaf5e3a7898197068e2dd7c0209331b36a1b7a73aeb8090df816a3ce5b7d3"
     """
 
@@ -48,16 +51,43 @@ def get_script_hash(bytecode: str) -> str:
     return sha3_256(unhexlify(bytecode)).hexdigest()
 
 
-def get_p2wpkh_program(public_key_hash: str) -> str:
+def p2pkh_program(public_key_hash: str) -> str:
     """
-    Get P2WPKH program return the segwit pay to public key hash program.
+    P2PKH program return the segwit pay to public key hash program.
 
     :param public_key_hash: Bytom public key hash.
     :type public_key_hash: str
     :return: program -- Bytom Public key hash program.
 
-    >>> from pybytom.script import get_p2wpkh_program
-    >>> get_p2wpkh_program("875240ba66646d900c59dd20d843351c2fcbeedc")
+    >>> from pybytom.script import p2pkh_program
+    >>> p2pkh_program("875240ba66646d900c59dd20d843351c2fcbeedc")
+    "0014875240ba66646d900c59dd20d843351c2fcbeedc"
+    """
+
+    if not isinstance(public_key_hash, str):
+        raise TypeError("invalid public key hash type, public_key_hash must be string format")
+
+    builder = Builder()
+    builder.add_op(OP_DUP)
+    builder.add_op(OP_HASH160)
+    builder.add_bytes(unhexlify(public_key_hash))
+    builder.add_op(OP_EQUALVERIFY)
+    builder.add_op(OP_TXSIGHASH)
+    builder.add_op(OP_SWAP)
+    builder.add_op(OP_CHECKSIG)
+    return builder.hex_digest()
+
+
+def p2wpkh_program(public_key_hash: str) -> str:
+    """
+    P2WPKH program return the segwit pay to public key hash program.
+
+    :param public_key_hash: Bytom public key hash.
+    :type public_key_hash: str
+    :return: program -- Bytom Public key hash program.
+
+    >>> from pybytom.script import p2wpkh_program
+    >>> p2wpkh_program("875240ba66646d900c59dd20d843351c2fcbeedc")
     "0014875240ba66646d900c59dd20d843351c2fcbeedc"
     """
 
@@ -70,31 +100,9 @@ def get_p2wpkh_program(public_key_hash: str) -> str:
     return builder.hex_digest()
 
 
-def get_p2wsh_program(script_hash: str) -> str:
+def p2wpkh_address(public_key_hash: str, network="solonet") -> str:
     """
-    Get P2WSH program return the segwit pay to script hash program.
-
-    :param script_hash: Bytom contract program(bytecode) script hash.
-    :type script_hash: str
-    :return: program -- Bytom script hash program.
-
-    >>> from pybytom.script import get_p2wsh_program
-    >>> get_p2wsh_program("e47eaf5e3a7898197068e2dd7c0209331b36a1b7a73aeb8090df816a3ce5b7d3")
-    "0020e47eaf5e3a7898197068e2dd7c0209331b36a1b7a73aeb8090df816a3ce5b7d3"
-    """
-
-    if not isinstance(script_hash, str):
-        raise TypeError("invalid script hash type, script_hash must be string format")
-
-    builder = Builder()
-    builder.add_int(0)
-    builder.add_bytes(unhexlify(script_hash))
-    return builder.hex_digest()
-
-
-def get_p2wpkh_address(public_key_hash: str, network="solonet") -> str:
-    """
-    Get P2WPKH program return the segwit pay to public key hash address.
+    P2WPKH program return the segwit pay to public key hash address.
 
     :param public_key_hash: Bytom public key hash.
     :type public_key_hash: str
@@ -102,8 +110,8 @@ def get_p2wpkh_address(public_key_hash: str, network="solonet") -> str:
     :type network: str
     :return: address -- Bytom pay to public key hash address.
 
-    >>> from pybytom.script import get_p2wpkh_address
-    >>> get_p2wpkh_address("875240ba66646d900c59dd20d843351c2fcbeedc")
+    >>> from pybytom.script import p2wpkh_address
+    >>> p2wpkh_address("875240ba66646d900c59dd20d843351c2fcbeedc")
     "bm1qsafypwnxv3keqrzem5sdsse4rshuhmku7kpnxq"
     """
 
@@ -125,9 +133,59 @@ def get_p2wpkh_address(public_key_hash: str, network="solonet") -> str:
         return encode("tm", 0x00, unhexlify(public_key_hash))
 
 
-def get_p2wsh_address(script_hash: str, network="solonet") -> str:
+def p2sh_program(script_hash: str) -> str:
     """
-    Get P2WSH program return the segwit pay to script hash address.
+    P2WSH program return the segwit pay to script hash program.
+
+    :param script_hash: Bytom contract program(bytecode) script hash.
+    :type script_hash: str
+    :return: program -- Bytom script hash program.
+
+    >>> from pybytom.script import p2sh_program
+    >>> p2sh_program("e47eaf5e3a7898197068e2dd7c0209331b36a1b7a73aeb8090df816a3ce5b7d3")
+    "0020e47eaf5e3a7898197068e2dd7c0209331b36a1b7a73aeb8090df816a3ce5b7d3"
+    """
+
+    if not isinstance(script_hash, str):
+        raise TypeError("invalid script hash type, script_hash must be string format")
+
+    builder = Builder()
+    builder.add_op(OP_DUP)
+    builder.add_op(OP_SHA3)
+    builder.add_bytes(unhexlify(script_hash))
+    builder.add_op(OP_EQUALVERIFY)
+    builder.add_int(-1)
+    builder.add_op(OP_SWAP)
+    builder.add_int(0)
+    builder.add_op(OP_CHECKPREDICATE)
+    return builder.hex_digest()
+
+
+def p2wsh_program(script_hash: str) -> str:
+    """
+    P2WSH program return the segwit pay to script hash program.
+
+    :param script_hash: Bytom contract program(bytecode) script hash.
+    :type script_hash: str
+    :return: program -- Bytom script hash program.
+
+    >>> from pybytom.script import p2wsh_program
+    >>> p2wsh_program("e47eaf5e3a7898197068e2dd7c0209331b36a1b7a73aeb8090df816a3ce5b7d3")
+    "0020e47eaf5e3a7898197068e2dd7c0209331b36a1b7a73aeb8090df816a3ce5b7d3"
+    """
+
+    if not isinstance(script_hash, str):
+        raise TypeError("invalid script hash type, script_hash must be string format")
+
+    builder = Builder()
+    builder.add_int(0)
+    builder.add_bytes(unhexlify(script_hash))
+    return builder.hex_digest()
+
+
+def p2wsh_address(script_hash: str, network="solonet") -> str:
+    """
+    P2WSH program return the segwit pay to script hash address.
 
     :param script_hash: Bytom contract program(bytecode) script hash.
     :type script_hash: str
@@ -135,8 +193,8 @@ def get_p2wsh_address(script_hash: str, network="solonet") -> str:
     :type network: str
     :return: address -- Bytom pay to script hash address.
 
-    >>> from pybytom.script import get_p2wsh_address
-    >>> get_p2wsh_address("e47eaf5e3a7898197068e2dd7c0209331b36a1b7a73aeb8090df816a3ce5b7d3")
+    >>> from pybytom.script import p2wsh_address
+    >>> p2wsh_address("e47eaf5e3a7898197068e2dd7c0209331b36a1b7a73aeb8090df816a3ce5b7d3")
     "bm1qu3l27h360zvpjurgutwhcqsfxvdndgdh5uawhqysm7qk5089klfsrrlhez"
     """
 
