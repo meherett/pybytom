@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
-from pybytom.exceptions import NetworkError, BalanceError, APIError, \
-    AddressError, InvalidURLError, ClientError, NotFoundError
+from pybytom.exceptions import (
+    NetworkError, BalanceError, APIError, AddressError, InvalidURLError, ClientError, NotFoundError
+)
 
 import pytest
 

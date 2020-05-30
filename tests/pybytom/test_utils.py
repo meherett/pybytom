@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
-from pybytom.utils import generate_mnemonic, generate_entropy, is_mnemonic, get_mnemonic_language
+from pybytom.utils import (
+    generate_mnemonic, generate_entropy, is_mnemonic, get_mnemonic_language
+)
 
 import pytest
 

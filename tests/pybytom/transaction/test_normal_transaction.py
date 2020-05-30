@@ -13,7 +13,7 @@ def test_normal_transaction():
     unsigned_normal_transaction.build_transaction(
         guid="f0ed6ddd-9d6b-49fd-8866-a52d1083a13b",
         recipients={
-            "bm1qzx7pjr6whcaxmh9u0thkjuavf2ynk3zkgshhle": 1_000_000
+            "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7": 1_000_000
         },
         asset=ASSET
     )
