@@ -176,108 +176,40 @@ Verified: True
 ```
 </details>
 
-bytom normal transaction
+bytom transaction
 
 ```python
 #!/usr/bin/env python3
 
-from pybytom.transaction import NormalTransaction
+from pybytom.transaction import Transaction
+from pybytom.transaction.actions import spend_wallet, control_address
 from pybytom.rpc import submit_transaction_raw
 from pybytom.wallet import Wallet
 
-# Bytom network and 12 word mnemonic
-NETWORK, MNEMONIC = "mainnet", "indicate warm sock mistake code spot acid ribbon sing over taxi toast"
-
-# Initializing sender wallet from mnemonic and derivation from path
-wallet = Wallet(network=NETWORK).from_mnemonic(mnemonic=MNEMONIC).from_path(path="m/44/153/1/0/1")
-
-# Initializing normal transaction and building transaction
-normal_transaction = NormalTransaction(network=NETWORK).build_transaction(
-    guid=wallet.guid(),
-    recipients={
-        "bm1qzx7pjr6whcaxmh9u0thkjuavf2ynk3zkgshhle": 10_000_000,  # recipient 1
-        "bm1q8wjwl5pxava9zgukf0sadqm5ec2aq0kt84hpxn": 90_000_000   # recipient 2
-    },
-    asset="ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-)
-
-# Print transaction info's
-print(f"Normal Transaction Fee: {normal_transaction.fee()}")
-print(f"Normal Transaction Confirmations: {normal_transaction.confirmations()}")
-print(f"Normal Transaction Hash: {normal_transaction.hash()}")
-print(f"Normal Transaction Raw: {normal_transaction.raw()}")
-print(f"Normal Transaction Json: {normal_transaction.json()}")
-print(f"Normal Transaction Unsigned Datas: {normal_transaction.unsigned_datas(detail=False)}")
-
-# Print before signing transaction signatures
-print(f"\nBefore Signing Normal Transaction Signatures: {normal_transaction.signatures()}")
-# Singing datas
-normal_transaction.sign(
-    xprivate_key=wallet.xprivate_key(),
-)
-# Print after signed transaction signatures
-print(f"After Signed Normal Transaction Signatures: {normal_transaction.signatures()}")
-
-# Submitting transaction raw
-print("\nSubmitted Bytom Blockchain Transaction Hash:", submit_transaction_raw(
-    guid=wallet.guid(), 
-    transaction_raw=normal_transaction.raw(),
-    signatures=normal_transaction.signatures(),
-    network=NETWORK
-))
-```
-
-<details>
-  <summary>Output</summary><br/>
-
-```shell script
-Normal Transaction Fee: 10000000
-Normal Transaction Confirmations: 1
-Normal Transaction Hash: 72868fe4134bb2e58c67e1c67a71c5bbed5bf8259e8405203d95a70294ea0629
-Normal Transaction Raw: 070100010160015eeef93f1d43b10b7cb076603f706a69dcfb7b0637b4a747153f5240516861f2defffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff08fb7e40801011600142cda4f99ea8112e6fa61cdd26157ed6dc408332a22012091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e203013cffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff80ade2040116001411bc190f4ebe3a6ddcbc7aef6973ac4a893b445600013cffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8095f52a011600143ba4efd026eb3a5123964be1d68374ce15d03ecb00013dfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0a0fdaf08011600142cda4f99ea8112e6fa61cdd26157ed6dc408332a00
-Normal Transaction Json: {'hash': '72868fe4134bb2e58c67e1c67a71c5bbed5bf8259e8405203d95a70294ea0629', 'status_fail': False, 'size': 328, 'submission_timestamp': 0, 'memo': '', 'inputs': [{'script': '00142cda4f99ea8112e6fa61cdd26157ed6dc408332a', 'address': 'bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7', 'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': 2358102000, 'type': 'spend'}], 'outputs': [{'utxo_id': '80a8cda6741c28921964c71a00d79531f068aa92e10ad36b113fc81927eed268', 'script': '001411bc190f4ebe3a6ddcbc7aef6973ac4a893b4456', 'address': 'bm1qzx7pjr6whcaxmh9u0thkjuavf2ynk3zkgshhle', 'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': 10000000, 'type': 'control'}, {'utxo_id': '1495fa02229be717fb749525678325c394fc50ad5dd88929003d11b5ccc05720', 'script': '00143ba4efd026eb3a5123964be1d68374ce15d03ecb', 'address': 'bm1q8wjwl5pxava9zgukf0sadqm5ec2aq0kt84hpxn', 'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': 90000000, 'type': 'control'}, {'utxo_id': '844d6ba91489d05afc2f17e5c2148c1a28901af13b531ff6c91df07a85ba5950', 'script': '00142cda4f99ea8112e6fa61cdd26157ed6dc408332a', 'address': 'bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7', 'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': 2248102000, 'type': 'control'}], 'fee': 10000000, 'balances': [{'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': '-110000000'}], 'types': ['ordinary']}
-Normal Transaction Unsigned Datas: [{'datas': ['10f96b2eaa037d06cd5022ea50b8f184203c6ba1565a0618d19e3c8de3715c56'], 'public_key': '91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e2', 'network': 'mainnet', 'path': 'm/44/153/1/0/1'}]
-
-Before Signing Normal Transaction Signatures: []
-After Signed Normal Transaction Signatures: [['1648308c6961ed17d27bddeb0fd5289b56b2abe1c9511fe3a535fd75d4319ad8aeefbf859015cc242707c1377ad5c45de0d8de6201d86d0bff773f9079474706']]
-
-Submitted Bytom Blockchain Transaction Hash: 72868fe4134bb2e58c67e1c67a71c5bbed5bf8259e8405203d95a70294ea0629
-```
-</details>
-
-bytom advanced transaction
-
-```python
-#!/usr/bin/env python3
-
-from pybytom.transaction import AdvancedTransaction
-from pybytom.transaction.tools import find_p2wsh_utxo
-from pybytom.transaction.actions import spend_utxo, control_address
-from pybytom.rpc import submit_transaction_raw
-from pybytom.wallet import Wallet
-
-# Bytom network and 12 word mnemonic
-NETWORK, MNEMONIC = "mainnet", "indicate warm sock mistake code spot acid ribbon sing over taxi toast"
+# Bytom network & mnemonic
+NETWORK, MNEMONIC = "mainnet", "prugna argento mittente arnese zinco filo piattino medesimo retina coltivato copione prolunga"
+# Bytom amount & asset id
+AMOUNT, ASSET = 100_000_000, "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+# Recipient address
+RECIPIENT_ADDRESS = "bm1qsafypwnxv3keqrzem5sdsse4rshuhmku7kpnxq"
 
 # Initializing sender wallet from mnemonic and driving from path
 wallet = Wallet(network=NETWORK).from_mnemonic(mnemonic=MNEMONIC).from_path(path="m/44/153/1/0/1")
 
-# Initializing advanced transaction and building transaction
-advanced_transaction = AdvancedTransaction(network=NETWORK).build_transaction(
+# Initializing transaction and building transaction
+transaction = Transaction(network=NETWORK).build_transaction(
     guid=wallet.guid(),
     inputs=[
-        spend_utxo(
-            utxo=find_p2wsh_utxo(
-                transaction_id="338cf2a29f055289132dd0f75d2d82777d2db1c7dbe64700cd24b03912e5d8e3",
-                network=NETWORK
-            )
+        spend_wallet(
+            asset=ASSET,
+            amount=AMOUNT
         )
     ],
     outputs=[
         control_address(
-            asset="f37dea62efd2965174b84bbb59a0bd0a671cf5fb2857303ffd77c1b482b84bdf",
-            amount=100,
-            address=wallet.address()
+            asset=ASSET,
+            address=RECIPIENT_ADDRESS,
+            amount=AMOUNT
         )
     ],
     fee=10_000_000,
@@ -285,28 +217,28 @@ advanced_transaction = AdvancedTransaction(network=NETWORK).build_transaction(
 )
 
 # Print transaction info's
-print(f"Advanced Transaction Fee: {advanced_transaction.fee()}")
-print(f"Advanced Transaction Confirmations: {advanced_transaction.confirmations()}")
-print(f"Advanced Transaction Hash: {advanced_transaction.hash()}")
-print(f"Advanced Transaction Raw: {advanced_transaction.raw()}")
-print(f"Advanced Transaction Json: {advanced_transaction.json()}")
-print(f"Advanced Transaction Unsigned Datas: {advanced_transaction.unsigned_datas(detail=False)}")
+print(f"Transaction Fee: {transaction.fee()}")
+print(f"Transaction Confirmations: {transaction.confirmations()}")
+print(f"Transaction Hash: {transaction.hash()}")
+print(f"Transaction Raw: {transaction.raw()}")
+print(f"Transaction Json: {transaction.json()}")
+print(f"Transaction Unsigned Datas: {transaction.unsigned_datas(detail=False)}")
 
 # Print before signing transaction signatures
-print(f"\nBefore Signing Advanced Transaction Signatures: {advanced_transaction.signatures()}")
+print(f"\nBefore Signing Transaction Signatures: {transaction.signatures()}")
 # Singing datas
-advanced_transaction.sign(
+transaction.sign(
     xprivate_key=wallet.xprivate_key(),
     indexes=["2c000000", "99000000", "01000000", "00000000", "01000000"]
 )
 # Print after signed transaction signatures
-print(f"After Signed Advanced Transaction Signatures: {advanced_transaction.signatures()}")
+print(f"After Signed Transaction Signatures: {transaction.signatures()}")
 
 # Submitting transaction raw
-print("\nSubmitted Bytom Blockchain Transaction Hash:", submit_transaction_raw(
-    guid=wallet.guid(), 
-    transaction_raw=advanced_transaction.raw(),
-    signatures=advanced_transaction.signatures(),
+print("\nSubmitted Transaction Id:", submit_transaction_raw(
+    guid=wallet.guid(),
+    transaction_raw=transaction.raw(),
+    signatures=transaction.signatures(),
     network=NETWORK
 ))
 ```
@@ -315,17 +247,17 @@ print("\nSubmitted Bytom Blockchain Transaction Hash:", submit_transaction_raw(
   <summary>Output</summary><br/>
 
 ```shell script
-Advanced Transaction Fee: 10000000
-Advanced Transaction Confirmations: 1
-Advanced Transaction Hash: 70c4af34a360a9e4e88d4bd77883df4ab381e67d9c7960919bb118cb4b91bafc
-Advanced Transaction Raw: 0701000201d00101cd0139630abd345a77b9112aac3c554a788a28cfb3e3015222ba058cfc751cbefa90f37dea62efd2965174b84bbb59a0bd0a671cf5fb2857303ffd77c1b482b84bdf640001880101642091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e220ac13c0bb1445423a641754182d53f0677cd4351a0e743e6f10b35122c3d7ea01203a26da82ead15a80533a02696656b14b5dbfd84eb14790f2e1be5e9e45820eeb741f547a6416000000557aa888537a7cae7cac631f000000537acd9f6972ae7cac00c001000160015e39630abd345a77b9112aac3c554a788a28cfb3e3015222ba058cfc751cbefa90fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0e2d4df0802011600142cda4f99ea8112e6fa61cdd26157ed6dc408332a22012091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e2020139f37dea62efd2965174b84bbb59a0bd0a671cf5fb2857303ffd77c1b482b84bdf64011600142cda4f99ea8112e6fa61cdd26157ed6dc408332a00013dfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0b5f2da08011600142cda4f99ea8112e6fa61cdd26157ed6dc408332a00
-Advanced Transaction Json: {'hash': '70c4af34a360a9e4e88d4bd77883df4ab381e67d9c7960919bb118cb4b91bafc', 'status_fail': False, 'size': 475, 'submission_timestamp': 0, 'memo': '', 'inputs': [{'script': '01642091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e220ac13c0bb1445423a641754182d53f0677cd4351a0e743e6f10b35122c3d7ea01203a26da82ead15a80533a02696656b14b5dbfd84eb14790f2e1be5e9e45820eeb741f547a6416000000557aa888537a7cae7cac631f000000537acd9f6972ae7cac00c0', 'address': 'smart contract', 'asset': 'f37dea62efd2965174b84bbb59a0bd0a671cf5fb2857303ffd77c1b482b84bdf', 'amount': 100, 'type': 'spend'}, {'script': '00142cda4f99ea8112e6fa61cdd26157ed6dc408332a', 'address': 'bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7', 'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': 2348102000, 'type': 'spend'}], 'outputs': [{'utxo_id': '4f871cbbfdfecdbed4075fe027e39850f80797f23b5036168d393739ca0e95a1', 'script': '00142cda4f99ea8112e6fa61cdd26157ed6dc408332a', 'address': 'bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7', 'asset': 'f37dea62efd2965174b84bbb59a0bd0a671cf5fb2857303ffd77c1b482b84bdf', 'amount': 100, 'type': 'control'}, {'utxo_id': 'fb72ff773c6b5274acad7a6794d77204be94857f159d4ba3d03a0381c645cc6e', 'script': '00142cda4f99ea8112e6fa61cdd26157ed6dc408332a', 'address': 'bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7', 'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': 2338102000, 'type': 'control'}], 'fee': 10000000, 'balances': [{'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': '-10000000'}, {'asset': 'f37dea62efd2965174b84bbb59a0bd0a671cf5fb2857303ffd77c1b482b84bdf', 'amount': '100'}], 'types': ['ordinary']}
-Advanced Transaction Unsigned Datas: [{'datas': ['6eeef43c62eb90d2585e4e0128a671d6b5efe6f0645c288372e5335696d3db2a'], 'network': 'mainnet', 'path': None}, {'datas': ['eab36e3689be0fd72f0c11f44a2260b2676bf3f3b27f3d4d8ffb893278ed90ca'], 'public_key': '91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e2', 'network': 'mainnet', 'path': 'm/44/153/1/0/1'}]
+Transaction Fee: 10000000
+Transaction Confirmations: 1
+Transaction Hash: 9871c2fdf066c2506e152e388957c994ce34dac851a5752c11a8b3f7c1aaf718
+Transaction Raw: 070100010160015e1a27542761cb9060e50ff53fe794a24fd59991aee13ee09f45536f40e5ab08ddfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0f287850801011600142cda4f99ea8112e6fa61cdd26157ed6dc408332a22012091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e202013cffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff80c2d72f01160014875240ba66646d900c59dd20d843351c2fcbeedc00013dfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff083ced007011600142cda4f99ea8112e6fa61cdd26157ed6dc408332a00
+Transaction Json: {'hash': '9871c2fdf066c2506e152e388957c994ce34dac851a5752c11a8b3f7c1aaf718', 'status_fail': False, 'size': 265, 'submission_timestamp': 0, 'memo': '', 'inputs': [{'script': '00142cda4f99ea8112e6fa61cdd26157ed6dc408332a', 'address': 'bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7', 'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': 2158098800, 'type': 'spend'}], 'outputs': [{'utxo_id': '18783c9fc4d8cd963ea56ff3a35682e7c4cc8a62660162a533427fa475d7c922', 'script': '0014875240ba66646d900c59dd20d843351c2fcbeedc', 'address': 'bm1qsafypwnxv3keqrzem5sdsse4rshuhmku7kpnxq', 'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': 100000000, 'type': 'control'}, {'utxo_id': '1fceb34f43da75346eeb6375047bb397f6120b8c142946b5fa52d883ff284f03', 'script': '00142cda4f99ea8112e6fa61cdd26157ed6dc408332a', 'address': 'bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7', 'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': 2048098800, 'type': 'control'}], 'fee': 10000000, 'balances': [{'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': '-110000000'}], 'types': ['ordinary']}
+Transaction Unsigned Datas: [{'datas': ['efecec3cbe374bf69553f5345797d4a57ffab938b5b93a922abedd5b2b333ae6'], 'public_key': '91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e2', 'network': 'mainnet', 'path': 'm/44/153/1/0/1'}]
 
-Before Signing Advanced Transaction Signatures: []
-After Signed Advanced Transaction Signatures: [['efcb400b08eec8e263e18f449d0104ec04917baced977795660f75a12ee5b7bab16c4b5df4918388f5dec0a82f23564d0fc6aa9fee4ad0858117077b5b06330d'], ['004f39908afeedadc107d0deb6da2a250292bfbad1a94c3ae23de641a90cce32210c2ba549240752f4b503438b167331bfc311d3257c78f00ca4137acc83290d']]
+Before Signing Transaction Signatures: []
+After Signed Transaction Signatures: [['33386e69735687f28ff3f864d7ae573928054f520b56b9f02799d85cdb69a07885923323cd10a0d9e5b062dd8df4926c8b85c202f0af9e5632767f7355e0520c']]
 
-Submitted Bytom Blockchain Transaction Hash: 70c4af34a360a9e4e88d4bd77883df4ab381e67d9c7960919bb118cb4b91bafc
+Submitted Transaction Id: 9871c2fdf066c2506e152e388957c994ce34dac851a5752c11a8b3f7c1aaf718
 ```
 </details>
 
