@@ -24,7 +24,7 @@ INDEXES = [
 
 def get_xpublic_key(xprivate_key):
     """
-    Get bytom xpublic key from xprivate key.
+    Get Bytom xpublic key from xprivate key.
 
     :param xprivate_key: Bytom xprivate key.
     :type xprivate_key: str.
@@ -48,7 +48,7 @@ def get_xpublic_key(xprivate_key):
 
 def get_expand_xprivate_key(xprivate_key):
     """
-    Get bytom expand xprivate key from xprivate key.
+    Get Bytom expand xprivate key from xprivate key.
 
     :param xprivate_key: Bytom xprivate key.
     :type xprivate_key: str.
@@ -131,7 +131,7 @@ def path_to_indexes(path):
 
 def get_child_xprivate_key(xprivate_key, indexes=None, path=None):
     """
-    Get bytom get child xprivate key.
+    Get Bytom get child xprivate key.
 
     :param xprivate_key: Bytom xprivate key.
     :type xprivate_key: str.
@@ -188,7 +188,7 @@ def get_child_xprivate_key(xprivate_key, indexes=None, path=None):
 
 def get_child_xpublic_key(xpublic_key, indexes=None, path=None):
     """
-    Get bytom get child xpublic key.
+    Get Bytom get child xpublic key.
 
     :param xpublic_key: Bytom xpublic key.
     :type xpublic_key: str.
@@ -243,7 +243,7 @@ def get_child_xpublic_key(xpublic_key, indexes=None, path=None):
 
 def get_private_key(xprivate_key, indexes=None, path=None):
     """
-    Get bytom private key from xprivate key. This is also the same with get_child_xprivate_key function.
+    Get Bytom private key from xprivate key. This is also the same with get_child_xprivate_key function.
 
     :param xprivate_key: Bytom xprivate key.
     :type xprivate_key: str.
@@ -264,7 +264,7 @@ def get_private_key(xprivate_key, indexes=None, path=None):
 
 def get_public_key(xpublic_key=None, indexes=None, path=None):
     """
-    Get bytom public key from xpublic key.
+    Get Bytom public key from xpublic key.
 
     :param xpublic_key: Bytom xpublic key.
     :type xpublic_key: str.
@@ -285,7 +285,7 @@ def get_public_key(xpublic_key=None, indexes=None, path=None):
 
 def get_program(public_key):
     """
-    Get bytom control program from public key.
+    Get Bytom control program from public key.
 
     :param public_key: Bytom public key.
     :type public_key: str.
@@ -310,7 +310,7 @@ def get_program(public_key):
 
 def get_address(program, network="solonet"):
     """
-    Get bytom address from program.
+    Get Bytom address from program.
 
     :param program: Bytom control program.
     :type program: str.
@@ -340,7 +340,7 @@ def get_address(program, network="solonet"):
 
 def get_vapor_address(program, network="solonet"):
     """
-    Get bytom vapor address from program.
+    Get Bytom vapor address from program.
 
     :param program: Bytom control program.
     :type program: str.
