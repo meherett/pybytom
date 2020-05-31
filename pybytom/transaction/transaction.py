@@ -430,7 +430,7 @@ class AdvancedTransaction(Transaction):
 
         >>> from pybytom.transaction import AdvancedTransaction
         >>> advanced_transaction = AdvancedTransaction(network="mainnet")
-        >>> advanced_transaction.build_transaction("f0ed6ddd-9d6b-49fd-8866-a52d1083a13b", [[...], ...], outputs=[[...], ...], 10000000, 3)
+        >>> advanced_transaction.build_transaction("f0ed6ddd-9d6b-49fd-8866-a52d1083a13b", [[...],...], [[...],...], 10000000, 3)
         <pybytom.transaction.transaction.AdvancedTransaction object at 0x0409DAF0>
         """
 
