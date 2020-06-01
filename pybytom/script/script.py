@@ -12,7 +12,7 @@ from .builder import Builder
 
 def public_key_hash(public_key: str) -> str:
     """
-    Bytom public key hash().
+    Bytom public key hash.
 
     :param public_key: Bytom contract program(bytecode).
     :type public_key: str
@@ -34,7 +34,7 @@ def public_key_hash(public_key: str) -> str:
 
 def script_hash(bytecode: str) -> str:
     """
-    Bytom smart contract program(bytecode) script hash(SHA3_256).
+    Bytom smart contract program(bytecode) script hash.
 
     :param bytecode: Bytom contract program(bytecode).
     :type bytecode: str
@@ -53,11 +53,11 @@ def script_hash(bytecode: str) -> str:
 
 def p2pkh_program(public_key_hash: str) -> str:
     """
-    P2PKH program return the segwit pay to public key hash program.
+    Get P2PKH program return the segwit pay to public key hash program.
 
     :param public_key_hash: Bytom public key hash.
     :type public_key_hash: str
-    :return: program -- Bytom Public key hash program.
+    :return: program -- Bytom pay to public key hash program.
 
     >>> from pybytom.script import p2pkh_program
     >>> p2pkh_program("875240ba66646d900c59dd20d843351c2fcbeedc")
@@ -80,7 +80,7 @@ def p2pkh_program(public_key_hash: str) -> str:
 
 def p2wpkh_program(public_key_hash: str) -> str:
     """
-    P2WPKH program return the segwit pay to public key hash program.
+    Get P2WPKH program return the segwit pay to witness public key hash program.
 
     :param public_key_hash: Bytom public key hash.
     :type public_key_hash: str
@@ -102,7 +102,7 @@ def p2wpkh_program(public_key_hash: str) -> str:
 
 def p2wpkh_address(public_key_hash: str, network="solonet") -> str:
     """
-    P2WPKH program return the segwit pay to public key hash address.
+    Get P2WPKH address return the segwit pay to public key hash address.
 
     :param public_key_hash: Bytom public key hash.
     :type public_key_hash: str
@@ -135,11 +135,11 @@ def p2wpkh_address(public_key_hash: str, network="solonet") -> str:
 
 def p2sh_program(script_hash: str) -> str:
     """
-    P2WSH program return the segwit pay to script hash program.
+    Get P2WSH program return the segwit pay to script hash program.
 
     :param script_hash: Bytom contract program(bytecode) script hash.
     :type script_hash: str
-    :return: program -- Bytom script hash program.
+    :return: program -- Bytom pay to script hash program.
 
     >>> from pybytom.script import p2sh_program
     >>> p2sh_program("e47eaf5e3a7898197068e2dd7c0209331b36a1b7a73aeb8090df816a3ce5b7d3")
@@ -163,7 +163,7 @@ def p2sh_program(script_hash: str) -> str:
 
 def p2wsh_program(script_hash: str) -> str:
     """
-    P2WSH program return the segwit pay to script hash program.
+    Get P2WSH program return the segwit pay to script hash program.
 
     :param script_hash: Bytom contract program(bytecode) script hash.
     :type script_hash: str
@@ -185,7 +185,7 @@ def p2wsh_program(script_hash: str) -> str:
 
 def p2wsh_address(script_hash: str, network="solonet") -> str:
     """
-    P2WSH program return the segwit pay to script hash address.
+    Get P2WSH address return the segwit pay to script hash address.
 
     :param script_hash: Bytom contract program(bytecode) script hash.
     :type script_hash: str
