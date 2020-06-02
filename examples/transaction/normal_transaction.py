@@ -26,7 +26,9 @@ unsigned_normal_transaction = NormalTransaction(network=NETWORK)
 unsigned_normal_transaction.build_transaction(
     guid=wallet.guid(),
     recipients={
-        "bm1qzx7pjr6whcaxmh9u0thkjuavf2ynk3zkgshhle": 10_000_000_000
+        "bm1qtwtdhf6jmxhfhutjacmgxyv6levnkuhad67wqh": 10_000_000,
+        "bm1qr3h0ljhcgwu0h09teegk638my30c29a3aerjg2": 80_000_000,
+        "bm1qwk4kpx09ehccrna3enqqwhrj9xt7pwxd4sufkw": 10_000_000
     },
     asset=ASSET_ID
 )
