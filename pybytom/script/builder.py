@@ -2,6 +2,7 @@
 
 from struct import pack
 from binascii import unhexlify
+from ctypes import c_int64
 
 from .opcode import (
     OP_0, OP_1, OP_DATA_1, OP_PUSHDATA1, OP_PUSHDATA2, OP_PUSHDATA4
@@ -50,8 +51,9 @@ class Builder:
                 OP_1 + number - 1
             )
             return self
-        return self.add_bytes(number.to_bytes(
-            8, byteorder="big", signed=True))
+        # return
+        return self.add_bytes(
+            bytes(c_int64(number)).rstrip(b'\x00'))
     
     def add_raw_bytes(self, data: str):
         self.program.append(
