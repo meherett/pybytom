@@ -93,7 +93,7 @@ def account_create(xpublic_key, label="1st address", email=None,
     response = requests.post(url=url, data=json.dumps(data),
                              headers=headers, timeout=timeout)
     if response.status_code == 200 and response.json()["code"] == 300:
-        raise APIError(response.json()["code"], response.json()["msg"])
+        raise APIError(response.json()["msg"], response.json()["code"])
     return response.json()["result"]["data"]
 
 
@@ -117,12 +117,14 @@ def list_address(guid, limit=10, network=config["network"], timeout=config["time
     [{"guid": "f0ed6ddd-9d6b-49fd-8866-a52d1083a13b", "address": "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "label": "1st address", "balances": [{"asset": "f37dea62efd2965174b84bbb59a0bd0a671cf5fb2857303ffd77c1b482b84bdf", "balance": "100000000000", "total_received": "100000000000", "total_sent": "0", "decimals": 8, "alias": "Asset", "icon": "", "name": "f37dea62efd2965174b84bbb59a0bd0a671cf5fb2857303ffd77c1b482b84bdf", "symbol": "Asset", "in_usd": "0.00", "in_cny": "0.00", "in_btc": "0.000000"}, {"asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "balance": "2450000000", "total_received": "4950000000", "total_sent": "2500000000", "decimals": 8, "alias": "btm", "icon": "", "name": "BTM", "symbol": "BTM", "in_usd": "2.90", "in_cny": "20.58", "in_btc": "0.000283"}]}]
     """
 
-    url = str(config[network]["blockcenter"]) + "/account/list-address"
+    url = str(config[network]["blockcenter"]) + "/account/list-addresses"
     response = requests.post(url=url, data=json.dumps(dict(guid=guid)),
                              params=dict(limit=limit), headers=headers, timeout=timeout)
     if response.status_code == 200 and response.json()["code"] == 300:
-        raise APIError(response.json()["code"], response.json()["msg"])
-    return response.json()["result"]["data"]
+        raise APIError(response.json()["msg"], response.json()["code"])
+    if response.status_code == 200 and response.json()["code"] == 414:
+        raise APIError(response.json()["msg"], response.json()["code"])
+    return response.json()
 
 
 # Build transaction in blockcenter
@@ -147,9 +149,9 @@ def build_transaction(transaction, network=config["network"], timeout=config["ti
     response = requests.post(url=url, data=json.dumps(transaction),
                              headers=headers, timeout=timeout)
     if response.status_code == 200 and response.json()["code"] == 300:
-        raise APIError(response.json()["code"], response.json()["msg"])
+        raise APIError(response.json()["msg"], response.json()["code"])
     elif response.status_code == 200 and response.json()["code"] == 503:
-        raise APIError(response.json()["code"], response.json()["msg"])
+        raise APIError(response.json()["msg"], response.json()["code"])
     return response.json()["result"]["data"]
 
 
@@ -210,7 +212,7 @@ def submit_transaction_raw(guid, transaction_raw, signatures,
     response = requests.post(url=url, data=json.dumps(data),
                              headers=headers, timeout=timeout)
     if response.json()["code"] != 200:
-        raise APIError(response.json()["code"], response.json()["msg"])
+        raise APIError(response.json()["msg"], response.json()["code"])
     return response.json()["result"]["data"]["transaction_hash"]
 
 
@@ -236,5 +238,5 @@ def decode_transaction_raw(transaction_raw, network=config["network"], timeout=c
     response = requests.post(url=url, data=json.dumps(dict(raw_transaction=transaction_raw)),
                              headers=headers, timeout=timeout)
     if response.status_code == 400:
-        raise APIError(response.json()["code"], response.json()["msg"])
+        raise APIError(response.json()["msg"], response.json()["code"])
     return response.json()["data"]
