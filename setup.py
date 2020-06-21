@@ -14,7 +14,7 @@ with open("requirements.txt", "r") as _requirements:
 
 setup(
     name="pybytom",
-    version="1.3.1",
+    version="1.3.2",
     description="Python library with tools for Bytom blockchain.",
     long_description=long_description,
     long_description_content_type="text/markdown",
