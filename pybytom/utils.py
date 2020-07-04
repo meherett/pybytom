@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from binascii import hexlify, unhexlify
+from binascii import hexlify
 from mnemonic.mnemonic import Mnemonic
 
 import os
@@ -150,6 +150,43 @@ def is_address(address, network=None):
             return address.startswith("sm") and not decode("sm", address) == (None, None)
         elif network == "testnet":
             return address.startswith("tm") and not decode("tm", address) == (None, None)
+        else:
+            raise ValueError("invalid network, use only this options mainnet, solonet or testnet networks.")
+    raise TypeError("address must be string format")
+
+
+def is_vapor_address(address, network=None):
+    """
+    Check Bytom vapor address.
+
+    :param address: Bytom vapor address.
+    :type address: str
+    :param network: Bytom network, defaults to None.
+    :type network: str
+    :returns: bool -- Bytom valid/invalid address.
+
+    >>> from pybytom.utils import is_vapor_address
+    >>> is_vapor_address("vp1q9ndylx02syfwd7npehfxz4lddhzqsve2za23ag", "mainnet")
+    True
+    """
+
+    if isinstance(address, str):
+        if network is None:
+            for hrp in ["vp", "sp", "tp"]:
+                valid = False
+                if address.startswith(hrp) and \
+                        not decode(hrp, address) == (None, None):
+                    valid = True
+                    break
+            return valid
+        if not isinstance(network, str):
+            raise TypeError("network must be string format")
+        elif network == "mainnet":
+            return address.startswith("vp") and not decode("vp", address) == (None, None)
+        elif network == "solonet":
+            return address.startswith("sp") and not decode("sp", address) == (None, None)
+        elif network == "testnet":
+            return address.startswith("tp") and not decode("tp", address) == (None, None)
         else:
             raise ValueError("invalid network, use only this options mainnet, solonet or testnet networks.")
     raise TypeError("address must be string format")
