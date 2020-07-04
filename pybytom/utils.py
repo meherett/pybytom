@@ -5,6 +5,8 @@ from mnemonic.mnemonic import Mnemonic
 
 import os
 
+from .libs.segwit import decode
+
 
 def generate_entropy(strength=128):
     """
@@ -46,7 +48,7 @@ def generate_mnemonic(language="english", strength=128):
     if language and language not in ["english", "french", "italian", "japanese",
                                      "chinese_simplified", "chinese_traditional", "korean", "spanish"]:
         raise ValueError("invalid language, use only this options english, french, "
-                         "italian, spanish, chinese_simplified, chinese_traditional, japanese & korean.")
+                         "italian, spanish, chinese_simplified, chinese_traditional, japanese or korean languages.")
     if strength not in [128, 160, 192, 224, 256]:
         raise ValueError(
             "Strength should be one of the following "
@@ -75,7 +77,7 @@ def is_mnemonic(mnemonic, language=None):
     if language and language not in ["english", "french", "italian", "japanese",
                                      "chinese_simplified", "chinese_traditional", "korean", "spanish"]:
         raise ValueError("invalid language, use only this options english, french, "
-                         "italian, spanish, chinese_simplified, chinese_traditional, japanese & korean.")
+                         "italian, spanish, chinese_simplified, chinese_traditional, japanese or korean languages.")
     try:
         if language is None:
             for _language in ["english", "french", "italian",
@@ -114,3 +116,40 @@ def get_mnemonic_language(mnemonic):
             language = _language
             break
     return language
+
+
+def is_address(address, network=None):
+    """
+    Check Bytom address.
+
+    :param address: Bytom address.
+    :type address: str
+    :param network: Bytom network, defaults to None.
+    :type network: str
+    :returns: bool -- Bytom valid/invalid address.
+
+    >>> from pybytom.utils import is_address
+    >>> is_address("bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "mainnet")
+    True
+    """
+
+    if isinstance(address, str):
+        if network is None:
+            for hrp in ["bm", "sm", "tm"]:
+                valid = False
+                if address.startswith(hrp) and \
+                        not decode(hrp, address) == (None, None):
+                    valid = True
+                    break
+            return valid
+        if not isinstance(network, str):
+            raise TypeError("network must be string format")
+        elif network == "mainnet":
+            return address.startswith("bm") and not decode("bm", address) == (None, None)
+        elif network == "solonet":
+            return address.startswith("sm") and not decode("sm", address) == (None, None)
+        elif network == "testnet":
+            return address.startswith("tm") and not decode("tm", address) == (None, None)
+        else:
+            raise ValueError("invalid network, use only this options mainnet, solonet or testnet networks.")
+    raise TypeError("address must be string format")
