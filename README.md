@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/meherett/pybytom.svg?branch=master)](https://travis-ci.org/meherett/pybytom)
 [![PyPI Version](https://img.shields.io/pypi/v/pybytom.svg?color=blue)](https://pypi.org/project/pybytom)
-[![Coverage Status](https://coveralls.io/repos/github/meherett/pybytom/badge.svg?branch=master)](https://coveralls.io/github/meherett/pybytom?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/meherett/pybytom/badge.svg?branch=master&kill_cache=1)](https://coveralls.io/github/meherett/pybytom?branch=master)
 
 Python library with tools for Bytom blockchain. [Wiki Documentation](https://github.com/meherett/pybytom/wiki)
 
