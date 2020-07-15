@@ -3,6 +3,7 @@
 from pybytom.rpc import (
     get_balance, list_address, submit_transaction_raw, decode_transaction_raw
 )
+from pybytom.exceptions import APIError
 
 import pytest
 
@@ -13,8 +14,7 @@ def test_rpc():
                                   "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
                                   "mainnet"), int)
 
-    with pytest.raises(Exception):
-        isinstance(list_address("f0ed6ddd-9d6b-49fd-8866-a52d1083a13b", 1, network="mainnet"), list)
+    assert isinstance(list_address("f0ed6ddd-9d6b-49fd-8866-a52d1083a13b", 1, network="mainnet"), dict)
 
     with pytest.raises(Exception):
         submit_transaction_raw(
