@@ -6,21 +6,23 @@
 
 Python library with tools for Bytom blockchain. [Wiki Documentation](https://github.com/meherett/pybytom/wiki)
 
-### Installation
+## Installation
 
 ```
 $ pip install pybytom
 ```
 
-### Development
+For the versions available, see the [tags on this repository](https://github.com/meherett/pybytom/tags).
 
-We welcome pull requests. To get started, just fork this repo, clone it locally, and run:
+## Development
+
+We welcome pull requests. To get started, just fork this repository, clone it locally, and run:
 
 ```
 $ pip install -e .[tests] -r requirements.txt
 ```
 
-### Testing
+## Testing
 
 You can run the tests with:
 
@@ -31,6 +33,6 @@ $ pytest
 Or use `tox` to run the complete suite against the full set of build targets, or pytest to run specific 
 tests against a specific version of Python.
 
-### License
+## License
 
 Distributed under the [MIT](https://github.com/meherett/pybytom/blob/master/LICENSE) license. See ``LICENSE`` for more information.
