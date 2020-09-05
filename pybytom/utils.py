@@ -13,8 +13,8 @@ def generate_entropy(strength=128):
     Generate entropy hex string.
 
     :param strength: Entropy strength, default to 128.
-    :type strength: str.
-    :returns:  entropy -- Entropy hex string.
+    :type strength: int
+    :returns: str -- Entropy hex string.
 
     >>> from pybytom.utils import generate_entropy
     >>> generate_entropy(strength=128)
@@ -35,10 +35,10 @@ def generate_mnemonic(language="english", strength=128):
     Generate 12 word mnemonic.
 
     :param language: Mnemonic language, default to english.
-    :type language: str.
+    :type language: str
     :param strength: Entropy strength, default to 128.
-    :type strength: str.
-    :returns:  mnemonic -- 12 word mnemonic.
+    :type strength: int
+    :returns: str -- 12 word mnemonic.
 
     >>> from pybytom.utils import generate_mnemonic
     >>> generate_mnemonic(language="french")
@@ -64,10 +64,10 @@ def is_mnemonic(mnemonic, language=None):
     Check 12 word mnemonic is Valid.
 
     :param mnemonic: 12 word mnemonic.
-    :type mnemonic: str.
+    :type mnemonic: str
     :param language: Mnemonic language, default to None.
-    :type language: str.
-    :returns:  mnemonic -- True/False.
+    :type language: str
+    :returns: bool -- True/False.
 
     >>> from pybytom.utils import is_mnemonic
     >>> is_mnemonic("sceptre capter séquence girafe absolu relatif fleur zoologie muscle sirop saboter parure")
@@ -98,8 +98,8 @@ def get_mnemonic_language(mnemonic):
     Get mnemonic language.
 
     :param mnemonic: 12 word mnemonic.
-    :type mnemonic: str.
-    :returns:  language -- Mnemonic language.
+    :type mnemonic: str
+    :returns: str -- Mnemonic language.
 
     >>> from pybytom.utils import get_mnemonic_language
     >>> get_mnemonic_language("sceptre capter séquence girafe absolu relatif fleur zoologie muscle sirop saboter parure")
