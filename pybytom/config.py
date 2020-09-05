@@ -20,7 +20,7 @@ def config():
             "blockmeta": None,
             "blockcenter": None
         },
-        "network": "solonet",  # default network
+        "network": "mainnet",  # default network
         "timeout": 60,
         "BTM_asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
         "one_BTM": 100_000_000,  # 1 BTM
