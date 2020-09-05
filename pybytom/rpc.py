@@ -3,40 +3,22 @@
 import requests
 import json
 
-from .exceptions import APIError
+from .utils import get_btm_amount, is_address, is_network
+from .exceptions import (
+    APIError, NetworkError, AddressError
+)
+from .config import config
 
 # Request headers
 headers = dict()
 # headers.setdefault("Content-Type", "application/json")
 
-# Bytom configuration
-config = {
-    "mainnet": {
-        "bytom": "http://localhost:9888",
-        "blockmeta": "https://blockmeta.com/api/v3",
-        "blockcenter": "https://bcapi.bystack.com/api/v2/btm"
-    },
-    "solonet": {
-        "bytom": "http://localhost:9888",
-        "blockmeta": None,
-        "blockcenter": None
-    },
-    "testnet": {
-        "bytom": "http://localhost:9888",
-        "blockmeta": None,
-        "blockcenter": None
-    },
-    "network": "solonet",  # mainnet, solonet & testnet
-    "timeout": 60,
-    "BTM_ASSET": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-    "fee": 10_000_000,  # 0.1 BTM
-    "confirmations": 1
-}
+# Bytom config
+config = config()
 
 
-# Get balance by address
-def get_balance(address, asset=config["BTM_ASSET"],
-                network=config["network"], timeout=config["timeout"]):
+def get_balance(address: str, asset: str = config["BTM_asset"],
+                network: str = config["network"], timeout: int = config["timeout"]):
     """
     Get Bytom balance.
 
@@ -55,6 +37,11 @@ def get_balance(address, asset=config["BTM_ASSET"],
     2580000000
     """
 
+    if not is_network(network=network):
+        raise NetworkError(f"Invalid '{network}' network/type",
+                           "choose only 'mainnet', 'solonet' or 'testnet' networks.")
+    if not is_address(address=address, network=network):
+        raise AddressError(f"Invalid '{address}' {network} address/type")
     url = f"{config[network]['blockmeta']}/address/{address}/asset"
     response = requests.get(url=url, headers=headers, timeout=timeout)
     if response.json() is None:
@@ -65,9 +52,8 @@ def get_balance(address, asset=config["BTM_ASSET"],
     return 0
 
 
-# Create account in blockcenter
 def account_create(xpublic_key, label="1st address", email=None,
-                   network=config["network"], timeout=config["timeout"]):
+                   network: str = config["network"], timeout: int = config["timeout"]):
     """
     Create account in blockcenter.
 
@@ -88,6 +74,9 @@ def account_create(xpublic_key, label="1st address", email=None,
     {"guid": "f0ed6ddd-9d6b-49fd-8866-a52d1083a13b", "address": "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "label": "1st address"}
     """
 
+    if not is_network(network=network):
+        raise NetworkError(f"Invalid '{network}' network/type",
+                           "choose only 'mainnet', 'solonet' or 'testnet' networks.")
     url = str(config[network]["blockcenter"]) + "/account/create"
     data = dict(pubkey=xpublic_key, label=label, email=email)
     response = requests.post(url=url, data=json.dumps(data),
@@ -97,8 +86,7 @@ def account_create(xpublic_key, label="1st address", email=None,
     return response.json()["result"]["data"]
 
 
-# List addresses from blockcenter
-def list_address(guid, limit=10, network=config["network"], timeout=config["timeout"]):
+def list_address(guid, limit=10, network: str = config["network"], timeout: int = config["timeout"]):
     """
     Get list address from blockcenter.
 
@@ -127,8 +115,49 @@ def list_address(guid, limit=10, network=config["network"], timeout=config["time
     return response.json()
 
 
-# Build transaction in blockcenter
-def build_transaction(transaction, network=config["network"], timeout=config["timeout"]):
+def estimate_transaction_fee(address: str, amount: int, asset: str = config["BTM_asset"],
+                             confirmations: int = config["confirmations"],
+                             network: str = config["network"], timeout: int = config["timeout"]) -> str:
+    """
+    Estimate transaction fee.
+
+    :param address: Bytom address.
+    :type address: str
+    :param amount: Bytom amount.
+    :type amount: int
+    :param asset: Bytom asset id, default to BTM_asset id
+    :type asset: str
+    :param confirmations: Bytom confirmations, default to 1.
+    :type confirmations: int
+    :param network: Bytom network, defaults to solonet.
+    :type network: str
+    :param timeout: request timeout, default to 60.
+    :type timeout: int
+    :returns: str -- Estimated transaction fee.
+
+    >>> from pybytom.rpc import estimate_transaction_fee
+    >>> estimate_transaction_fee(address="bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", asset="ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", amount=100_000_000, confirmations=6, network="mainnet")
+    "0.0044900000"
+    """
+
+    if not is_network(network=network):
+        raise NetworkError(f"Invalid '{network}' network/type",
+                           "choose only 'mainnet', 'solonet' or 'testnet' networks.")
+    if not is_address(address=address, network=network):
+        raise AddressError(f"Invalid '{address}' {network} address/type")
+    url = config[network]["blockcenter"] + f"/merchant/estimate_tx_fee?address={address}"
+    data = dict(asset_amounts={asset: str(get_btm_amount(amount=amount))}, confirmations=confirmations)
+    response = requests.post(
+        url=url, data=json.dumps(data), headers=headers, timeout=timeout
+    )
+    if response.status_code == 200 and response.json()["code"] == 300:
+        raise APIError(response.json()["msg"], response.json()["code"])
+    elif response.status_code == 200 and response.json()["code"] == 503:
+        raise APIError(response.json()["msg"], response.json()["code"])
+    return response.json()["result"]["data"]["fee"]
+
+
+def build_transaction(transaction: dict, network: str = config["network"], timeout: int = config["timeout"]):
     """
     Build Bytom transaction in blockcenter.
 
@@ -145,7 +174,10 @@ def build_transaction(transaction, network=config["network"], timeout=config["ti
     {"transaction": {"hash": "2993414225f65390220730d0c1a356c14e91bca76db112d37366df93e364a492", "status_fail": false, "size": 379, "submission_timestamp": 0, "memo": "", "inputs": [{"script": "00142cda4f99ea8112e6fa61cdd26157ed6dc408332a", "address": "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": 2450000000, "type": "spend"}], "outputs": [{"utransactiono_id": "5edccebe497893c289121f9e365fdeb34c97008b9eb5a9960fe9541e7923aabc", "script": "01642091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e220ac13c0bb1445423a641754182d53f0677cd4351a0e743e6f10b35122c3d7ea01202b9a5949f5546f63a253e41cda6bffdedb527288a7e24ed953f5c2680c70d6ff741f547a6416000000557aa888537a7cae7cac631f000000537acd9f6972ae7cac00c0", "address": "smart contract", "asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": 1000, "type": "control"}, {"utransactiono_id": "f8cfbb692db1963be88b09c314adcc9e19d91c6c019aa556fb7cb76ba8ffa1fa", "script": "00142cda4f99ea8112e6fa61cdd26157ed6dc408332a", "address": "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": 2439999000, "type": "control"}], "fee": 10000000, "balances": [{"asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": "-10001000"}], "types": ["ordinary"]}, "raw_transaction": "070100010160015e7f2d7ecec3f61d30d0b2968973a3ac8448f0599ea20dce883b48c903c4d6e87fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8091a0900901011600142cda4f99ea8112e6fa61cdd26157ed6dc408332a22012091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e20201ad01ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe80701880101642091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e220ac13c0bb1445423a641754182d53f0677cd4351a0e743e6f10b35122c3d7ea01202b9a5949f5546f63a253e41cda6bffdedb527288a7e24ed953f5c2680c70d6ff741f547a6416000000557aa888537a7cae7cac631f000000537acd9f6972ae7cac00c000013dffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff98dcbd8b09011600142cda4f99ea8112e6fa61cdd26157ed6dc408332a00", "signing_instructions": [{"derivation_path": ["2c000000", "99000000", "01000000", "00000000", "01000000"], "sign_data": ["37727d44af9801e9723eb325592f4d55cc8d7e3815b1d663d61b7f1af9fc13a7"], "pubkey": "91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e2"}], "fee": 10000000}
     """
 
-    url = str(config[network]["blockcenter"]) + "/merchant/build-transaction"
+    if not is_network(network=network):
+        raise NetworkError(f"Invalid '{network}' network/type",
+                           "choose only 'mainnet', 'solonet' or 'testnet' networks.")
+    url = str(config[network]["blockcenter"]) + "/merchant/build-advanced-tx"
     response = requests.post(url=url, data=json.dumps(transaction),
                              headers=headers, timeout=timeout)
     if response.status_code == 200 and response.json()["code"] == 300:
@@ -155,8 +187,7 @@ def build_transaction(transaction, network=config["network"], timeout=config["ti
     return response.json()["result"]["data"]
 
 
-# Get transaction from blockcenter
-def get_transaction(transaction_id, network=config["network"], timeout=config["timeout"]):
+def get_transaction(transaction_id, network: str = config["network"], timeout: int = config["timeout"]):
     """
     Get Bytom transaction detail.
 
@@ -173,6 +204,9 @@ def get_transaction(transaction_id, network=config["network"], timeout=config["t
     {"transaction": {"hash": "2993414225f65390220730d0c1a356c14e91bca76db112d37366df93e364a492", "status_fail": false, "size": 379, "submission_timestamp": 0, "memo": "", "inputs": [{"script": "00142cda4f99ea8112e6fa61cdd26157ed6dc408332a", "address": "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": 2450000000, "type": "spend"}], "outputs": [{"utransactiono_id": "5edccebe497893c289121f9e365fdeb34c97008b9eb5a9960fe9541e7923aabc", "script": "01642091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e220ac13c0bb1445423a641754182d53f0677cd4351a0e743e6f10b35122c3d7ea01202b9a5949f5546f63a253e41cda6bffdedb527288a7e24ed953f5c2680c70d6ff741f547a6416000000557aa888537a7cae7cac631f000000537acd9f6972ae7cac00c0", "address": "smart contract", "asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": 1000, "type": "control"}, {"utransactiono_id": "f8cfbb692db1963be88b09c314adcc9e19d91c6c019aa556fb7cb76ba8ffa1fa", "script": "00142cda4f99ea8112e6fa61cdd26157ed6dc408332a", "address": "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": 2439999000, "type": "control"}], "fee": 10000000, "balances": [{"asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "amount": "-10001000"}], "types": ["ordinary"]}, "raw_transaction": "070100010160015e7f2d7ecec3f61d30d0b2968973a3ac8448f0599ea20dce883b48c903c4d6e87fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8091a0900901011600142cda4f99ea8112e6fa61cdd26157ed6dc408332a22012091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e20201ad01ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe80701880101642091ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e220ac13c0bb1445423a641754182d53f0677cd4351a0e743e6f10b35122c3d7ea01202b9a5949f5546f63a253e41cda6bffdedb527288a7e24ed953f5c2680c70d6ff741f547a6416000000557aa888537a7cae7cac631f000000537acd9f6972ae7cac00c000013dffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff98dcbd8b09011600142cda4f99ea8112e6fa61cdd26157ed6dc408332a00", "signing_instructions": [{"derivation_path": ["2c000000", "99000000", "01000000", "00000000", "01000000"], "sign_data": ["37727d44af9801e9723eb325592f4d55cc8d7e3815b1d663d61b7f1af9fc13a7"], "pubkey": "91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e2"}], "fee": 10000000}
     """
 
+    if not is_network(network=network):
+        raise NetworkError(f"Invalid '{network}' network/type",
+                           "choose only 'mainnet', 'solonet' or 'testnet' networks.")
     url = str(config[network]["blockcenter"]) + "/merchant/get-transaction"
     response = requests.post(url=url, data=json.dumps(dict(tx_id=transaction_id)),
                              headers=headers, timeout=timeout)
@@ -181,9 +215,8 @@ def get_transaction(transaction_id, network=config["network"], timeout=config["t
     return response.json()["result"]["data"]
 
 
-# Submit transaction raw
 def submit_transaction_raw(guid, transaction_raw, signatures,
-                           network, memo="mock", timeout=config["timeout"]):
+                           network, memo="mock", timeout: int = config["timeout"]):
     """
      Submit transaction raw to Bytom blockchain.
 
@@ -205,6 +238,10 @@ def submit_transaction_raw(guid, transaction_raw, signatures,
     >>> submit_transaction_raw("guid", transaction_raw, [[...], [...]], "mainent")
     "2993414225f65390220730d0c1a356c14e91bca76db112d37366df93e364a492"
     """
+    
+    if not is_network(network=network):
+        raise NetworkError(f"Invalid '{network}' network/type",
+                           "choose only 'mainnet', 'solonet' or 'testnet' networks.")
     if not isinstance(signatures, list):
         raise TypeError("signatures must be list format")
     url = str(config[network]["blockcenter"]) + "/merchant/submit-payment"
@@ -216,8 +253,7 @@ def submit_transaction_raw(guid, transaction_raw, signatures,
     return response.json()["result"]["data"]["transaction_hash"]
 
 
-# Decode transaction raw
-def decode_transaction_raw(transaction_raw, network=config["network"], timeout=config["timeout"]):
+def decode_transaction_raw(transaction_raw, network: str = config["network"], timeout: int = config["timeout"]):
     """
     Get decode transaction raw.
 
@@ -234,7 +270,10 @@ def decode_transaction_raw(transaction_raw, network=config["network"], timeout=c
     {...}
     """
 
-    url = str(config[network]["bytom"]) + "/decode-raw-transaction"
+    if not is_network(network=network):
+        raise NetworkError(f"Invalid '{network}' network/type",
+                           "choose only 'mainnet', 'solonet' or 'testnet' networks.")
+    url = config[network]["bytom"] + "/decode-raw-transaction"
     response = requests.post(url=url, data=json.dumps(dict(raw_transaction=transaction_raw)),
                              headers=headers, timeout=timeout)
     if response.status_code == 400:
