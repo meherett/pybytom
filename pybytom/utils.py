@@ -2,13 +2,18 @@
 
 from binascii import hexlify
 from mnemonic.mnemonic import Mnemonic
+from typing import Optional
 
 import os
 
 from .libs.segwit import decode
+from .config import config
+
+# Bytom config
+config = config()
 
 
-def generate_entropy(strength=128):
+def generate_entropy(strength=128) -> str:
     """
     Generate entropy hex string.
 
@@ -30,7 +35,7 @@ def generate_entropy(strength=128):
     return hexlify(os.urandom(strength // 8)).decode()
 
 
-def generate_mnemonic(language="english", strength=128):
+def generate_mnemonic(language="english", strength=128) -> str:
     """
     Generate 12 word mnemonic.
 
@@ -59,7 +64,7 @@ def generate_mnemonic(language="english", strength=128):
     return Mnemonic(language=language).generate(strength=strength)
 
 
-def is_mnemonic(mnemonic, language=None):
+def is_mnemonic(mnemonic, language=None) -> bool:
     """
     Check 12 word mnemonic is Valid.
 
@@ -93,7 +98,7 @@ def is_mnemonic(mnemonic, language=None):
         return False
 
 
-def get_mnemonic_language(mnemonic):
+def get_mnemonic_language(mnemonic) -> Optional[str]:
     """
     Get mnemonic language.
 
@@ -118,7 +123,23 @@ def get_mnemonic_language(mnemonic):
     return language
 
 
-def is_address(address, network=None):
+def get_btm_amount(amount: int) -> str:
+    """
+    Amount converter to BTM asset amount
+
+    :param amount: Bytom amount.
+    :type amount: int
+    :returns: float -- BTM asset amount.
+
+    >>> from pybytom.utils import get_btm_amount
+    >>> get_btm_amount(amount=10_000_000)
+    0.1
+    """
+
+    return amount / config["one_BTM"]
+
+
+def is_address(address, network=None) -> bool:
     """
     Check Bytom address.
 
@@ -155,7 +176,7 @@ def is_address(address, network=None):
     raise TypeError("address must be string format")
 
 
-def is_vapor_address(address, network=None):
+def is_vapor_address(address, network=None) -> bool:
     """
     Check Bytom vapor address.
 
