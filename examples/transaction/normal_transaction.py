@@ -24,7 +24,7 @@ wallet.from_path("m/44/153/1/0/1")
 unsigned_normal_transaction = NormalTransaction(network=NETWORK)
 # Building normal transaction
 unsigned_normal_transaction.build_transaction(
-    guid=wallet.guid(),
+    address="bm1qwk4kpx09ehccrna3enqqwhrj9xt7pwxd4sufkw",
     recipients={
         "bm1qtwtdhf6jmxhfhutjacmgxyv6levnkuhad67wqh": 10_000_000,
         "bm1qr3h0ljhcgwu0h09teegk638my30c29a3aerjg2": 80_000_000,
@@ -61,9 +61,9 @@ print("Signed Normal Transaction Unsigned Datas:",
       json.dumps(signed_normal_transaction.unsigned_datas(detail=False), indent=4))
 print("Signed Normal Transaction Signatures:", json.dumps(signed_normal_transaction.signatures(), indent=4))
 
-# # Submitting normal transaction raw
+# Submitting normal transaction raw
 # print("\nSubmitted Normal Transaction Id:", submit_transaction_raw(
-#     guid=wallet.guid(),
+#     address=wallet.address(),
 #     transaction_raw=signed_normal_transaction.raw(),
 #     signatures=signed_normal_transaction.signatures(),
 #     network=NETWORK

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
 from pybytom.transaction import Transaction
-from pybytom.transaction.tools import find_smart_contract_utxo
+from pybytom.transaction.tools import find_smart_contract_utxo, find_p2wsh_utxo
 from pybytom.transaction.actions import spend_utxo, control_address
+from pybytom.utils import amount_converter
 from pybytom.rpc import submit_transaction_raw
 from pybytom.wallet import Wallet
 
@@ -13,7 +14,7 @@ NETWORK = "mainnet"  # Choose mainnet, solonet or testnet
 # 12 word mnemonic seed
 MNEMONIC = "indicate warm sock mistake code spot acid ribbon sing over taxi toast"
 # Bytom asset id
-ASSET = "f37dea62efd2965174b84bbb59a0bd0a671cf5fb2857303ffd77c1b482b84bdf"
+ASSET = "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
 
 # Initializing wallet
 wallet = Wallet(network=NETWORK)
@@ -26,11 +27,11 @@ wallet.from_path("m/44/153/1/0/1")
 unsigned_transaction = Transaction(network=NETWORK)
 # Building transaction
 unsigned_transaction.build_transaction(
-    guid=wallet.guid(),
+    address=wallet.address(),
     inputs=[
         spend_utxo(
-            utxo=find_smart_contract_utxo(
-                transaction_id="338cf2a29f055289132dd0f75d2d82777d2db1c7dbe64700cd24b03912e5d8e3",
+            utxo=find_p2wsh_utxo(
+                transaction_id="049d4c26bb15885572c16e0eefac5b2f4d0fde50eaf90f002272d39507ff315b",
                 network=NETWORK
             )
         )
@@ -38,8 +39,9 @@ unsigned_transaction.build_transaction(
     outputs=[
         control_address(
             asset=ASSET,
-            amount=100,
-            address=wallet.address()
+            amount=10_000_000,
+            address="bm1qwk4kpx09ehccrna3enqqwhrj9xt7pwxd4sufkw",
+            symbol="NEU"
         )
     ],
     fee=10_000_000,
@@ -58,7 +60,7 @@ print("Unsigned Transaction Signatures:", json.dumps(unsigned_transaction.signat
 # Singing unsigned transaction by xprivate key
 signed_transaction = unsigned_transaction.sign(
     xprivate_key=wallet.xprivate_key(),
-    account=1,  # Account index, default to 1
+    account=1,   # Account index, default to 1
     change=False,  # Addresses for change False(0)/True(1), default to False(0)
     address=1,  # Address index, default to 1
     path=None,  # Derivation from path, default to None
@@ -76,7 +78,7 @@ print("Signed Transaction Signatures:", json.dumps(signed_transaction.signatures
 
 # Submitting transaction raw
 # print("\nSubmitted Transaction Id:", submit_transaction_raw(
-#     guid=wallet.guid(),
+#     address=wallet.address(),
 #     transaction_raw=signed_transaction.raw(),
 #     signatures=signed_transaction.signatures(),
 #     network=NETWORK
