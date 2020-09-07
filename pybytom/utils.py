@@ -2,11 +2,12 @@
 
 from binascii import hexlify
 from mnemonic.mnemonic import Mnemonic
-from typing import Optional
+from typing import Optional, Union
 
 import os
 
 from .libs.segwit import decode
+from .exceptions import SymbolError
 from .config import config
 
 # Bytom config
@@ -123,20 +124,62 @@ def get_mnemonic_language(mnemonic) -> Optional[str]:
     return language
 
 
-def get_btm_amount(amount: int) -> str:
+def amount_converter(amount: float, symbol: str = "NEU2BTM") -> Union[int, float]:
     """
-    Amount converter to BTM asset amount
+    Amount converter
 
     :param amount: Bytom amount.
-    :type amount: int
+    :type amount: float
+    :param symbol: Bytom symbol, default to NEU2BTM
+    :type symbol: str
     :returns: float -- BTM asset amount.
 
-    >>> from pybytom.utils import get_btm_amount
-    >>> get_btm_amount(amount=10_000_000)
+    >>> from pybytom.utils import amount_converter
+    >>> amount_converter(amount=10_000_000, symbol="NEU2BTM")
     0.1
     """
 
-    return amount / config["one_BTM"]
+    if symbol not in ["BTM2mBTM", "BTM2NEU", "mBTM2BTM", "mBTM2NEU", "NEU2BTM", "NEU2mBTM"]:
+        raise SymbolError(f"Invalid '{symbol}' symbol/type",
+                          "choose only 'BTM2mBTM', 'BTM2NEU', 'mBTM2BTM', 'mBTM2NEU', 'NEU2BTM' or 'NEU2mBTM' symbols.")
+
+    # Constant values
+    BTM, mBTM, NEU = (
+        config["symbols"]["BTM"],
+        config["symbols"]["mBTM"],
+        config["symbols"]["NEU"]
+    )
+
+    if symbol == "BTM2mBTM":
+        return float((amount * mBTM) / BTM)
+    elif symbol == "BTM2NEU":
+        return int((amount * NEU) / BTM)
+    elif symbol == "mBTM2BTM":
+        return float((amount * BTM) / mBTM)
+    elif symbol == "mBTM2NEU":
+        return int((amount * NEU) / mBTM)
+    elif symbol == "NEU2BTM":
+        return float((amount * BTM) / NEU)
+    elif symbol == "NEU2mBTM":
+        return int((amount * mBTM) / NEU)
+
+
+def is_network(network: str) -> bool:
+    """
+    Check network type.
+
+    :param network: Bytom network.
+    :type network: str
+    :returns: bool -- Checked network.
+
+    >>> from pybytom.utils import is_network
+    >>> is_network("solonet")
+    True
+    """
+
+    if isinstance(network, str):
+        return network.lower() in ["mainnet", "solonet", "testnet"]
+    raise TypeError("network must be string format")
 
 
 def is_address(address, network=None) -> bool:
