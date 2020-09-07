@@ -40,7 +40,6 @@ wallet.from_indexes(['2c000000', '99000000', '01000000', '00000000', '01000000']
 # Print all wallet information's
 # print(json.dumps(wallet.dumps(), indent=4))
 
-print("Entropy:", wallet.entropy())
 print("Mnemonic:", wallet.mnemonic())
 print("Language:", wallet.language())
 print("Passphrase:", wallet.passphrase())

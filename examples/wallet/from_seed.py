@@ -30,10 +30,6 @@ wallet.from_path("m/44/153/1/0/1")
 # Print all wallet information's
 # print(json.dumps(wallet.dumps(), indent=4))
 
-print("Entropy:", wallet.entropy())
-print("Mnemonic:", wallet.mnemonic())
-print("Language:", wallet.language())
-print("Passphrase:", wallet.passphrase())
 print("Seed:", wallet.seed())
 print("XPrivate Key:", wallet.xprivate_key())
 print("Expand XPrivate Key:", wallet.expand_xprivate_key())
