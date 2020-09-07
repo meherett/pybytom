@@ -607,7 +607,7 @@ class Wallet:
         >>> wallet = Wallet(network="mainnet")
         >>> wallet.from_mnemonic("indicate warm sock mistake code spot acid ribbon sing over taxi toast")
         >>> wallet.from_indexes(["2c000000", "99000000", "01000000", "00000000", "01000000"])
-        >>> wallet.address(networl="mainnet")
+        >>> wallet.address(network="mainnet")
         "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7"
         """
 
@@ -641,7 +641,7 @@ class Wallet:
 
         return get_vapor_address(program=self.program(), network=network)
 
-    def balance(self, asset: str = config["BTM_asset"]) -> int:
+    def balance(self, asset: str = config["asset"]) -> int:
         """
         Get Bytom wallet balance.
 
