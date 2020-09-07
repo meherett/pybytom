@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
 
 from binascii import hexlify, unhexlify
+from typing import TypeVar, Optional, List
 from mnemonic import Mnemonic
 
 import hmac
 import hashlib
 
+from ..config import config
 from ..signature import sign, verify
-from ..utils import get_mnemonic_language, is_mnemonic
-from ..rpc import config, account_create, get_balance
+from ..utils import get_mnemonic_language, is_mnemonic, is_network
+from ..exceptions import NetworkError, DerivationError, ClientError
+from ..rpc import account_create, get_balance
+
 from .tools import (
     get_xpublic_key, get_address,
     get_vapor_address, get_program,
@@ -20,6 +24,11 @@ from .utils import (
     prune_root_scalar, prune_intermediate_scalar,
     get_bytes, bad_seed_checker
 )
+
+# Bytom config
+config = config()
+# Wallet class
+_Wallet = TypeVar("_Wallet", bound="Wallet")
 
 
 class Wallet:
@@ -34,21 +43,26 @@ class Wallet:
         Bytom has only three networks, ``mainnet``, ``solonet`` and ``testnet``.
     """
 
-    def __init__(self, network="solonet"):
+    def __init__(self, network: str = config["network"]):
 
         # Bytom network.
-        if not isinstance(network, str):
-            raise TypeError("network must be string format")
-        if network not in "mainnet/solonet/testnet".split("/"):
-            raise ValueError("invalid network option, choose only mainnet, solonet or testnet network")
+        if not is_network(network=network):
+            raise NetworkError(f"Invalid '{network}' network/type",
+                               "choose only 'mainnet', 'solonet' or 'testnet' networks.")
         self.network = network
 
-        self._entropy, self._mnemonic, self._passphrase, \
-            self._language, self._seed = None, None, None, None, None
-        self._xprivate_key, self._xpublic_key, self._indexes, \
-            self._path, self._guid = None, None, list(), None, None
+        self._entropy, self._mnemonic, self._passphrase, self._language = (
+            None, None, None, None
+        )
+        self._seed, self._guid, self._xprivate_key, self._private_key = (
+            None, None, None, None
+        )
+        self._indexes, self._path = (
+            list(), None
+        )
 
-    def from_entropy(self, entropy, passphrase=None, language="english"):
+    def from_entropy(self, entropy: str,
+                     passphrase: Optional[str] = None, language: str = "english") -> _Wallet:
         """
         Initialize Bytom wallet from entropy.
 
@@ -90,7 +104,8 @@ class Wallet:
         self.from_seed(seed=hexlify(self._seed).decode())
         return self
 
-    def from_mnemonic(self, mnemonic, passphrase=None, language=None):
+    def from_mnemonic(self, mnemonic: str,
+                      passphrase: Optional[str] = None, language: Optional[str] = None) -> _Wallet:
         """
         Initialize Bytom wallet from mnemonic.
 
@@ -131,7 +146,7 @@ class Wallet:
         self.from_seed(seed=hexlify(self._seed).decode())
         return self
 
-    def from_seed(self, seed):
+    def from_seed(self, seed: str) -> _Wallet:
         """
         Initialize Bytom wallet from seed.
 
@@ -157,11 +172,12 @@ class Wallet:
 
         # get root xprivate_key key
         self._xprivate_key = prune_root_scalar(il).hex() + ir
+        self._private_key = get_private_key(str(self._xprivate_key), self._indexes)
         return self
 
-    def from_xprivate_key(self, xprivate_key):
+    def from_xprivate_key(self, xprivate_key: str) -> _Wallet:
         """
-        Initialize Bytom wallet from seed.
+        Initialize Bytom wallet from xprivate key.
 
         :param xprivate_key: Bytom xprivate key.
         :type xprivate_key: str.
@@ -180,12 +196,37 @@ class Wallet:
         self._xprivate_key = xprivate_key
         return self
 
-    def derive_private_key(self, index):
-        index = int(index).to_bytes(4, byteorder="little").hex()
-        self._indexes.append(index)
+    def from_private_key(self, private_key: str) -> _Wallet:
+        """
+        Initialize Bytom wallet from private key.
+
+        :param private_key: Bytom private key.
+        :type private_key: str.
+        :returns:  Wallet -- Bytom wallet class instance.
+
+        >>> from pybytom.wallet import Wallet
+        >>> wallet = Wallet(network="mainnet")
+        >>> wallet.from_private_key("e0d42c3a1d9e1c54c09d5da9fd582afb1d053d3c033c3a07fedf2a709ce3f4477b4b52132f610150767edac6e1c2934d34780a9340a56a9dea58e070e44b70f1")
+        <pybytom.wallet.Wallet object at 0x040DA268>
+        """
+
+        # Checking parameters
+        if not isinstance(private_key, str):
+            raise TypeError("private key must be string format")
+
+        self._private_key = private_key
         return self
 
-    def from_indexes(self, indexes):
+    def derivation(self, index: Optional[int] = None) -> _Wallet:
+        if index is not None:
+            index = int(index).to_bytes(4, byteorder="little").hex()
+            self._indexes.append(index)
+        if not self._xprivate_key:
+            raise DerivationError("You can't drive private key", "xprivate key is also None.")
+        self._private_key = get_private_key(str(self._xprivate_key), self._indexes)
+        return self
+
+    def from_indexes(self, indexes: List[str]) -> _Wallet:
         """
         Drive Bytom wallet from indexes.
 
@@ -205,9 +246,10 @@ class Wallet:
             raise TypeError("indexes must be list format")
 
         self._indexes = indexes
+        self.derivation()
         return self
 
-    def from_index(self, index, harden=False):
+    def from_index(self, index: int, harden: bool = False) -> _Wallet:
         """
         Drive Bytom wallet from index.
 
@@ -233,12 +275,12 @@ class Wallet:
             raise TypeError("index must be integer format")
 
         if harden:
-            self.derive_private_key(index + 0x80000000)
+            self.derivation(index + 0x80000000)
         else:
-            self.derive_private_key(index)
+            self.derivation(index)
         return self
 
-    def from_path(self, path):
+    def from_path(self, path: str) -> _Wallet:
         """
         Drive Bytom wallet from path.
 
@@ -257,16 +299,16 @@ class Wallet:
         if not isinstance(path, str):
             raise TypeError("path must be string format")
         if str(path)[0:2] != "m/":
-            raise ValueError("bad path, insert like this type of path \"m/0'/0\"! ")
+            raise DerivationError("Bad path", "insert like this type of path \"m/0'/0\"! ")
 
         for index in path.lstrip("m/").split("/"):
             if "'" in index:
-                self.derive_private_key(int(index[:-1]) + 0x80000000)
+                self.derivation(int(index[:-1]) + 0x80000000)
             else:
-                self.derive_private_key(int(index))
+                self.derivation(int(index))
         return self
 
-    def clean_derivation(self):
+    def clean_derivation(self) -> _Wallet:
         """
         Clean derivation indexes/path.
 
@@ -287,10 +329,11 @@ class Wallet:
         None
         """
         self._indexes = list()
+        self.derivation()
         return self
 
     # Getting guid from blockcenter
-    def guid(self):
+    def guid(self) -> Optional[str]:
         """
         Get Bytom wallet blockcenter guid.
 
@@ -304,11 +347,13 @@ class Wallet:
         """
 
         if self._guid is None:
+            if not self.xpublic_key():
+                raise ClientError("You can't get GUID", "xpublic key is None.")
             self._guid = account_create(
                 xpublic_key=self.xpublic_key(), network=self.network)["guid"]
         return self._guid
 
-    def entropy(self):
+    def entropy(self) -> Optional[str]:
         """
         Get wallet entropy.
 
@@ -323,7 +368,7 @@ class Wallet:
 
         return hexlify(self._entropy).decode() if self._entropy else None
 
-    def mnemonic(self):
+    def mnemonic(self) -> Optional[str]:
         """
         Get wallet mnemonic.
 
@@ -338,7 +383,7 @@ class Wallet:
 
         return str(self._mnemonic) if self._mnemonic else None
 
-    def passphrase(self):
+    def passphrase(self) -> Optional[str]:
         """
         Get wallet secret password/passphrase.
 
@@ -353,7 +398,7 @@ class Wallet:
 
         return str(self._passphrase) if self._passphrase else None
 
-    def language(self):
+    def language(self) -> Optional[str]:
         """
         Get wallet mnemonic language.
 
@@ -368,7 +413,7 @@ class Wallet:
 
         return str(self._language) if self._language else None
 
-    def seed(self):
+    def seed(self) -> Optional[str]:
         """
         Get wallet mnemonic seed.
 
@@ -383,7 +428,7 @@ class Wallet:
 
         return hexlify(self._seed).decode() if self._seed else None
 
-    def xprivate_key(self):
+    def xprivate_key(self) -> Optional[str]:
         """
         Get Bytom wallet xprivate key.
 
@@ -398,7 +443,7 @@ class Wallet:
 
         return str(self._xprivate_key)
 
-    def xpublic_key(self):
+    def xpublic_key(self) -> Optional[str]:
         """
         Get Bytom wallet xpublic key.
 
@@ -411,9 +456,9 @@ class Wallet:
         "16476b7fd68ca2acd92cfc38fa353e75d6103f828276f44d587e660a6bd7a5c5ef4490504bd2b6f997113671892458830de09518e6bd5958d5d5dd97624cfa4b"
         """
 
-        return get_xpublic_key(xprivate_key=self.xprivate_key())
+        return get_xpublic_key(xprivate_key=self.xprivate_key()) if self._xprivate_key else None
 
-    def expand_xprivate_key(self):
+    def expand_xprivate_key(self)-> Optional[str]:
         """
         Get Bytom wallet expand xprivate key.
 
@@ -426,9 +471,9 @@ class Wallet:
         "205b15f70e253399da90b127b074ea02904594be9d54678207872ec1ba31ee5102416c643cfb46ab1ae5a524c8b4aaa002eb771d0d9cfc7490c0c3a8177e053e"
         """
 
-        return get_expand_xprivate_key(xprivate_key=self.xprivate_key())
+        return get_expand_xprivate_key(xprivate_key=self.xprivate_key()) if self._xprivate_key else None
 
-    def private_key(self):
+    def private_key(self) -> str:
         """
         Get Bytom wallet private key.
 
@@ -442,9 +487,9 @@ class Wallet:
         "e07af52746e7cccd0a7d1fba6651a6f474bada481f34b1c5bab5e2d71e36ee515803ee0a6682fb19e279d8f4f7acebee8abd0fc74771c71565f9a9643fd77141"
         """
 
-        return get_private_key(xprivate_key=self.xprivate_key(), indexes=self.indexes())
+        return str(self._private_key)
 
-    def public_key(self):
+    def public_key(self) -> str:
         """
         Get Bytom wallet public key.
 
@@ -458,9 +503,10 @@ class Wallet:
         "91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e2"
         """
 
-        return get_public_key(xpublic_key=self.xpublic_key(), indexes=self.indexes())
+        return get_public_key(xpublic_key=self.xpublic_key(), indexes=self.indexes()) \
+            if self._xprivate_key else get_xpublic_key(xprivate_key=self.private_key())[:64]
 
-    def indexes(self):
+    def indexes(self) -> Optional[list]:
         """
         Get Bytom wallet derivation indexes.
 
@@ -476,7 +522,7 @@ class Wallet:
 
         return self._indexes
 
-    def path(self):
+    def path(self) -> Optional[str]:
         """
         Get Bytom wallet derivation path.
 
@@ -499,7 +545,7 @@ class Wallet:
                 path = path + str(number) + "/"
         return path if not path == "m/" else None
 
-    def child_xprivate_key(self):
+    def child_xprivate_key(self) -> Optional[str]:
         """
         Get Bytom get child xprivate key.
 
@@ -513,9 +559,10 @@ class Wallet:
         "e07af52746e7cccd0a7d1fba6651a6f474bada481f34b1c5bab5e2d71e36ee515803ee0a6682fb19e279d8f4f7acebee8abd0fc74771c71565f9a9643fd77141"
         """
 
-        return get_child_xprivate_key(xprivate_key=self.xprivate_key(), indexes=self.indexes())
+        return get_child_xprivate_key(xprivate_key=self.xprivate_key(),
+                                      indexes=self.indexes()) if self._xprivate_key else None
 
-    def child_xpublic_key(self):
+    def child_xpublic_key(self) -> Optional[str]:
         """
         Get Bytom get child xpublic key.
 
@@ -529,9 +576,10 @@ class Wallet:
         "91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e25803ee0a6682fb19e279d8f4f7acebee8abd0fc74771c71565f9a9643fd77141"
         """
 
-        return get_child_xpublic_key(xpublic_key=self.xpublic_key(), indexes=self.indexes())
+        return get_child_xpublic_key(xpublic_key=self.xpublic_key(),
+                                     indexes=self.indexes()) if self._xprivate_key else None
 
-    def program(self):
+    def program(self) -> str:
         """
         Get Bytom wallet control program.
 
@@ -547,7 +595,7 @@ class Wallet:
 
         return get_program(public_key=self.public_key())
 
-    def address(self, network=None):
+    def address(self, network: Optional[str] = None) -> str:
         """
         Get Bytom wallet address.
 
@@ -570,7 +618,7 @@ class Wallet:
 
         return get_address(program=self.program(), network=network)
 
-    def vapor_address(self, network=None):
+    def vapor_address(self, network: Optional[str] = None) -> str:
         """
         Get Bytom wallet vapor address.
 
@@ -593,7 +641,7 @@ class Wallet:
 
         return get_vapor_address(program=self.program(), network=network)
 
-    def balance(self, asset=config["BTM_ASSET"]):
+    def balance(self, asset: str = config["BTM_asset"]) -> int:
         """
         Get Bytom wallet balance.
 
@@ -610,7 +658,7 @@ class Wallet:
 
         return get_balance(address=self.address(), asset=asset, network=self.network)
 
-    def sign(self, message):
+    def sign(self, message: str) -> str:
         """
         Sign message data by private key.
 
@@ -632,7 +680,7 @@ class Wallet:
 
         return sign(self.private_key(), message)
 
-    def verify(self, message, signature):
+    def verify(self, message: str, signature: str) -> bool:
         """
         Verify signature by public key.
 
@@ -659,7 +707,7 @@ class Wallet:
 
         return verify(self.public_key(), message, signature)
 
-    def dumps(self, guid=False):
+    def dumps(self, guid: bool = False) -> dict:
         """
         Get Bytom all wallet information's
 
