@@ -9,8 +9,8 @@ def config():
             "bytom": "http://localhost:9888",
             "blockmeta": "https://blockmeta.com/api/v3",
             "blockcenter": {
-                "version2": "https://bcapi.bystack.com/api/v2/btm",
-                "version3": "https://bcapi.bystack.com/bytom/v3"
+                "v2": "https://bcapi.bystack.com/api/v2/btm",
+                "v3": "https://bcapi.bystack.com/bytom/v3"
             },
             "mov": "https://ex.movapi.com/bytom/v3"
         },
@@ -18,8 +18,8 @@ def config():
             "bytom": "http://localhost:9888",
             "blockmeta": None,
             "blockcenter": {
-                "version2": None,
-                "version3": None
+                "v2": None,
+                "v3": None
             },
             "mov": None
         },
@@ -27,14 +27,19 @@ def config():
             "bytom": "http://localhost:9888",
             "blockmeta": None,
             "blockcenter": {
-                "version2": None,
-                "version3": None
+                "v2": None,
+                "v3": None
             },
             "mov": None
         },
-        "network": "mainnet",  # default network
+        "network": "mainnet",
         "timeout": 60,
-        "BTM_asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-        "fee": 10_000_000,  # 0.1 BTM
+        "asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "symbols": {
+            "BTM": 1,
+            "mBTM": 1000,
+            "NEU": 100_000_000
+        },
+        "fee": 10_000_000,
         "confirmations": 1
     }
