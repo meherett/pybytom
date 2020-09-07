@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+from ..utils import amount_converter
+from .. exceptions import SymbolError
+
 
 def spend_utxo(utxo: str) -> dict:
     """
@@ -11,75 +14,111 @@ def spend_utxo(utxo: str) -> dict:
 
     >>> from pybytom.transaction.actions import spend_utxo
     >>> spend_utxo("169a45be47583f7240115c9059cd0d03e4d4fab70a41536cf298d6f261c0a1ac")
-    {'type': 'spend_utxo, 'output_id': '169a45be47583f7240115c9059cd0d03e4d4fab70a41536cf298d6f261c0a1ac'}
+    {'type': 'spend_utxo, 'output': '169a45be47583f7240115c9059cd0d03e4d4fab70a41536cf298d6f261c0a1ac'}
     """
 
-    return dict(type=str("spend_utxo"), output_id=utxo)
+    return dict(type=str("spend_utxo"), output=utxo)
 
 
-def spend_wallet(amount: int, asset: str) -> dict:
+def spend_wallet(amount: float, asset: str, symbol: str = "NEU") -> dict:
     """
     Get spend wallet action.
 
     :param amount: Bytom amount.
-    :type amount: int
+    :type amount: float
     :param asset: Bytom asset.
     :type asset: str
+    :param symbol: Bytom symbol, default to NEU
+    :type symbol: str
     :returns: dict -- Bytom spend wallet action.
 
     >>> from pybytom.transaction.actions import spend_wallet
-    >>> spend_wallet(100000000, "41536cf298d6f261c0a1ac169a45be47583f7240115c9059cd0d03e4d4fab70a")
-    {'type': 'spend_wallet', 'amount': 100000000, 'asset': '41536cf298d6f261c0a1ac169a45be47583f7240115c9059cd0d03e4d4fab70a'}
+    >>> spend_wallet(10_000_000, "41536cf298d6f261c0a1ac169a45be47583f7240115c9059cd0d03e4d4fab70a")
+    {'type': 'spend_wallet', 'amount': '0.1', 'asset': '41536cf298d6f261c0a1ac169a45be47583f7240115c9059cd0d03e4d4fab70a'}
     """
+
+    if symbol.startswith("BTM"):
+        amount = amount
+    elif symbol.startswith("mBTM"):
+        amount = amount_converter(amount, symbol="mBTM2BTM")
+    elif symbol.startswith("NEU"):
+        amount = amount_converter(amount, symbol="NEU2BTM")
+    else:
+        raise SymbolError(f"Invalid '{symbol}' symbol/type",
+                          "choose only 'BTM', 'mBTM' or 'NEU' symbols.")
 
     return dict(
         type=str("spend_wallet"),
-        amount=amount, asset=asset
+        amount=str(amount), asset=asset
     )
 
 
-def control_program(amount: int, asset: str, program: str) -> dict:
+def control_program(amount: float, asset: str, program: str, symbol: str = "NEU") -> dict:
     """
     Get control program action.
 
     :param amount: Bytom amount.
-    :type amount: int
+    :type amount: float
     :param asset: Bytom asset.
     :type asset: str
     :param program: Bytom control program.
     :type program: str
+    :param symbol: Bytom symbol, default to NEU
+    :type symbol: str
     :returns: dict -- Bytom control program action.
 
     >>> from pybytom.transaction.actions import control_program
-    >>> control_program(10000, "41536cf298d6f261c0a1ac169a45be47583f7240115c9059cd0d03e4d4fab70a", "0020e47eaf5e3a7898197068e2dd7c0209331b36a1b7a73aeb8090df816a3ce5b7d3")
-    {'type': 'control_program', 'amount': 10000, 'asset': '41536cf298d6f261c0a1ac169a45be47583f7240115c9059cd0d03e4d4fab70a', 'control_program': '0020e47eaf5e3a7898197068e2dd7c0209331b36a1b7a73aeb8090df816a3ce5b7d3'}
+    >>> control_program(10_000_000, "41536cf298d6f261c0a1ac169a45be47583f7240115c9059cd0d03e4d4fab70a", "0020e47eaf5e3a7898197068e2dd7c0209331b36a1b7a73aeb8090df816a3ce5b7d3")
+    {'type': 'control_program', 'amount': '0.1', 'asset': '41536cf298d6f261c0a1ac169a45be47583f7240115c9059cd0d03e4d4fab70a', 'control_program': '0020e47eaf5e3a7898197068e2dd7c0209331b36a1b7a73aeb8090df816a3ce5b7d3'}
     """
+
+    if symbol.startswith("BTM"):
+        amount = amount
+    elif symbol.startswith("mBTM"):
+        amount = amount_converter(amount, symbol="mBTM2BTM")
+    elif symbol.startswith("NEU"):
+        amount = amount_converter(amount, symbol="NEU2BTM")
+    else:
+        raise SymbolError(f"Invalid '{symbol}' symbol/type",
+                          "choose only 'BTM', 'mBTM' or 'NEU' symbols.")
 
     return dict(
         type=str("control_program"),
-        amount=amount, asset=asset,
+        amount=str(amount), asset=asset,
         control_program=program
     )
 
 
-def control_address(amount: int, asset: str, address: str) -> dict:
+def control_address(amount: float, asset: str, address: str, symbol: str = "NEU") -> dict:
     """
     Get control address action.
 
     :param amount: Bytom amount.
-    :type amount: int
+    :type amount: float
     :param asset: Bytom asset.
     :type asset: str
     :param address: Bytom address.
     :type address: str
+    :param symbol: Bytom symbol, default to NEU
+    :type symbol: str
     :returns: dict -- Bytom control address action.
 
     >>> from pybytom.transaction.actions import control_address
-    >>> control_address(10000000, "41536cf298d6f261c0a1ac169a45be47583f7240115c9059cd0d03e4d4fab70a", "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7")
-    {'type': 'control_address', 'amount': 10000000, 'asset': '41536cf298d6f261c0a1ac169a45be47583f7240115c9059cd0d03e4d4fab70a', 'address': 'bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7'}
+    >>> control_address(10_000_000, "41536cf298d6f261c0a1ac169a45be47583f7240115c9059cd0d03e4d4fab70a", "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7")
+    {'type': 'control_address', 'amount': '0.1', 'asset': '41536cf298d6f261c0a1ac169a45be47583f7240115c9059cd0d03e4d4fab70a', 'address': 'bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7'}
     """
+
+    if symbol.startswith("BTM"):
+        amount = amount
+    elif symbol.startswith("mBTM"):
+        amount = amount_converter(amount, symbol="mBTM2BTM")
+    elif symbol.startswith("NEU"):
+        amount = amount_converter(amount, symbol="NEU2BTM")
+    else:
+        raise SymbolError(f"Invalid '{symbol}' symbol/type",
+                          "choose only 'BTM', 'mBTM' or 'NEU' symbols.")
 
     return dict(
         type=str("control_address"),
-        amount=amount, asset=asset, address=address
+        amount=str(amount), asset=asset, address=address
     )
