@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from pybytom.transaction import NormalTransaction
+from pybytom.utils import amount_converter
 from pybytom.rpc import submit_transaction_raw
 from pybytom.wallet import Wallet
 
@@ -11,7 +12,7 @@ NETWORK = "mainnet"  # Choose mainnet, solonet or testnet
 # 12 word mnemonic seed
 MNEMONIC = "indicate warm sock mistake code spot acid ribbon sing over taxi toast"
 # Bytom asset id
-ASSET_ID = "f37dea62efd2965174b84bbb59a0bd0a671cf5fb2857303ffd77c1b482b84bdf"
+ASSET_ID = "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
 
 # Initializing wallet
 wallet = Wallet(network=NETWORK)
@@ -24,11 +25,11 @@ wallet.from_path("m/44/153/1/0/1")
 unsigned_normal_transaction = NormalTransaction(network=NETWORK)
 # Building normal transaction
 unsigned_normal_transaction.build_transaction(
-    address="bm1qwk4kpx09ehccrna3enqqwhrj9xt7pwxd4sufkw",
+    address=wallet.address(),
     recipients={
-        "bm1qtwtdhf6jmxhfhutjacmgxyv6levnkuhad67wqh": 10_000_000,
-        "bm1qr3h0ljhcgwu0h09teegk638my30c29a3aerjg2": 80_000_000,
-        "bm1qwk4kpx09ehccrna3enqqwhrj9xt7pwxd4sufkw": 10_000_000
+        "bm1qtwtdhf6jmxhfhutjacmgxyv6levnkuhad67wqh": amount_converter(0.1, "BTM2NEU"),
+        "bm1qr3h0ljhcgwu0h09teegk638my30c29a3aerjg2": amount_converter(0.8, "BTM2NEU"),
+        "bm1qwk4kpx09ehccrna3enqqwhrj9xt7pwxd4sufkw": amount_converter(0.8, "BTM2NEU")
     },
     asset=ASSET_ID
 )
