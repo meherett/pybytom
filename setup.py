@@ -14,7 +14,7 @@ with open("requirements.txt", "r") as _requirements:
 
 setup(
     name="pybytom",
-    version="1.3.3",
+    version="1.4.0",
     description="Python library with tools for Bytom blockchain.",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -27,8 +27,8 @@ setup(
     install_requires=requirements,
     extras_require={
         "tests": [
-            "pytest>=5.4.1,<6",
-            "pytest-cov>=2.8.1,<3"
+            "pytest>=6.0.1,<7",
+            "pytest-cov>=2.10.1,<3"
         ]
     },
     classifiers=[
