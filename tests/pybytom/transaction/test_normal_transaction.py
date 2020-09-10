@@ -11,7 +11,7 @@ def test_normal_transaction():
 
     unsigned_normal_transaction = NormalTransaction(network=NETWORK)
     unsigned_normal_transaction.build_transaction(
-        guid="f0ed6ddd-9d6b-49fd-8866-a52d1083a13b",
+        address="bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7",
         recipients={
             "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7": 1_000_000
         },

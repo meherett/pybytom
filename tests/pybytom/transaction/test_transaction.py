@@ -6,18 +6,18 @@ from pybytom.transaction.tools import find_smart_contract_utxo, find_p2wsh_utxo
 
 NETWORK = "mainnet"
 
-ASSET = "f37dea62efd2965174b84bbb59a0bd0a671cf5fb2857303ffd77c1b482b84bdf"
+ASSET = "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
 
 
 def test_transaction():
 
     unsigned_transaction = Transaction(network=NETWORK)
     unsigned_transaction.build_transaction(
-        guid="f0ed6ddd-9d6b-49fd-8866-a52d1083a13b",
+        address="bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7",
         inputs=[
             spend_utxo(
-                utxo=find_smart_contract_utxo(
-                    transaction_id="5268c5a52f22141521833d79ad69c27a2760e99cb0f8386c3e02cf5d1bb0832f",
+                utxo=find_p2wsh_utxo(
+                    transaction_id="049d4c26bb15885572c16e0eefac5b2f4d0fde50eaf90f002272d39507ff315b",
                     network=NETWORK
                 )
             )
@@ -25,8 +25,9 @@ def test_transaction():
         outputs=[
             control_address(
                 asset=ASSET,
-                amount=100,
-                address="bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7"
+                amount=10_000_000,
+                address="bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7",
+                symbol="NEU"
             )
         ],
         fee=10_000_000,

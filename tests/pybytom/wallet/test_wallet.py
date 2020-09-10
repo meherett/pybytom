@@ -3,6 +3,7 @@
 from pybytom.wallet import Wallet
 from pybytom.utils import is_mnemonic, generate_entropy
 from pybytom.wallet.utils import get_bytes, bad_seed_checker
+from pybytom.exceptions import NetworkError, DerivationError
 
 import hashlib
 import pytest
@@ -45,7 +46,7 @@ def test_wallet_errors():
 
     with pytest.raises(TypeError, match="network must be string format"):
         Wallet(123)
-    with pytest.raises(ValueError, match=r"invalid network option, .*"):
+    with pytest.raises(NetworkError, match=r"Invalid 'meheretnet' network/type, .*"):
         Wallet("meheretnet")
 
     # from entropy
@@ -77,7 +78,7 @@ def test_wallet_errors():
     # from path
     with pytest.raises(TypeError, match="path must be string format"):
         Wallet("solonet").from_path(int())
-    with pytest.raises(ValueError, match=r"bad path, insert like this type of path .*"):
+    with pytest.raises(DerivationError, match=r"Bad path, insert like this type of path .*"):
         Wallet("mainnet").from_path("mm/")
     # address
     with pytest.raises(TypeError, match="network must be string format"):
