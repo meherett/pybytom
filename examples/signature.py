@@ -10,9 +10,9 @@ PUBLIC_KEY = "91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e2"
 # Message data
 MESSAGE = "1246b84985e1ab5f83f4ec2bdf271114666fd3d9e24d12981a3c861b9ed523c6"
 
-# Signing message by private key
+# Sign message by private key
 signature = sign(private_key=PRIVATE_KEY, message=MESSAGE)
 print("Signature:", signature)
-# Verifying signature by public key
+# Verify signature by public key
 verified = verify(public_key=PUBLIC_KEY, signature=signature, message=MESSAGE)
 print("Verified:", verified)
