@@ -441,7 +441,7 @@ class Wallet:
         "205b15f70e253399da90b127b074ea02904594be9d54678207872ec1ba31ee51ef4490504bd2b6f997113671892458830de09518e6bd5958d5d5dd97624cfa4b"
         """
 
-        return str(self._xprivate_key)
+        return self._xprivate_key
 
     def xpublic_key(self) -> Optional[str]:
         """
