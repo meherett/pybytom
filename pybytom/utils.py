@@ -2,19 +2,22 @@
 
 from binascii import hexlify
 from mnemonic.mnemonic import Mnemonic
-from typing import Optional, Union
+from typing import (
+    Optional, Union
+)
 
 import os
+import unicodedata
 
 from .libs.segwit import decode
 from .exceptions import SymbolError
 from .config import config
 
 # Bytom config
-config = config()
+config: dict = config()
 
 
-def generate_entropy(strength=128) -> str:
+def generate_entropy(strength: int = 128) -> str:
     """
     Generate entropy hex string.
 
@@ -33,18 +36,19 @@ def generate_entropy(strength=128) -> str:
             "[128, 160, 192, 224, 256], but it is not (%d)."
             % strength
         )
+
     return hexlify(os.urandom(strength // 8)).decode()
 
 
-def generate_mnemonic(language="english", strength=128) -> str:
+def generate_mnemonic(language: str = "english", strength: int = 128) -> str:
     """
-    Generate 12 word mnemonic.
+    Generate mnemonic words.
 
     :param language: Mnemonic language, default to english.
     :type language: str
     :param strength: Entropy strength, default to 128.
     :type strength: int
-    :returns: str -- 12 word mnemonic.
+    :returns: str -- Mnemonic words.
 
     >>> from pybytom.utils import generate_mnemonic
     >>> generate_mnemonic(language="french")
@@ -53,8 +57,8 @@ def generate_mnemonic(language="english", strength=128) -> str:
 
     if language and language not in ["english", "french", "italian", "japanese",
                                      "chinese_simplified", "chinese_traditional", "korean", "spanish"]:
-        raise ValueError("invalid language, use only this options english, french, "
-                         "italian, spanish, chinese_simplified, chinese_traditional, japanese or korean languages.")
+        raise ValueError("Invalid language, choose only the following options 'english', 'french', 'italian', "
+                         "'spanish', 'chinese_simplified', 'chinese_traditional', 'japanese or 'korean' languages.")
     if strength not in [128, 160, 192, 224, 256]:
         raise ValueError(
             "Strength should be one of the following "
@@ -65,11 +69,27 @@ def generate_mnemonic(language="english", strength=128) -> str:
     return Mnemonic(language=language).generate(strength=strength)
 
 
-def is_mnemonic(mnemonic, language=None) -> bool:
+def is_entropy(entropy: str) -> bool:
     """
-    Check 12 word mnemonic is Valid.
+    Check entropy hex string.
 
-    :param mnemonic: 12 word mnemonic.
+    :param entropy: Entropy hex string.
+    :type entropy: str
+    :returns: bool -- True/False.
+
+    >>> from pybytom.utils import is_entropy
+    >>> is_entropy("ee535b143b0d9d1f87546f9df0d06b1a")
+    True
+    """
+
+    return len(entropy) in [32, 40, 48, 56, 64]
+
+
+def is_mnemonic(mnemonic: str, language: Optional[str] = None) -> bool:
+    """
+    Check mnemonic words.
+
+    :param mnemonic: Mnemonic words.
     :type mnemonic: str
     :param language: Mnemonic language, default to None.
     :type language: str
@@ -82,8 +102,8 @@ def is_mnemonic(mnemonic, language=None) -> bool:
 
     if language and language not in ["english", "french", "italian", "japanese",
                                      "chinese_simplified", "chinese_traditional", "korean", "spanish"]:
-        raise ValueError("invalid language, use only this options english, french, "
-                         "italian, spanish, chinese_simplified, chinese_traditional, japanese or korean languages.")
+        raise ValueError("Invalid language, choose only the following options 'english', 'french', 'italian', "
+                         "'spanish', 'chinese_simplified', 'chinese_traditional', 'japanese or 'korean' languages.")
     try:
         if language is None:
             for _language in ["english", "french", "italian",
@@ -99,11 +119,11 @@ def is_mnemonic(mnemonic, language=None) -> bool:
         return False
 
 
-def get_mnemonic_language(mnemonic) -> Optional[str]:
+def get_mnemonic_language(mnemonic: str) -> Optional[str]:
     """
     Get mnemonic language.
 
-    :param mnemonic: 12 word mnemonic.
+    :param mnemonic: Mnemonic words.
     :type mnemonic: str
     :returns: str -- Mnemonic language.
 
@@ -113,9 +133,9 @@ def get_mnemonic_language(mnemonic) -> Optional[str]:
     """
 
     if not is_mnemonic(mnemonic=mnemonic):
-        raise ValueError("invalid 12 word mnemonic.")
+        raise ValueError("Invalid mnemonic words.")
 
-    language = None
+    language: Optional[str] = None
     for _language in ["english", "french", "italian",
                       "chinese_simplified", "chinese_traditional", "japanese", "korean", "spanish"]:
         if Mnemonic(language=_language).check(mnemonic=mnemonic) is True:
@@ -124,9 +144,67 @@ def get_mnemonic_language(mnemonic) -> Optional[str]:
     return language
 
 
+def get_entropy_strength(entropy: str) -> int:
+    """
+    Get entropy strength.
+
+    :param entropy: Entropy hex string.
+    :type entropy: str
+    :returns: int -- strength.
+
+    >>> from pybytom.utils import get_entropy_strength
+    >>> get_entropy_strength("ee535b143b0d9d1f87546f9df0d06b1a")
+    128
+    """
+
+    if not is_entropy(entropy=entropy):
+        raise ValueError("Invalid entropy.")
+
+    length = len(entropy)
+    if length == 32:
+        return 128
+    elif length == 40:
+        return 160
+    elif length == 48:
+        return 192
+    elif length == 56:
+        return 224
+    elif length == 64:
+        return 256
+
+
+def get_mnemonic_strength(mnemonic: str) -> int:
+    """
+    Get mnemonic strength.
+
+    :param mnemonic: Mnemonic words.
+    :type mnemonic: str
+    :returns: int -- strength.
+
+    >>> from pybytom.utils import get_mnemonic_strength
+    >>> get_mnemonic_strength("sceptre capter séquence girafe absolu relatif fleur zoologie muscle sirop saboter parure")
+    128
+    """
+
+    if not is_mnemonic(mnemonic=mnemonic):
+        raise ValueError("Invalid mnemonic words.")
+
+    words = len(unicodedata.normalize("NFKC", mnemonic).split(" "))
+    if words == 12:
+        return 128
+    elif words == 15:
+        return 160
+    elif words == 18:
+        return 192
+    elif words == 21:
+        return 224
+    elif words == 24:
+        return 256
+
+
 def amount_converter(amount: float, symbol: str = "NEU2BTM") -> Union[int, float]:
     """
-    Amount converter
+    Bytom amount converter.
 
     :param amount: Bytom amount.
     :type amount: float
@@ -179,10 +257,10 @@ def is_network(network: str) -> bool:
 
     if isinstance(network, str):
         return network.lower() in ["mainnet", "solonet", "testnet"]
-    raise TypeError("network must be string format")
+    raise TypeError("Network must be string format")
 
 
-def is_address(address, network=None) -> bool:
+def is_address(address: str, network: Optional[str] = None) -> bool:
     """
     Check Bytom address.
 
@@ -215,11 +293,11 @@ def is_address(address, network=None) -> bool:
         elif network == "testnet":
             return address.startswith("tm") and not decode("tm", address) == (None, None)
         else:
-            raise ValueError("invalid network, use only this options mainnet, solonet or testnet networks.")
-    raise TypeError("address must be string format")
+            raise ValueError("Invalid network, use only this options mainnet, solonet or testnet networks.")
+    raise TypeError("Address must be string format")
 
 
-def is_vapor_address(address, network=None) -> bool:
+def is_vapor_address(address: str, network: Optional[str] = None) -> bool:
     """
     Check Bytom vapor address.
 
@@ -252,5 +330,5 @@ def is_vapor_address(address, network=None) -> bool:
         elif network == "testnet":
             return address.startswith("tp") and not decode("tp", address) == (None, None)
         else:
-            raise ValueError("invalid network, use only this options mainnet, solonet or testnet networks.")
-    raise TypeError("address must be string format")
+            raise ValueError("Invalid network, use only this options mainnet, solonet or testnet networks.")
+    raise TypeError("Vapor address must be string format")

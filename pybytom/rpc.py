@@ -5,22 +5,20 @@ from typing import Optional
 import requests
 import json
 
-from .utils import amount_converter, is_address, is_network
+from .utils import (
+    amount_converter, is_address, is_vapor_address, is_network
+)
 from .exceptions import (
-    APIError, NetworkError, AddressError, ClientError
+    APIError, NetworkError, AddressError, BalanceError
 )
 from .config import config
 
-# Request headers
-headers = dict()
-# headers.setdefault("Content-Type", "application/json")
-
 # Bytom config
-config = config()
+config: dict = config()
 
 
-def get_balance(address: str, asset: str = config["asset"],
-                network: str = config["network"], timeout: int = config["timeout"]) -> int:
+def get_balance(address: str, asset: str = config["asset"], network: str = config["network"],
+                vapor: bool = False, timeout: int = config["timeout"]) -> int:
     """
     Get Bytom balance.
 
@@ -30,6 +28,8 @@ def get_balance(address: str, asset: str = config["asset"],
     :type asset: str
     :param network: Bytom network, defaults to solonet.
     :type network: str
+    :param vapor: Bytom sidechain vapor, defaults to False.
+    :type vapor: bool
     :param timeout: request timeout, default to 15.
     :type timeout: int
     :returns: int -- Bytom asset balance.
@@ -38,21 +38,32 @@ def get_balance(address: str, asset: str = config["asset"],
     >>> get_balance("bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "mainnet")
     2580000000
     """
-
+    
     if not is_network(network=network):
-        raise NetworkError(f"Invalid '{network}' network/type",
+        raise NetworkError(f"Invalid '{network}' network.",
                            "choose only 'mainnet', 'solonet' or 'testnet' networks.")
-
-    if not is_address(address=address, network=network):
-        raise AddressError(f"Invalid '{address}' {network} address/type")
-    url = f"{config[network]['blockmeta']}/address/{address}/asset"
-    response = requests.get(url=url, headers=headers, timeout=timeout)
-    if response.json() is None:
+    if vapor:
+        if not is_vapor_address(address=address, network=network):
+            raise AddressError(f"Invalid '{address}' {network} vapor address.")
+        url = f"{config['vapor'][network]['blockmeta']}/address/{address}"
+        response = requests.get(url=url, headers=config["headers"], timeout=timeout)
+        if response.json() is None or response.json()["data"] is None:
+            return 0  # 该数据不存在 -> መረጃው የለም!
+        for _asset in response.json()["data"]["address"]:
+            if asset == _asset["asset_id"]:
+                return int(_asset["balance"])
         return 0
-    for _asset in response.json():
-        if asset == _asset["asset_id"]:
-            return int(_asset["balance"])
-    return 0
+    else:
+        if not is_address(address=address, network=network):
+            raise AddressError(f"Invalid '{address}' {network} address.")
+        url = f"{config['bytom'][network]['blockmeta']}/address/{address}/asset"
+        response = requests.get(url=url, headers=config["headers"], timeout=timeout)
+        if response.json() is None:
+            return 0
+        for _asset in response.json():
+            if asset == _asset["asset_id"]:
+                return int(_asset["balance"])
+        return 0
 
 
 def account_create(xpublic_key: str, label: str = "1st address", email: Optional[str] = None,
@@ -78,13 +89,13 @@ def account_create(xpublic_key: str, label: str = "1st address", email: Optional
     """
 
     if not is_network(network=network):
-        raise NetworkError(f"Invalid '{network}' network/type",
+        raise NetworkError(f"Invalid '{network}' network",
                            "choose only 'mainnet', 'solonet' or 'testnet' networks.")
 
     url = f"{config[network]['blockcenter']['v2']}/account/create"
     data = dict(pubkey=xpublic_key, label=label, email=email)
     response = requests.post(
-        url=url, data=json.dumps(data), headers=headers, timeout=timeout
+        url=url, data=json.dumps(data), headers=config["headers"], timeout=timeout
     )
     if response.status_code == 200 and response.json()["code"] == 300:
         raise APIError(response.json()["msg"], response.json()["code"])
@@ -114,7 +125,7 @@ def list_address(guid, limit: int = 10, network: str = config["network"],
     url = f"{config[network]['blockcenter']['v2']}/account/list-addresses"
     data, params = dict(guid=guid), dict(limit=limit)
     response = requests.post(
-        url=url, data=json.dumps(data), params=params, headers=headers, timeout=timeout
+        url=url, data=json.dumps(data), params=params, headers=config["headers"], timeout=timeout
     )
     if response.status_code == 200 and response.json()["code"] == 300:
         raise APIError(response.json()["msg"], response.json()["code"])
@@ -149,10 +160,10 @@ def estimate_transaction_fee(address: str, amount: int, asset: str = config["ass
     """
 
     if not is_network(network=network):
-        raise NetworkError(f"Invalid '{network}' network/type",
+        raise NetworkError(f"Invalid '{network}' network",
                            "choose only 'mainnet', 'solonet' or 'testnet' networks.")
     if not is_address(address=address, network=network):
-        raise AddressError(f"Invalid '{address}' {network} address/type")
+        raise AddressError(f"Invalid '{address}' {network} address.")
 
     url = f"{config[network]['mov']}/merchant/estimate-tx-fee"
     data = dict(
@@ -163,7 +174,7 @@ def estimate_transaction_fee(address: str, amount: int, asset: str = config["ass
     )
     params = dict(address=address)
     response = requests.post(
-        url=url, data=json.dumps(data), params=params, headers=headers, timeout=timeout
+        url=url, data=json.dumps(data), params=params, headers=config["headers"], timeout=timeout
     )
     if response.status_code == 200 and response.json()["code"] == 300:
         raise APIError(response.json()["msg"], response.json()["code"])
@@ -172,8 +183,8 @@ def estimate_transaction_fee(address: str, amount: int, asset: str = config["ass
     return response.json()["data"]["fee"]
 
 
-def build_transaction(address: str, transaction: dict,
-                      network: str = config["network"], timeout: int = config["timeout"]) -> dict:
+def build_transaction(address: str, transaction: dict, network: str = config["network"],
+                      vapor: bool = False, timeout: int = config["timeout"]) -> dict:
     """
     Build Bytom transaction in blockcenter.
 
@@ -183,6 +194,8 @@ def build_transaction(address: str, transaction: dict,
     :type transaction: dict
     :param network: Bytom network, defaults to solonet.
     :type network: str
+    :param vapor: Bytom sidechain vapor, defaults to False.
+    :type vapor: bool
     :param timeout: request timeout, default to 60.
     :type timeout: int
     :returns: dict -- Bytom built transaction.
@@ -193,27 +206,34 @@ def build_transaction(address: str, transaction: dict,
     """
 
     if not is_network(network=network):
-        raise NetworkError(f"Invalid '{network}' network/type",
+        raise NetworkError(f"Invalid '{network}' network",
                            "choose only 'mainnet', 'solonet' or 'testnet' networks.")
-    if not is_address(address=address, network=network):
-        raise AddressError(f"Invalid '{address}' {network} address/type")
-
-    url = f"{config[network]['blockcenter']['v3']}/merchant/build-advanced-tx"
+    if vapor:
+        if not is_vapor_address(address=address, network=network):
+            raise AddressError(f"Invalid '{address}' {network} vapor address.")
+        url = f"{config['vapor'][network]['blockcenter']}/merchant/build-advanced-tx"
+    else:
+        if not is_address(address=address, network=network):
+            raise AddressError(f"Invalid '{address}' {network} address.")
+        url = f"{config['bytom'][network]['blockcenter']}/merchant/build-advanced-tx"
     params = dict(address=address)
     response = requests.post(
-        url=url, data=json.dumps(transaction), params=params, headers=headers, timeout=timeout
+        url=url, data=json.dumps(transaction),
+        params=params, headers=config["headers"], timeout=timeout
     )
     if response.status_code == 200 and response.json()["code"] == 300:
         raise APIError(response.json()["msg"], response.json()["code"])
     elif response.status_code == 200 and response.json()["code"] == 503:
         raise APIError(response.json()["msg"], response.json()["code"])
     elif response.status_code == 200 and response.json()["code"] == 422:
-        raise ClientError(f"There is no any asset balance recorded on this '{address}' address.")
+        raise BalanceError(f"There is no any asset balance recorded on this '{address}' address.")
+    elif response.status_code == 200 and response.json()["code"] == 515:
+        raise BalanceError(f"Insufficient balance, check your balance and try again.")
     return response.json()["data"][0]
 
 
 def get_transaction(transaction_id: str, network: str = config["network"],
-                    timeout: int = config["timeout"]) -> dict:
+                    vapor: bool = False, timeout: int = config["timeout"]) -> dict:
     """
     Get Bytom transaction detail.
 
@@ -221,6 +241,8 @@ def get_transaction(transaction_id: str, network: str = config["network"],
     :type transaction_id: str
     :param network: Bytom network, defaults to solonet.
     :type network: str
+    :param vapor: Bytom sidechain vapor, defaults to False.
+    :type vapor: bool
     :param timeout: request timeout, default to 60.
     :type timeout: int
     :returns: dict -- Bytom transaction detail.
@@ -231,19 +253,28 @@ def get_transaction(transaction_id: str, network: str = config["network"],
     """
 
     if not is_network(network=network):
-        raise NetworkError(f"Invalid '{network}' network/type",
+        raise NetworkError(f"Invalid '{network}' network",
                            "choose only 'mainnet', 'solonet' or 'testnet' networks.")
-    url = f"{config[network]['blockcenter']['v2']}/merchant/get-transaction"
-    response = requests.post(
-        url=url, data=json.dumps(dict(tx_id=transaction_id)), headers=headers, timeout=timeout
-    )
-    if response.status_code == 200 and response.json()["code"] == 300:
-        raise APIError(response.json()["msg"], response.json()["code"])
-    return response.json()["result"]["data"]
+    if vapor:
+        url = f"{config['vapor'][network]['blockmeta']}/tx/hash/{transaction_id}"
+        response = requests.get(
+            url=url, headers=config["headers"], timeout=timeout
+        )
+        if response.status_code == 200 and response.json()["code"] == 200:
+            return response.json()["data"]["transaction"]
+        raise APIError(f"Not found this '{transaction_id}' vapor transaction id.", 500)
+    else:
+        url = f"{config['bytom'][network]['blockmeta']}/transaction/{transaction_id}"
+        response = requests.get(
+            url=url, headers=config["headers"], timeout=timeout
+        )
+        if response.status_code == 200 and response.json()["inputs"] is not None:
+            return response.json()
+        raise APIError(f"Not found this '{transaction_id}' transaction id.", 500)
 
 
-def submit_transaction_raw(address: str, transaction_raw: str, signatures: list,
-                           network: str = config["network"], timeout: int = config["timeout"]) -> str:
+def submit_transaction_raw(address: str, transaction_raw: str, signatures: list, network: str = config["network"],
+                           vapor: bool = False, timeout: int = config["timeout"]) -> str:
     """
      Submit transaction raw to Bytom blockchain.
 
@@ -255,6 +286,8 @@ def submit_transaction_raw(address: str, transaction_raw: str, signatures: list,
     :type signatures: list
     :param network: Bytom network, defaults to solonet.
     :type network: str
+    :param vapor: Bytom sidechain vapor, defaults to False.
+    :type vapor: bool
     :param timeout: request timeout, default to 60.
     :type timeout: int
     :returns: dict -- Bytom transaction id/hash.
@@ -265,18 +298,22 @@ def submit_transaction_raw(address: str, transaction_raw: str, signatures: list,
     """
     
     if not is_network(network=network):
-        raise NetworkError(f"Invalid '{network}' network/type",
+        raise NetworkError(f"Invalid '{network}' network",
                            "choose only 'mainnet', 'solonet' or 'testnet' networks.")
-    
-    if not isinstance(signatures, list):
-        raise TypeError("signatures must be list format")
-    url = f"{config[network]['blockcenter']['v3']}/merchant/submit-payment"
+    if vapor:
+        if not is_vapor_address(address=address, network=network):
+            raise AddressError(f"Invalid '{address}' {network} vapor address.")
+        url = f"{config['vapor'][network]['blockcenter']}/merchant/submit-payment"
+    else:
+        if not is_address(address=address, network=network):
+            raise AddressError(f"Invalid '{address}' {network} address.")
+        url = f"{config['bytom'][network]['blockcenter']}/merchant/submit-payment"
     data = dict(raw_transaction=transaction_raw, signatures=signatures)
     params = dict(address=address)
     response = requests.post(
-        url=url, data=json.dumps(data), params=params, headers=headers, timeout=timeout
+        url=url, data=json.dumps(data), params=params, headers=config["headers"], timeout=timeout
     )
-    if response.json()["code"] != 200:
+    if requests.status_codes == 200 and response.json()["code"] != 200:
         raise APIError(response.json()["msg"], response.json()["code"])
     return response.json()["data"]["tx_hash"]
 
@@ -300,12 +337,12 @@ def decode_transaction_raw(transaction_raw: str, network: str = config["network"
     """
 
     if not is_network(network=network):
-        raise NetworkError(f"Invalid '{network}' network/type",
+        raise NetworkError(f"Invalid '{network}' network",
                            "choose only 'mainnet', 'solonet' or 'testnet' networks.")
     url = f"{config[network]['bytom']}/decode-raw-transaction"
     data = dict(raw_transaction=transaction_raw)
     response = requests.post(
-        url=url, data=json.dumps(data), headers=headers, timeout=timeout
+        url=url, data=json.dumps(data), headers=config["headers"], timeout=timeout
     )
     if response.status_code == 400:
         raise APIError(response.json()["msg"], response.json()["code"])

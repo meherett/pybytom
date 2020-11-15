@@ -1,34 +1,34 @@
 #!/usr/bin/env python3
 
-from binascii import hexlify, unhexlify
-from typing import TypeVar, Optional, List
+from binascii import (hexlify, unhexlify)
 from mnemonic import Mnemonic
+from typing import (Optional, List)
 
 import hmac
+import unicodedata
 import hashlib
 
 from ..config import config
-from ..signature import sign, verify
-from ..utils import get_mnemonic_language, is_mnemonic, is_network
-from ..exceptions import NetworkError, DerivationError, ClientError
-from ..rpc import account_create, get_balance
-
+from ..signature import (sign, verify)
+from ..utils import (
+    get_mnemonic_language, is_mnemonic, is_network, get_entropy_strength, get_mnemonic_strength
+)
+from ..exceptions import (
+    NetworkError, DerivationError, ClientError
+)
+from ..rpc import (
+    account_create, get_balance
+)
 from .tools import (
-    get_xpublic_key, get_address,
-    get_vapor_address, get_program,
-    get_child_xpublic_key, get_child_xprivate_key,
-    get_private_key, get_public_key,
-    get_expand_xprivate_key
+    get_xpublic_key, get_address, get_vapor_address, get_program, get_child_xpublic_key,
+    get_child_xprivate_key, get_private_key, get_public_key, get_expand_xprivate_key
 )
 from .utils import (
-    prune_root_scalar, prune_intermediate_scalar,
-    get_bytes, bad_seed_checker
+    prune_root_scalar, get_bytes, bad_seed_checker
 )
 
 # Bytom config
-config = config()
-# Wallet class
-_Wallet = TypeVar("_Wallet", bound="Wallet")
+config: dict = config()
 
 
 class Wallet:
@@ -37,7 +37,7 @@ class Wallet:
 
     :param network: Bytom network, defaults to solonet.
     :type network: str
-    :returns:  Wallet -- Bytom wallet instance.
+    :returns: Wallet -- Bytom wallet instance.
 
     .. note::
         Bytom has only three networks, ``mainnet``, ``solonet`` and ``testnet``.
@@ -45,24 +45,27 @@ class Wallet:
 
     def __init__(self, network: str = config["network"]):
 
-        # Bytom network.
         if not is_network(network=network):
             raise NetworkError(f"Invalid '{network}' network/type",
                                "choose only 'mainnet', 'solonet' or 'testnet' networks.")
-        self.network = network
+        self.network: str = network
 
-        self._entropy, self._mnemonic, self._passphrase, self._language = (
-            None, None, None, None
-        )
-        self._seed, self._guid, self._xprivate_key, self._private_key = (
-            None, None, None, None
-        )
-        self._indexes, self._path = (
-            list(), None
-        )
+        self._strength: Optional[int] = None
+        self._entropy: Optional[str] = None
+        self._mnemonic: Optional[str] = None
+        self._language: Optional[str] = None
+        self._passphrase: Optional[str] = None
 
-    def from_entropy(self, entropy: str,
-                     passphrase: Optional[str] = None, language: str = "english") -> _Wallet:
+        self._seed: Optional[str] = None
+        self._guid: Optional[str] = None
+        self._xprivate_key: Optional[str] = None
+        self._private_key: Optional[str] = None
+
+        self._indexes: List[str] = []
+        self._path: Optional[str] = None
+
+    def from_entropy(self, entropy: str, passphrase: Optional[str] = None,
+                     language: str = "english") -> "Wallet":
         """
         Initialize Bytom wallet from entropy.
 
@@ -72,7 +75,7 @@ class Wallet:
         :type passphrase: str.
         :param language: Mnemonic language, default to english.
         :type language: str.
-        :returns:  Wallet -- Bytom wallet class instance.
+        :returns: Wallet -- Bytom wallet class instance.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
@@ -80,42 +83,34 @@ class Wallet:
         <pybytom.wallet.Wallet object at 0x040DA268>
         """
 
-        if passphrase is None:
-            passphrase = str()
-
-        # Checking parameters
-        if not isinstance(entropy, str):
-            raise TypeError("entropy must be string format")
-        if not isinstance(passphrase, str):
-            raise TypeError("passphrase must be string format")
-        if not isinstance(language, str):
-            raise TypeError("language must be string format")
-        if language not in "english/french/italian/spanish/" \
-                           "chinese_simplified/chinese_traditional/japanese/korean".split("/"):
-            raise ValueError("invalid language option, choose only english, french, italian, spanish, "
-                             "chinese_simplified, chinese_traditional, japanese & korean language")
+        if language not in ["english", "french", "italian", "japanese",
+                            "chinese_simplified", "chinese_traditional", "korean", "spanish"]:
+            raise ValueError("Invalid language, choose only the following options 'english', 'french', 'italian', "
+                             "'spanish', 'chinese_simplified', 'chinese_traditional', 'japanese or 'korean' languages.")
 
         self._entropy = unhexlify(entropy.encode())
-        self._passphrase, self._language = passphrase, language
-        self._mnemonic = Mnemonic(language=self._language) \
-            .to_mnemonic(data=self._entropy)
-        self._seed = Mnemonic.to_seed(
-            mnemonic=self._mnemonic, passphrase=self._passphrase)
+        self._passphrase, self._language = (
+            (passphrase if passphrase is not None else str()), language
+        )
+        self._strength = get_entropy_strength(entropy=hexlify(self._entropy).decode())
+        mnemonic = Mnemonic(language=self._language).to_mnemonic(data=self._entropy)
+        self._mnemonic = unicodedata.normalize("NFKC", mnemonic)
+        self._seed = Mnemonic.to_seed(mnemonic=self._mnemonic, passphrase=self._passphrase)
         self.from_seed(seed=hexlify(self._seed).decode())
         return self
 
-    def from_mnemonic(self, mnemonic: str,
-                      passphrase: Optional[str] = None, language: Optional[str] = None) -> _Wallet:
+    def from_mnemonic(self, mnemonic: str, passphrase: Optional[str] = None,
+                      language: Optional[str] = None) -> "Wallet":
         """
         Initialize Bytom wallet from mnemonic.
 
-        :param mnemonic: 12 words mnemonic.
+        :param mnemonic: Mnemonic words.
         :type mnemonic: str.
         :param passphrase: Secret password/passphrase, default to None.
         :type passphrase: str.
         :param language: Mnemonic language, default to None.
         :type language: str.
-        :returns:  Wallet -- Bytom wallet class instance.
+        :returns: Wallet -- Bytom wallet class instance.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
@@ -123,46 +118,37 @@ class Wallet:
         <pybytom.wallet.Wallet object at 0x040DA268>
         """
 
-        if passphrase is None:
-            passphrase = str()
-
-        # Checking parameters
-        if not isinstance(mnemonic, str):
-            raise TypeError("mnemonic must be string format")
-        if not isinstance(passphrase, str):
-            raise TypeError("passphrase must be string format")
-        if language and language not in "english/french/italian/spanish/chinese_simplified" \
-                                        "/chinese_traditional/japanese/korean".split("/"):
-            raise ValueError("invalid language option, choose only english, french, italian, spanish, "
-                             "chinese_simplified, chinese_traditional, japanese & korean language")
+        if language and language not in ["english", "french", "italian", "japanese",
+                                         "chinese_simplified", "chinese_traditional", "korean", "spanish"]:
+            raise ValueError("Invalid language, choose only the following options 'english', 'french', 'italian', "
+                             "'spanish', 'chinese_simplified', 'chinese_traditional', 'japanese or 'korean' languages.")
         if not is_mnemonic(mnemonic=mnemonic, language=language):
-            raise ValueError("invalid 12 word mnemonic.")
+            raise ValueError("Invalid mnemonic words.")
 
-        self._mnemonic = mnemonic
-        self._passphrase, self._language = \
-            passphrase, get_mnemonic_language(mnemonic=self._mnemonic)
+        self._mnemonic = unicodedata.normalize("NFKC", mnemonic)
+        self._language, self._passphrase = (
+            get_mnemonic_language(mnemonic=self._mnemonic),
+            (passphrase if passphrase is not None else str())
+        )
+        self._strength = get_mnemonic_strength(mnemonic=self._mnemonic)
         self._seed = Mnemonic.to_seed(
             mnemonic=self._mnemonic, passphrase=self._passphrase)
         self.from_seed(seed=hexlify(self._seed).decode())
         return self
 
-    def from_seed(self, seed: str) -> _Wallet:
+    def from_seed(self, seed: str) -> "Wallet":
         """
         Initialize Bytom wallet from seed.
 
         :param seed: Mnemonic seed hex string.
         :type seed: str.
-        :returns:  Wallet -- Bytom wallet class instance.
+        :returns: Wallet -- Bytom wallet class instance.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
         >>> wallet.from_seed("baff3e1fe60e1f2a2d840d304acc98d1818140c79354a353b400fb019bfb256bc392d7aa9047adff1f14bce0342e14605c6743a6c08e02150588375eb2eb7d49")
         <pybytom.wallet.Wallet object at 0x040DA268>
         """
-
-        # Checking parameters
-        if not isinstance(seed, str):
-            raise TypeError("seed must be string format")
 
         self._seed = unhexlify(seed.encode())
         i = hmac.HMAC(b"Root", get_bytes(self._seed),
@@ -175,13 +161,13 @@ class Wallet:
         self._private_key = get_private_key(str(self._xprivate_key), self._indexes)
         return self
 
-    def from_xprivate_key(self, xprivate_key: str) -> _Wallet:
+    def from_xprivate_key(self, xprivate_key: str) -> "Wallet":
         """
         Initialize Bytom wallet from xprivate key.
 
         :param xprivate_key: Bytom xprivate key.
         :type xprivate_key: str.
-        :returns:  Wallet -- Bytom wallet class instance.
+        :returns: Wallet -- Bytom wallet class instance.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
@@ -189,20 +175,16 @@ class Wallet:
         <pybytom.wallet.Wallet object at 0x040DA268>
         """
 
-        # Checking parameters
-        if not isinstance(xprivate_key, str):
-            raise TypeError("xprivate key must be string format")
-
         self._xprivate_key = xprivate_key
         return self
 
-    def from_private_key(self, private_key: str) -> _Wallet:
+    def from_private_key(self, private_key: str) -> "Wallet":
         """
         Initialize Bytom wallet from private key.
 
         :param private_key: Bytom private key.
         :type private_key: str.
-        :returns:  Wallet -- Bytom wallet class instance.
+        :returns: Wallet -- Bytom wallet class instance.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
@@ -210,29 +192,25 @@ class Wallet:
         <pybytom.wallet.Wallet object at 0x040DA268>
         """
 
-        # Checking parameters
-        if not isinstance(private_key, str):
-            raise TypeError("private key must be string format")
-
         self._private_key = private_key
         return self
 
-    def derivation(self, index: Optional[int] = None) -> _Wallet:
+    def derivation(self, index: Optional[int] = None) -> "Wallet":
         if index is not None:
             index = int(index).to_bytes(4, byteorder="little").hex()
             self._indexes.append(index)
         if not self._xprivate_key:
-            raise DerivationError("You can't drive private key", "xprivate key is also None.")
+            raise DerivationError("You can't drive", "XPrivate Key is also None.")
         self._private_key = get_private_key(str(self._xprivate_key), self._indexes)
         return self
 
-    def from_indexes(self, indexes: List[str]) -> _Wallet:
+    def from_indexes(self, indexes: List[str]) -> "Wallet":
         """
         Drive Bytom wallet from indexes.
 
         :param indexes: Bytom derivation indexes.
         :type indexes: list.
-        :returns:  Wallet -- Bytom wallet class instance.
+        :returns: Wallet -- Bytom wallet class instance.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
@@ -241,15 +219,11 @@ class Wallet:
         <pybytom.wallet.Wallet object at 0x040DA268>
         """
 
-        # Checking parameters
-        if not isinstance(indexes, list):
-            raise TypeError("indexes must be list format")
-
         self._indexes = indexes
         self.derivation()
         return self
 
-    def from_index(self, index: int, harden: bool = False) -> _Wallet:
+    def from_index(self, index: int, harden: bool = False) -> "Wallet":
         """
         Drive Bytom wallet from index.
 
@@ -257,7 +231,7 @@ class Wallet:
         :type index: int.
         :param harden: BIP 32 key harden, default to False.
         :type harden: bool.
-        :returns:  Wallet -- Bytom wallet class instance.
+        :returns: Wallet -- Bytom wallet class instance.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
@@ -270,17 +244,13 @@ class Wallet:
         <pybytom.wallet.Wallet object at 0x040DA268>
         """
 
-        # Checking parameters
-        if not isinstance(index, int):
-            raise TypeError("index must be integer format")
-
         if harden:
             self.derivation(index + 0x80000000)
         else:
             self.derivation(index)
         return self
 
-    def from_path(self, path: str) -> _Wallet:
+    def from_path(self, path: str) -> "Wallet":
         """
         Drive Bytom wallet from path.
 
@@ -295,9 +265,6 @@ class Wallet:
         <pybytom.wallet.Wallet object at 0x040DA268>
         """
 
-        # Checking parameters
-        if not isinstance(path, str):
-            raise TypeError("path must be string format")
         if str(path)[0:2] != "m/":
             raise DerivationError("Bad path", "insert like this type of path \"m/0'/0\"! ")
 
@@ -308,7 +275,7 @@ class Wallet:
                 self.derivation(int(index))
         return self
 
-    def clean_derivation(self) -> _Wallet:
+    def clean_derivation(self) -> "Wallet":
         """
         Clean derivation indexes/path.
 
@@ -328,11 +295,11 @@ class Wallet:
         >>> wallet.path()
         None
         """
+
         self._indexes = list()
         self.derivation()
         return self
 
-    # Getting guid from blockcenter
     def guid(self) -> Optional[str]:
         """
         Get Bytom wallet blockcenter guid.
@@ -352,6 +319,21 @@ class Wallet:
             self._guid = account_create(
                 xpublic_key=self.xpublic_key(), network=self.network)["guid"]
         return self._guid
+
+    def strength(self) -> Optional[int]:
+        """
+        Get wallet entropy/mnemonic strength.
+
+        :return: int -- Entropy/Mnemonic strength.
+
+        >>> from pybytom.wallet import Wallet
+        >>> wallet = Wallet(network="mainnet")
+        >>> wallet.from_entropy(entropy="8d7454bb99e8e68de6adfc5519cbee64", language="korean")
+        >>> wallet.strength()
+        128
+        """
+
+        return self._strength if self._strength else None
 
     def entropy(self) -> Optional[str]:
         """
@@ -381,7 +363,7 @@ class Wallet:
         "occasione pizzico coltivato cremoso odorare epilogo patacca salone fonia sfuso vispo selettivo"
         """
 
-        return str(self._mnemonic) if self._mnemonic else None
+        return unicodedata.normalize("NFKC", self._mnemonic) if self._mnemonic else None
 
     def passphrase(self) -> Optional[str]:
         """
@@ -411,7 +393,7 @@ class Wallet:
         "italian"
         """
 
-        return str(self._language) if self._language else None
+        return self._language if self._language else None
 
     def seed(self) -> Optional[str]:
         """
@@ -458,7 +440,7 @@ class Wallet:
 
         return get_xpublic_key(xprivate_key=self.xprivate_key()) if self._xprivate_key else None
 
-    def expand_xprivate_key(self)-> Optional[str]:
+    def expand_xprivate_key(self) -> Optional[str]:
         """
         Get Bytom wallet expand xprivate key.
 
@@ -487,7 +469,7 @@ class Wallet:
         "e07af52746e7cccd0a7d1fba6651a6f474bada481f34b1c5bab5e2d71e36ee515803ee0a6682fb19e279d8f4f7acebee8abd0fc74771c71565f9a9643fd77141"
         """
 
-        return str(self._private_key)
+        return self._private_key
 
     def public_key(self) -> str:
         """
@@ -613,8 +595,6 @@ class Wallet:
 
         if network is None:
             network = self.network
-        if not isinstance(network, str):
-            raise TypeError("network must be string format")
 
         return get_address(program=self.program(), network=network)
 
@@ -636,17 +616,17 @@ class Wallet:
 
         if network is None:
             network = self.network
-        if not isinstance(network, str):
-            raise TypeError("network must be string format")
 
         return get_vapor_address(program=self.program(), network=network)
 
-    def balance(self, asset: str = config["asset"]) -> int:
+    def balance(self, asset: str = config["asset"], vapor: bool = False) -> int:
         """
         Get Bytom wallet balance.
 
         :param asset: Bytom asset, defaults to BTM asset.
         :type asset: str
+        :param vapor: Bytom sidechain vapor, defaults to False.
+        :type vapor: bool
         :return: int -- Bytom balance.
 
         >>> from pybytom.wallet import Wallet
@@ -656,7 +636,10 @@ class Wallet:
         2450000000
         """
 
-        return get_balance(address=self.address(), asset=asset, network=self.network)
+        return get_balance(
+            address=(self.vapor_address() if vapor else self.address()),
+            asset=asset, network=self.network, vapor=vapor
+        )
 
     def sign(self, message: str) -> str:
         """
@@ -675,10 +658,7 @@ class Wallet:
         "f6624fea84fadccbc1bc72dc384f662468e271c4e32d846bc0a1524470549992c8ffcc3ca43891a30de4235392b0868c506ed254f0f77cc1f2b9c1a2385ddb05"
         """
 
-        if not isinstance(message, str):
-            raise TypeError("message must be string format")
-
-        return sign(self.private_key(), message)
+        return sign(private_key=self.private_key(), message=message)
 
     def verify(self, message: str, signature: str) -> bool:
         """
@@ -700,12 +680,7 @@ class Wallet:
         True
         """
 
-        if not isinstance(message, str):
-            raise TypeError("message must be string format")
-        if not isinstance(signature, str):
-            raise TypeError("signature must be string format")
-
-        return verify(self.public_key(), message, signature)
+        return verify(public_key=self.public_key(), message=message, signature=signature)
 
     def dumps(self, guid: bool = False) -> dict:
         """
@@ -720,10 +695,11 @@ class Wallet:
         >>> wallet.from_mnemonic("indicate warm sock mistake code spot acid ribbon sing over taxi toast")
         >>> wallet.from_indexes(["2c000000", "99000000", "01000000", "00000000", "01000000"])
         >>> wallet.dumps()
-        {'entropy': None, 'mnemonic': 'indicate warm sock mistake code spot acid ribbon sing over taxi toast', 'language': 'english', 'passphrase': None, 'seed': 'baff3e1fe60e1f2a2d840d304acc98d1818140c79354a353b400fb019bfb256bc392d7aa9047adff1f14bce0342e14605c6743a6c08e02150588375eb2eb7d49', 'xprivate_key': '205b15f70e253399da90b127b074ea02904594be9d54678207872ec1ba31ee51ef4490504bd2b6f997113671892458830de09518e6bd5958d5d5dd97624cfa4b', 'xpublic_key': '16476b7fd68ca2acd92cfc38fa353e75d6103f828276f44d587e660a6bd7a5c5ef4490504bd2b6f997113671892458830de09518e6bd5958d5d5dd97624cfa4b', 'expand_xprivate_key': '205b15f70e253399da90b127b074ea02904594be9d54678207872ec1ba31ee5102416c643cfb46ab1ae5a524c8b4aaa002eb771d0d9cfc7490c0c3a8177e053e', 'guid': None, 'indexes': ['2c000000', '99000000', '01000000', '00000000', '01000000'], 'path': 'm/44/153/1/0/1', 'child_xprivate_key': 'e07af52746e7cccd0a7d1fba6651a6f474bada481f34b1c5bab5e2d71e36ee515803ee0a6682fb19e279d8f4f7acebee8abd0fc74771c71565f9a9643fd77141', 'child_xpublic_key': '91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e25803ee0a6682fb19e279d8f4f7acebee8abd0fc74771c71565f9a9643fd77141', 'private_key': 'e07af52746e7cccd0a7d1fba6651a6f474bada481f34b1c5bab5e2d71e36ee515803ee0a6682fb19e279d8f4f7acebee8abd0fc74771c71565f9a9643fd77141', 'public_key': '91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e2', 'program': '00142cda4f99ea8112e6fa61cdd26157ed6dc408332a', 'address': {'mainnet': 'bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7', 'solonet': 'sm1q9ndylx02syfwd7npehfxz4lddhzqsve2gdsdcs', 'testnet': 'tm1q9ndylx02syfwd7npehfxz4lddhzqsve2d2mgc0'}}
+        {'strength': 128, 'entropy': None, 'mnemonic': 'indicate warm sock mistake code spot acid ribbon sing over taxi toast', 'language': 'english', 'passphrase': None, 'seed': 'baff3e1fe60e1f2a2d840d304acc98d1818140c79354a353b400fb019bfb256bc392d7aa9047adff1f14bce0342e14605c6743a6c08e02150588375eb2eb7d49', 'xprivate_key': '205b15f70e253399da90b127b074ea02904594be9d54678207872ec1ba31ee51ef4490504bd2b6f997113671892458830de09518e6bd5958d5d5dd97624cfa4b', 'xpublic_key': '16476b7fd68ca2acd92cfc38fa353e75d6103f828276f44d587e660a6bd7a5c5ef4490504bd2b6f997113671892458830de09518e6bd5958d5d5dd97624cfa4b', 'expand_xprivate_key': '205b15f70e253399da90b127b074ea02904594be9d54678207872ec1ba31ee5102416c643cfb46ab1ae5a524c8b4aaa002eb771d0d9cfc7490c0c3a8177e053e', 'guid': None, 'indexes': ['2c000000', '99000000', '01000000', '00000000', '01000000'], 'path': 'm/44/153/1/0/1', 'child_xprivate_key': 'e07af52746e7cccd0a7d1fba6651a6f474bada481f34b1c5bab5e2d71e36ee515803ee0a6682fb19e279d8f4f7acebee8abd0fc74771c71565f9a9643fd77141', 'child_xpublic_key': '91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e25803ee0a6682fb19e279d8f4f7acebee8abd0fc74771c71565f9a9643fd77141', 'private_key': 'e07af52746e7cccd0a7d1fba6651a6f474bada481f34b1c5bab5e2d71e36ee515803ee0a6682fb19e279d8f4f7acebee8abd0fc74771c71565f9a9643fd77141', 'public_key': '91ff7f525ff40874c4f47f0cab42e46e3bf53adad59adef9558ad1b6448f22e2', 'program': '00142cda4f99ea8112e6fa61cdd26157ed6dc408332a', 'address': {'mainnet': 'bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7', 'solonet': 'sm1q9ndylx02syfwd7npehfxz4lddhzqsve2gdsdcs', 'testnet': 'tm1q9ndylx02syfwd7npehfxz4lddhzqsve2d2mgc0'}}
         """
 
         return dict(
+            strength=self.strength(),
             entropy=self.entropy(),
             mnemonic=self.mnemonic(),
             language=self.language(),

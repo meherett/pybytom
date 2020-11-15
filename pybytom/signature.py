@@ -6,12 +6,11 @@ import hmac
 
 from .wallet.tools import get_xpublic_key
 from .libs.ed25519 import (
-    sc_reduce32, encodeint, decodeint,
-    scalarmultbase, encodepoint, sc_muladd
+    sc_reduce32, decodeint, scalarmultbase, encodepoint, sc_muladd
 )
 
 
-def sign(private_key, message):
+def sign(private_key: str, message: str) -> str:
     """
     Sign Bytom message data by private key.
 
@@ -43,8 +42,9 @@ def sign(private_key, message):
     encoded_r = encodepoint(scalarmultbase(scalar))
     public = get_xpublic_key(private)
     public_bytes = bytes.fromhex(public)
-    hram_digest_data = encoded_r + public_bytes[:32] + message_bytes
-
+    hram_digest_data = (
+        encoded_r + public_bytes[:32] + message_bytes
+    )
     hram_digest = hashlib.sha512(hram_digest_data).digest()
     hram_digest = sc_reduce32(hram_digest.hex().encode())
     hram_digest = bytes.fromhex(hram_digest.decode())
@@ -60,7 +60,7 @@ def sign(private_key, message):
     return signature
 
 
-def verify(public_key, message, signature):
+def verify(public_key: str, message: str, signature: str) -> bool:
     """
     Verify Bytom signature by public key.
 
@@ -79,11 +79,13 @@ def verify(public_key, message, signature):
 
     result = False
     verifying_key = ed25519.VerifyingKey(
-        public_key.encode(), encoding="hex")
+        public_key.encode(), encoding="hex"
+    )
     try:
         verifying_key.verify(
             signature.encode(),
-            bytes.fromhex(message), encoding="hex")
+            bytes.fromhex(message), encoding="hex"
+        )
         result = True
     except ed25519.BadSignatureError:
         result = False

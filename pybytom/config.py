@@ -1,36 +1,48 @@
 #!/usr/bin/env python3
 
 
-# Bytom configuration
+# Bytom and Vapor configuration
 def config():
-
     return {
-        "mainnet": {
-            "bytom": "http://localhost:9888",
-            "blockmeta": "https://blockmeta.com/api/v3",
-            "blockcenter": {
-                "v2": "https://bcapi.bystack.com/api/v2/btm",
-                "v3": "https://bcapi.bystack.com/bytom/v3"
+        "bytom": {
+            "mainnet": {
+                "bytom": "http://localhost:9888",
+                "blockmeta": "https://blockmeta.com/api/v3",
+                "blockcenter": "https://bcapi.bystack.com/bytom/v3",
+                "mov": "https://ex.movapi.com/bytom/v3"
             },
-            "mov": "https://ex.movapi.com/bytom/v3"
+            "solonet": {
+                "bytom": "http://localhost:9888",
+                "blockmeta": None,
+                "blockcenter": None,
+                "mov": None
+            },
+            "testnet": {
+                "bytom": "http://localhost:9888",
+                "blockmeta": None,
+                "blockcenter": None,
+                "mov": None
+            }
         },
-        "solonet": {
-            "bytom": "http://localhost:9888",
-            "blockmeta": None,
-            "blockcenter": {
-                "v2": None,
-                "v3": None
+        "vapor": {
+            "mainnet": {
+                "bytom": "http://localhost:9888",
+                "blockmeta": "https://vapor.blockmeta.com/api/v1",
+                "blockcenter": "https://ex.movapi.com/vapor/v3",
+                "mov": "https://ex.movapi.com/bytom/v3"
             },
-            "mov": None
-        },
-        "testnet": {
-            "bytom": "http://localhost:9888",
-            "blockmeta": None,
-            "blockcenter": {
-                "v2": None,
-                "v3": None
+            "solonet": {
+                "bytom": "http://localhost:9888",
+                "blockmeta": None,
+                "blockcenter": None,
+                "mov": None
             },
-            "mov": None
+            "testnet": {
+                "bytom": "http://localhost:9888",
+                "blockmeta": None,
+                "blockcenter": None,
+                "mov": None
+            }
         },
         "network": "mainnet",
         "timeout": 60,
@@ -41,5 +53,11 @@ def config():
             "NEU": 100_000_000
         },
         "fee": 10_000_000,
-        "confirmations": 1
+        "confirmations": 1,
+        "forbid_chain_tx": False,
+        "headers": {
+            "User-Agent": "PyBytom User Agent v0.1.0",
+            "Content-Type": "application/json; charset=utf-8",
+            "Accept": "application/json"
+        }
     }

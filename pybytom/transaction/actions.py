@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 
-from ..utils import amount_converter
-from .. exceptions import SymbolError
+from ..utils import (
+    amount_converter, is_address, is_vapor_address
+)
+from .. exceptions import (
+    SymbolError, AddressError
+)
 
 
 def spend_utxo(utxo: str) -> dict:
@@ -10,6 +14,7 @@ def spend_utxo(utxo: str) -> dict:
 
     :param utxo: Bytom utxo id.
     :type utxo: str
+
     :returns: dict -- Bytom spend utxo action.
 
     >>> from pybytom.transaction.actions import spend_utxo
@@ -30,6 +35,7 @@ def spend_wallet(amount: float, asset: str, symbol: str = "NEU") -> dict:
     :type asset: str
     :param symbol: Bytom symbol, default to NEU
     :type symbol: str
+
     :returns: dict -- Bytom spend wallet action.
 
     >>> from pybytom.transaction.actions import spend_wallet
@@ -65,6 +71,7 @@ def control_program(amount: float, asset: str, program: str, symbol: str = "NEU"
     :type program: str
     :param symbol: Bytom symbol, default to NEU
     :type symbol: str
+
     :returns: dict -- Bytom control program action.
 
     >>> from pybytom.transaction.actions import control_program
@@ -89,7 +96,7 @@ def control_program(amount: float, asset: str, program: str, symbol: str = "NEU"
     )
 
 
-def control_address(amount: float, asset: str, address: str, symbol: str = "NEU") -> dict:
+def control_address(amount: float, asset: str, address: str, vapor: bool = False, symbol: str = "NEU") -> dict:
     """
     Get control address action.
 
@@ -101,12 +108,20 @@ def control_address(amount: float, asset: str, address: str, symbol: str = "NEU"
     :type address: str
     :param symbol: Bytom symbol, default to NEU
     :type symbol: str
+    :param vapor: Bytom sidechain vapor, defaults to False.
+    :type vapor: bool
+
     :returns: dict -- Bytom control address action.
 
     >>> from pybytom.transaction.actions import control_address
     >>> control_address(10_000_000, "41536cf298d6f261c0a1ac169a45be47583f7240115c9059cd0d03e4d4fab70a", "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7")
     {'type': 'control_address', 'amount': '0.1', 'asset': '41536cf298d6f261c0a1ac169a45be47583f7240115c9059cd0d03e4d4fab70a', 'address': 'bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7'}
     """
+
+    if vapor and not is_vapor_address(address=address):
+        raise AddressError(f"Invalid recipient '{address}' vapor address.")
+    elif not vapor and not is_address(address=address):
+        raise AddressError(f"Invalid recipient '{address}' address.")
 
     if symbol.startswith("BTM"):
         amount = amount

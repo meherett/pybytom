@@ -17,11 +17,12 @@ def find_smart_contract_utxo(transaction_id: str, network: str = config["network
 
     :param transaction_id: Bytom transaction id/hash.
     :type transaction_id: str
-    :param network: Bytom network.
+    :param network: Bytom network, defaults to mainnet.
     :type network: str
     :param vapor: Bytom sidechain vapor, defaults to False.
     :type vapor: bool
-    :returns: str -- UTXO id.
+
+    :returns: str -- Smart Contract UTXO id.
 
     >>> from pybytom.transaction.tools import find_smart_contract_utxo
     >>> find_smart_contract_utxo("e4d4fab70a41536cf298d6f261c0a1ac169a45be47583f7240115c9059cd0d03", "mainnet", False)
@@ -46,11 +47,12 @@ def find_p2wsh_utxo(transaction_id: str, network: str = config["network"], vapor
 
     :param transaction_id: Bytom transaction id/hash.
     :type transaction_id: str
-    :param network: Bytom network.
+    :param network: Bytom network, defaults to mainnet.
     :type network: str
     :param vapor: Bytom sidechain vapor, defaults to False.
     :type vapor: bool
-    :returns: str -- UTXO id.
+
+    :returns: str -- Pay to Witness Secript Hash (P2WSH) UTXO id.
 
     >>> from pybytom.transaction.tools import find_p2wsh_utxo
     >>> find_p2wsh_utxo("0a1ac169a45be47583f72401e4d4fab70a41536cf298d6f261c15c9059cd0d03", "mainnet", False)

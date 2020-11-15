@@ -14,11 +14,11 @@ class Builder:
     def __init__(self):
         self.program = bytearray()
 
-    def add_op(self, op: int):
+    def add_op(self, op: int) -> "Builder":
         self.program.append(op)
         return self
 
-    def add_bytes(self, data: bytes):
+    def add_bytes(self, data: bytes) -> "Builder":
         len_byte = len(data)
 
         if len_byte == 0:
@@ -42,7 +42,7 @@ class Builder:
             self.program += data
         return self
 
-    def add_int(self, number: int):
+    def add_int(self, number: int) -> "Builder":
         if number == 0:
             self.program.append(OP_0)
             return self
@@ -55,14 +55,14 @@ class Builder:
         return self.add_bytes(
             bytes(c_int64(number)).rstrip(b'\x00'))
     
-    def add_raw_bytes(self, data: str):
+    def add_raw_bytes(self, data: str) -> "Builder":
         self.program.append(
             unhexlify(data)
         )
         return self
 
-    def digest(self):
+    def digest(self) -> bytearray:
         return self.program
 
-    def hex_digest(self):
+    def hex_digest(self) -> str:
         return self.program.hex()
