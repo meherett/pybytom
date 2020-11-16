@@ -16,10 +16,7 @@ STRENGTH: int = 128  # Default is 128
 # Choose language english, french, italian, spanish, chinese_simplified, chinese_traditional, japanese or korean
 LANGUAGE: str = "english"  # Default is english
 # Generate new mnemonic words
-# MNEMONIC: str = generate_mnemonic(language=LANGUAGE, strength=STRENGTH)
-# MNEMONIC: str = "when loan need vacant same guard demise sail basic mutual person slim"
-MNEMONIC: str = "echo motion furnace name total legal destroy utility measure assault park man"
-# MNEMONIC: str = "indicate warm sock mistake code spot acid ribbon sing over taxi toast"
+MNEMONIC: str = generate_mnemonic(language=LANGUAGE, strength=STRENGTH)
 # Secret passphrase/password for mnemonic
 PASSPHRASE: Optional[str] = None  # str("meherett")
 # Message data

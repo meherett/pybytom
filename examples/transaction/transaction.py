@@ -13,9 +13,9 @@ from typing import Optional
 import json
 
 # Choose network mainnet, solonet or testnet
-NETWORK: str = "mainnet"
-# Bytom sidechain vapor
-VAPOR: bool = False
+NETWORK: str = "mainnet"  # Default is mainnet
+# Bytom sidechain (Vapor protocol)
+VAPOR: bool = False  # Default is False
 # Wallet mnemonic words
 MNEMONIC: str = "indicate warm sock mistake code spot acid ribbon sing over taxi toast"
 # Secret passphrase/password for mnemonic

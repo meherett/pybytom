@@ -10,11 +10,11 @@ from typing import Optional
 import json
 
 # Choose network mainnet, solonet or testnet
-NETWORK: str = "mainnet"
-# Bytom sidechain vapor
-VAPOR: bool = True
+NETWORK: str = "mainnet"  # Default is mainnet
+# Bytom sidechain (Vapor protocol)
+VAPOR: bool = False  # Default is False
 # Wallet mnemonic words
-MNEMONIC: str = "indicate warm sock mistake code spot acid ribbon sing over taxi toast"
+MNEMONIC: str = "echo motion furnace name total legal destroy utility measure assault park man"
 # Secret passphrase/password for mnemonic
 PASSPHRASE: Optional[str] = None  # str("meherett")
 # Wallet derivation path
@@ -33,9 +33,9 @@ unsigned_normal_transaction: NormalTransaction = NormalTransaction(
 )
 # Build normal transaction
 unsigned_normal_transaction.build_transaction(
-    address=wallet.vapor_address(),
+    address=wallet.address(),
     recipients={
-        "vp1q3plwvmvy4qhjmp5zffzmk50aagpujt6flnf63h": amount_converter(0.01, "BTM2NEU")
+        "bm1qg83h7fddr70dsw6c2c3zhc25fved9mhydp6u8d": amount_converter(40_000, "BTM2NEU")
     },
     asset=ASSET
 )
@@ -44,7 +44,7 @@ print("Unsigned Normal Transaction Fee:", unsigned_normal_transaction.fee())
 print("Unsigned Normal Transaction Confirmations:", unsigned_normal_transaction.confirmations())
 print("Unsigned Normal Transaction Hash:", unsigned_normal_transaction.hash())
 print("Unsigned Normal Transaction Raw:", unsigned_normal_transaction.raw())
-# print("Unsigned Normal Transaction Json:", json.dumps(unsigned_normal_transaction.json(), indent=4))
+print("Unsigned Normal Transaction Json:", json.dumps(unsigned_normal_transaction.json(), indent=4))
 print("Unsigned Normal Transaction Unsigned Datas:",
       json.dumps(unsigned_normal_transaction.unsigned_datas(detail=False), indent=4))
 print("Unsigned Normal Transaction Signatures:", json.dumps(unsigned_normal_transaction.signatures(), indent=4))
@@ -63,11 +63,11 @@ print("Signed Normal Transaction Unsigned Datas:",
       json.dumps(signed_normal_transaction.unsigned_datas(detail=False), indent=4))
 print("Signed Normal Transaction Signatures:", json.dumps(signed_normal_transaction.signatures(), indent=4))
 
-# Submitting normal transaction raw
-# print("\nSubmitted Normal Transaction Id:", submit_transaction_raw(
-#     address=wallet.vapor_address(),
-#     transaction_raw=signed_normal_transaction.raw(),
-#     signatures=signed_normal_transaction.signatures(),
-#     network=NETWORK,
-#     vapor=VAPOR
-# ))
+# Submit normal transaction raw
+print("\nSubmitted Normal Transaction Id:", submit_transaction_raw(
+    address=wallet.address(),
+    transaction_raw=signed_normal_transaction.raw(),
+    signatures=signed_normal_transaction.signatures(),
+    network=NETWORK,
+    vapor=VAPOR
+))

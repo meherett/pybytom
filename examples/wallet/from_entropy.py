@@ -8,7 +8,7 @@ from typing import Optional
 import json
 
 # Choose network mainnet, solonet or testnet
-NETWORK: str = "mainnet"
+NETWORK: str = "mainnet"  # Default is mainnet
 # Choose strength 128, 160, 192, 224 or 256
 STRENGTH: int = 224  # Default is 128
 # Choose language english, french, italian, spanish, chinese_simplified, chinese_traditional, japanese or korean
