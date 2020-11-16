@@ -1,56 +1,57 @@
 #!/usr/bin/env python3
 
+from pybytom.wallet import Wallet
 from pybytom.transaction import NormalTransaction
+from pybytom.assets import BTM as ASSET
 from pybytom.utils import amount_converter
 from pybytom.rpc import submit_transaction_raw
-from pybytom.wallet import Wallet
+from typing import Optional
 
 import json
 
-# Bytom network
-NETWORK = "mainnet"  # Choose mainnet, solonet or testnet
-# 12 word mnemonic seed
-MNEMONIC = "indicate warm sock mistake code spot acid ribbon sing over taxi toast"
-# Bytom asset id
-ASSET_ID = "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+# Choose network mainnet, solonet or testnet
+NETWORK: str = "mainnet"
+# Bytom sidechain vapor
+VAPOR: bool = True
+# Wallet mnemonic words
+MNEMONIC: str = "indicate warm sock mistake code spot acid ribbon sing over taxi toast"
+# Secret passphrase/password for mnemonic
+PASSPHRASE: Optional[str] = None  # str("meherett")
+# Wallet derivation path
+PATH: str = "m/44/153/1/0/1"
 
-# Initializing wallet
-wallet = Wallet(network=NETWORK)
+# Initialize Bytom wallet
+wallet: Wallet = Wallet(network=NETWORK)
 # Get Bytom wallet from mnemonic
-wallet.from_mnemonic(mnemonic=MNEMONIC)
+wallet.from_mnemonic(mnemonic=MNEMONIC, passphrase=PASSPHRASE)
 # Derivation from path
-wallet.from_path("m/44/153/1/0/1")
+wallet.from_path(path=PATH)
 
-# Initializing normal transaction
-unsigned_normal_transaction = NormalTransaction(network=NETWORK)
-# Building normal transaction
+# Initialize normal transaction
+unsigned_normal_transaction: NormalTransaction = NormalTransaction(
+    network=NETWORK, vapor=VAPOR
+)
+# Build normal transaction
 unsigned_normal_transaction.build_transaction(
-    address=wallet.address(),
+    address=wallet.vapor_address(),
     recipients={
-        "bm1qtwtdhf6jmxhfhutjacmgxyv6levnkuhad67wqh": amount_converter(0.1, "BTM2NEU"),
-        "bm1qr3h0ljhcgwu0h09teegk638my30c29a3aerjg2": amount_converter(0.8, "BTM2NEU"),
-        "bm1qwk4kpx09ehccrna3enqqwhrj9xt7pwxd4sufkw": amount_converter(0.8, "BTM2NEU")
+        "vp1q3plwvmvy4qhjmp5zffzmk50aagpujt6flnf63h": amount_converter(0.01, "BTM2NEU")
     },
-    asset=ASSET_ID
+    asset=ASSET
 )
 
 print("Unsigned Normal Transaction Fee:", unsigned_normal_transaction.fee())
 print("Unsigned Normal Transaction Confirmations:", unsigned_normal_transaction.confirmations())
 print("Unsigned Normal Transaction Hash:", unsigned_normal_transaction.hash())
 print("Unsigned Normal Transaction Raw:", unsigned_normal_transaction.raw())
-print("Unsigned Normal Transaction Json:", json.dumps(unsigned_normal_transaction.json(), indent=4))
+# print("Unsigned Normal Transaction Json:", json.dumps(unsigned_normal_transaction.json(), indent=4))
 print("Unsigned Normal Transaction Unsigned Datas:",
       json.dumps(unsigned_normal_transaction.unsigned_datas(detail=False), indent=4))
 print("Unsigned Normal Transaction Signatures:", json.dumps(unsigned_normal_transaction.signatures(), indent=4))
 
-# Singing unsigned normal transaction by xprivate key
-signed_normal_transaction = unsigned_normal_transaction.sign(
-    xprivate_key=wallet.xprivate_key(),
-    account=1,  # Account index, default to 1
-    change=False,  # Addresses for change False(0)/True(1), default to False(0)
-    address=1,  # Address index, default to 1
-    path=None,  # Derivation from path, default to None
-    indexes=None  # Derivation from indexes, default to None
+# Sing unsigned normal transaction by xprivate key
+signed_normal_transaction: NormalTransaction = unsigned_normal_transaction.sign(
+    xprivate_key=wallet.xprivate_key(), path=PATH
 )
 
 print("\nSigned Normal Transaction Fee:", signed_normal_transaction.fee())
@@ -64,8 +65,9 @@ print("Signed Normal Transaction Signatures:", json.dumps(signed_normal_transact
 
 # Submitting normal transaction raw
 # print("\nSubmitted Normal Transaction Id:", submit_transaction_raw(
-#     address=wallet.address(),
+#     address=wallet.vapor_address(),
 #     transaction_raw=signed_normal_transaction.raw(),
 #     signatures=signed_normal_transaction.signatures(),
-#     network=NETWORK
+#     network=NETWORK,
+#     vapor=VAPOR
 # ))

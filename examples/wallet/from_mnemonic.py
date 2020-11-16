@@ -1,45 +1,55 @@
 #!/usr/bin/env python3
 
 from pybytom.wallet import Wallet
-from pybytom.utils import generate_mnemonic, is_mnemonic
+from pybytom.assets import BTM as ASSET
+from pybytom.utils import (
+    generate_mnemonic, is_mnemonic, amount_converter
+)
+from typing import Optional
 
 import json
 
-# 12 word mnemonic seed
-MNEMONIC = "indicate warm sock mistake code spot acid ribbon sing over taxi toast"
-# Or generate mnemonic
-# MNEMONIC = generate_mnemonic(language="korean", strength=128)
-# Secret password/passphrase
-PASSPHRASE = None  # str("meherett")
+# Choose network mainnet, solonet or testnet
+NETWORK: str = "mainnet"  # Default is mainnet
+# Choose strength 128, 160, 192, 224 or 256
+STRENGTH: int = 128  # Default is 128
 # Choose language english, french, italian, spanish, chinese_simplified, chinese_traditional, japanese or korean
-LANGUAGE = "english"  # Default is english
-
+LANGUAGE: str = "english"  # Default is english
+# Generate new mnemonic words
+# MNEMONIC: str = generate_mnemonic(language=LANGUAGE, strength=STRENGTH)
+# MNEMONIC: str = "when loan need vacant same guard demise sail basic mutual person slim"
+MNEMONIC: str = "echo motion furnace name total legal destroy utility measure assault park man"
+# MNEMONIC: str = "indicate warm sock mistake code spot acid ribbon sing over taxi toast"
+# Secret passphrase/password for mnemonic
+PASSPHRASE: Optional[str] = None  # str("meherett")
 # Message data
-MESSAGE = "a0841d35364046649ab8fc4af5a6266245890778f6cf7304696c4ab8edd86242"
+MESSAGE: str = "a0841d35364046649ab8fc4af5a6266245890778f6cf7304696c4ab8edd86242"
 
-# Checking 12 word mnemonic seed
-assert is_mnemonic(mnemonic=MNEMONIC, language=LANGUAGE), \
-      "Invalid %s 12 word mnemonic seed." % LANGUAGE
+# Check mnemonic words
+assert is_mnemonic(mnemonic=MNEMONIC, language=LANGUAGE)
 
-# Initialize wallet
-wallet = Wallet(network="mainnet")  # Choose network mainnet, solonet or testnet
+# Initialize Bytom wallet
+wallet: Wallet = Wallet(network=NETWORK)
 # Get Bytom wallet from mnemonic
-wallet.from_mnemonic(mnemonic=MNEMONIC, passphrase=PASSPHRASE, language=LANGUAGE)
+wallet.from_mnemonic(
+    mnemonic=MNEMONIC, passphrase=PASSPHRASE, language=LANGUAGE
+)
 
 # Derivation from path
-# wallet.from_path("m/44/153/1/0/1")
+# wallet.from_path(path="m/44/153/1/0/1")
 # Or derivation from index
-# wallet.from_index(44)
-# wallet.from_index(153)
-# wallet.from_index(1)
-# wallet.from_index(0)
-# wallet.from_index(1)
+wallet.from_index(index=44)
+wallet.from_index(index=153)
+wallet.from_index(index=1)
+wallet.from_index(index=0)
+wallet.from_index(index=1)
 # Or derivation from indexes
-wallet.from_indexes(['2c000000', '99000000', '01000000', '00000000', '01000000'])
+# wallet.from_indexes(indexes=["2c000000", "99000000", "01000000", "00000000", "01000000"])
 
 # Print all wallet information's
-# print(json.dumps(wallet.dumps(), indent=4))
+# print(json.dumps(wallet.dumps(), indent=4, ensure_ascii=False))
 
+print("Strength:", wallet.strength())
 print("Mnemonic:", wallet.mnemonic())
 print("Language:", wallet.language())
 print("Passphrase:", wallet.passphrase())
@@ -57,7 +67,8 @@ print("Public Key:", wallet.public_key())
 print("Program:", wallet.program())
 print("Address:", wallet.address())
 print("Vapor Address:", wallet.vapor_address())
-# print("Balance:", wallet.balance())
+print("Balance:", amount_converter(wallet.balance(asset=ASSET, vapor=False), "NEU2BTM"), "BTM")
+print("Vapor Balance:", amount_converter(wallet.balance(asset=ASSET, vapor=True), "NEU2BTM"), "BTM")
 
 print("-------- Sign & Verify --------")
 
@@ -65,4 +76,3 @@ print("Message:", MESSAGE)
 signature = wallet.sign(message=MESSAGE)
 print("Signature:", signature)
 print("Verified:", wallet.verify(message=MESSAGE, signature=signature))
-
