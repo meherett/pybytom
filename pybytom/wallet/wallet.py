@@ -17,7 +17,7 @@ from ..exceptions import (
     NetworkError, DerivationError, ClientError
 )
 from ..rpc import (
-    account_create, get_balance
+    account_create, get_balance, get_utxos
 )
 from .tools import (
     get_xpublic_key, get_address, get_vapor_address, get_program, get_child_xpublic_key,
@@ -130,6 +130,7 @@ class Wallet:
             get_mnemonic_language(mnemonic=self._mnemonic),
             (passphrase if passphrase is not None else str())
         )
+        self._entropy = Mnemonic(language=self._language).to_entropy(self._mnemonic)
         self._strength = get_mnemonic_strength(mnemonic=self._mnemonic)
         self._seed = Mnemonic.to_seed(
             mnemonic=self._mnemonic, passphrase=self._passphrase)
@@ -640,6 +641,27 @@ class Wallet:
             address=(self.vapor_address() if vapor else self.address()),
             asset=asset, network=self.network, vapor=vapor
         )
+
+    def utxos(self, asset: str = config["asset"], limit: int = 15) -> list:
+        """
+        Get Bytom wallet unspent transaction output (UTXO's).
+
+        :param asset: Bytom asset id, defaults to BTM asset.
+        :type asset: str
+        :param limit: Bytom balance, default is 15.
+        :type limit: int
+
+        :return: list -- Bytom unspent transaction outputs.
+
+        >>> from pybytom.wallet import Wallet
+        >>> wallet = Wallet(network="mainnet")
+        >>> wallet.from_entropy("50f002376c81c96e430b48f1fe71df57")
+        >>> wallet.from_path("m/44/153/1/0/1")
+        >>> wallet.utxos()
+        [{'hash': 'e152f88d33c6659ad823d15c5c65b2ed946d207c42430022cba9bb9b9d70a7a4', 'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': 587639800}, {'hash': '88289fa4c7633574931be7ce4102aeb24def0de20e38e7d69a5ddd6efc116b95', 'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': 8160000}, {'hash': 'f71c68f921b434cc2bcd469d26e7927aa6db7500e4cdeef814884f11c10f5de2', 'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': 10000}, {'hash': 'e46cfecc1f1a26413172ce81c78affb19408e613915642fa5fb04d3b0a4ffa65', 'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': 100}]
+        """
+
+        return get_utxos(program=self.program(), asset=asset, limit=limit)
 
     def sign(self, message: str) -> str:
         """

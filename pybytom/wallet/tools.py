@@ -25,11 +25,11 @@ HARDEN: int = 0x80000000
 PATH: str = "m/44/153/1/0/1"
 # Derivation Indexes
 INDEXES: List[str] = [
-    "2c000000",  # 44
-    "99000000",  # 153
-    "01000000",  # 1 Account
-    "00000000",  # 0 Change
-    "01000000"  # 1 Address
+    # "2c000000",  # 44
+    # "99000000",  # 153
+    # "01000000",  # 1 Account
+    # "00000000",  # 0 Change
+    # "01000000"  # 1 Address
 ]
 
 
