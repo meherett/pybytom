@@ -66,6 +66,50 @@ def get_balance(address: str, asset: str = config["asset"], network: str = confi
         return 0
 
 
+def get_utxos(program: str, network: str = config["network"], asset: str = config["asset"],
+              limit: int = 15, by: str = "amount", order: str = "desc",
+              headers: dict = config["headers"], timeout: int = config["timeout"]) -> list:
+    """
+    Get Bytom unspent transaction outputs (UTXO's).
+
+    :param program: Bytom control program.
+    :type program: str
+    :param network: Bytom network, defaults to mainnet.
+    :type network: str
+    :param asset: Bytom asset id, defaults to BTM asset.
+    :type asset: str
+    :param limit: Bytom utxo's limit, defaults to 15.
+    :type limit: int
+    :param by: Sort by, defaults to amount.
+    :type by: str
+    :param order: Sort order, defaults to desc.
+    :type order: str
+    :param headers: Request headers, default to common headers.
+    :type headers: dict
+    :param timeout: Request timeout, default to 60.
+    :type timeout: int
+
+    :returns: list -- Bytom unspent transaction outputs (UTXO's).
+
+    >>> from pybytom.rpc import get_utxos
+    >>> get_utxos(program="00142cda4f99ea8112e6fa61cdd26157ed6dc408332a", network="mainnet")
+    [...]
+    """
+
+    if not is_network(network=network):
+        raise NetworkError(f"Invalid Bytom '{network}' network",
+                           "choose only 'mainnet' or 'testnet' networks.")
+
+    url = f"{config['bytom'][network]['blockcenter']}/q/utxos"
+    data = dict(filter=dict(script=program, asset=asset), sort=dict(by=by, order=order))
+    params = dict(limit=limit)
+    response = requests.post(
+        url=url, data=json.dumps(data), params=params, headers=headers, timeout=timeout
+    )
+    response_json = response.json()
+    return response_json["data"]
+
+
 def account_create(xpublic_key: str, label: str = "1st address", email: Optional[str] = None,
                    network: str = config["network"], timeout: int = config["timeout"]) -> dict:
     """
@@ -92,17 +136,17 @@ def account_create(xpublic_key: str, label: str = "1st address", email: Optional
         raise NetworkError(f"Invalid '{network}' network",
                            "choose only 'mainnet', 'solonet' or 'testnet' networks.")
 
-    url = f"{config[network]['blockcenter']['v2']}/account/create"
+    url = f"{config['bytom'][network]['blockcenter']}/account/create"
     data = dict(pubkey=xpublic_key, label=label, email=email)
     response = requests.post(
         url=url, data=json.dumps(data), headers=config["headers"], timeout=timeout
     )
-    if response.status_code == 200 and response.json()["code"] == 300:
-        raise APIError(response.json()["msg"], response.json()["code"])
-    return response.json()["result"]["data"]
+    if response.status_code == 200 and response.json()["code"] == 200:
+        return response.json()["data"]
+    raise APIError(response.json()["msg"], response.json()["code"])
 
 
-def list_address(guid, limit: int = 10, network: str = config["network"],
+def list_address(guid: str, limit: int = 10, network: str = config["network"],
                  timeout: int = config["timeout"]) -> list:
     """
     Get list address from blockcenter.
@@ -122,16 +166,14 @@ def list_address(guid, limit: int = 10, network: str = config["network"],
     [{"guid": "f0ed6ddd-9d6b-49fd-8866-a52d1083a13b", "address": "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "label": "1st address", "balances": [{"asset": "f37dea62efd2965174b84bbb59a0bd0a671cf5fb2857303ffd77c1b482b84bdf", "balance": "100000000000", "total_received": "100000000000", "total_sent": "0", "decimals": 8, "alias": "Asset", "icon": "", "name": "f37dea62efd2965174b84bbb59a0bd0a671cf5fb2857303ffd77c1b482b84bdf", "symbol": "Asset", "in_usd": "0.00", "in_cny": "0.00", "in_btc": "0.000000"}, {"asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "balance": "2450000000", "total_received": "4950000000", "total_sent": "2500000000", "decimals": 8, "alias": "btm", "icon": "", "name": "BTM", "symbol": "BTM", "in_usd": "2.90", "in_cny": "20.58", "in_btc": "0.000283"}]}]
     """
 
-    url = f"{config[network]['blockcenter']['v2']}/account/list-addresses"
+    url = f"{config['bytom'][network]['blockcenter']}/account/list-addresses"
     data, params = dict(guid=guid), dict(limit=limit)
     response = requests.post(
         url=url, data=json.dumps(data), params=params, headers=config["headers"], timeout=timeout
     )
-    if response.status_code == 200 and response.json()["code"] == 300:
-        raise APIError(response.json()["msg"], response.json()["code"])
-    if response.status_code == 200 and response.json()["code"] == 414:
-        raise APIError(response.json()["msg"], response.json()["code"])
-    return response.json()
+    if response.status_code == 200 and response.json()["code"] == 200:
+        return response.json()
+    raise APIError(response.json()["msg"], response.json()["code"])
 
 
 def estimate_transaction_fee(address: str, amount: int, asset: str = config["asset"],
@@ -165,10 +207,12 @@ def estimate_transaction_fee(address: str, amount: int, asset: str = config["ass
     if not is_address(address=address, network=network):
         raise AddressError(f"Invalid '{address}' {network} address.")
 
-    url = f"{config[network]['mov']}/merchant/estimate-tx-fee"
+    url = f"{config['bytom'][network]['mov']}/merchant/estimate-tx-fee"
     data = dict(
         asset_amounts={
-            asset: str(amount_converter(amount=amount, symbol="NEU2BTM"))
+            asset: str(amount_converter(
+                amount=amount, symbol="NEU2BTM"
+            ))
         },
         confirmations=confirmations
     )
@@ -176,11 +220,9 @@ def estimate_transaction_fee(address: str, amount: int, asset: str = config["ass
     response = requests.post(
         url=url, data=json.dumps(data), params=params, headers=config["headers"], timeout=timeout
     )
-    if response.status_code == 200 and response.json()["code"] == 300:
-        raise APIError(response.json()["msg"], response.json()["code"])
-    elif response.status_code == 200 and response.json()["code"] == 503:
-        raise APIError(response.json()["msg"], response.json()["code"])
-    return response.json()["data"]["fee"]
+    if response.status_code == 200 and response.json()["code"] == 200:
+        return response.json()["data"]["fee"]
+    raise APIError(response.json()["msg"], response.json()["code"])
 
 
 def build_transaction(address: str, transaction: dict, network: str = config["network"],
@@ -228,6 +270,8 @@ def build_transaction(address: str, transaction: dict, network: str = config["ne
     elif response.status_code == 200 and response.json()["code"] == 422:
         raise BalanceError(f"There is no any asset balance recorded on this '{address}' address.")
     elif response.status_code == 200 and response.json()["code"] == 515:
+        raise BalanceError(f"Insufficient balance, check your balance and try again.")
+    elif response.status_code == 200 and response.json()["code"] == 504:
         raise BalanceError(f"Insufficient balance, check your balance and try again.")
     return response.json()["data"][0]
 
