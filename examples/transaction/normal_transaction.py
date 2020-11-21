@@ -12,9 +12,9 @@ import json
 # Choose network mainnet, solonet or testnet
 NETWORK: str = "mainnet"  # Default is mainnet
 # Bytom sidechain (Vapor protocol)
-VAPOR: bool = False  # Default is False
+VAPOR: bool = True  # Default is False
 # Wallet mnemonic words
-MNEMONIC: str = "echo motion furnace name total legal destroy utility measure assault park man"
+MNEMONIC: str = "indicate warm sock mistake code spot acid ribbon sing over taxi toast"
 # Secret passphrase/password for mnemonic
 PASSPHRASE: Optional[str] = None  # str("meherett")
 # Wallet derivation path
@@ -33,9 +33,9 @@ unsigned_normal_transaction: NormalTransaction = NormalTransaction(
 )
 # Build normal transaction
 unsigned_normal_transaction.build_transaction(
-    address=wallet.address(),
+    address=wallet.vapor_address(),
     recipients={
-        "bm1qg83h7fddr70dsw6c2c3zhc25fved9mhydp6u8d": amount_converter(40_000, "BTM2NEU")
+        "vp1qzhm2ydkxcs242z2v6eca73zqrvjzw60gl0pt0w": amount_converter(0.01, "BTM2NEU")
     },
     asset=ASSET
 )
@@ -64,10 +64,10 @@ print("Signed Normal Transaction Unsigned Datas:",
 print("Signed Normal Transaction Signatures:", json.dumps(signed_normal_transaction.signatures(), indent=4))
 
 # Submit normal transaction raw
-print("\nSubmitted Normal Transaction Id:", submit_transaction_raw(
-    address=wallet.address(),
-    transaction_raw=signed_normal_transaction.raw(),
-    signatures=signed_normal_transaction.signatures(),
-    network=NETWORK,
-    vapor=VAPOR
-))
+# print("\nSubmitted Normal Transaction Id:", submit_transaction_raw(
+#     address=wallet.vapor_address(),
+#     transaction_raw=signed_normal_transaction.raw(),
+#     signatures=signed_normal_transaction.signatures(),
+#     network=NETWORK,
+#     vapor=VAPOR
+# ))
