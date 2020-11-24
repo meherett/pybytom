@@ -5,7 +5,7 @@
 [![PyPI Python Version](https://img.shields.io/pypi/pyversions/pybytom.svg)](https://pypi.org/project/pybytom)
 [![Coverage Status](https://coveralls.io/repos/github/meherett/pybytom/badge.svg?branch=master&kill_cache=1)](https://coveralls.io/github/meherett/pybytom?branch=master)
 
-Python library with tools for Bytom blockchain. [Wiki Documentation](https://github.com/meherett/pybytom/wiki)
+Python library with tools for Bytom mainchain and sidechain protocols. [Wiki Documentation](https://github.com/meherett/pybytom/wiki)
 
 ## Installation
 

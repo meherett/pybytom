@@ -14,15 +14,15 @@ with open("requirements.txt", "r") as _requirements:
 
 setup(
     name="pybytom",
-    version="1.5.0",
-    description="Python library with tools for Bytom blockchain.",
+    version="1.5.1",
+    description="Python library with tools for Bytom mainchain and sidechain protocols.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     license="MIT",
     author="Meheret Tesfaye",
     author_email="meherett@zoho.com",
     url="https://github.com/meherett/pybytom",
-    keywords=["bytom", "vapor", "blockchain", "sidechain", "wallet"],
+    keywords=["bytom", "vapor", "mainchain", "sidechain", "wallet", "protocol", "blockchain"],
     python_requires=">=3.6,<4",
     packages=find_packages(),
     install_requires=requirements,
