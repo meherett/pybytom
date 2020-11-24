@@ -5,7 +5,7 @@ import os
 
 from pybytom.utils import (
     generate_mnemonic, generate_entropy, is_mnemonic,
-    get_mnemonic_language, is_address, is_vapor_address
+    get_mnemonic_language, is_address
 )
 
 # Test Values
@@ -29,16 +29,16 @@ def test_utils():
     assert is_mnemonic(mnemonic=_["wallet"]["mnemonic"])
     assert is_mnemonic(mnemonic=_["wallet"]["mnemonic"], language=_["wallet"]["language"])
 
-    assert is_address(address=_["wallet"]["address"]["mainnet"])
-    assert is_address(address=_["wallet"]["address"]["mainnet"], network="mainnet")
-    assert is_address(address=_["wallet"]["address"]["solonet"])
-    assert is_address(address=_["wallet"]["address"]["solonet"], network="solonet")
-    assert is_address(address=_["wallet"]["address"]["testnet"])
-    assert is_address(address=_["wallet"]["address"]["testnet"], network="testnet")
+    assert is_address(address=_["wallet"]["address"]["mainnet"], vapor=False)
+    assert is_address(address=_["wallet"]["address"]["mainnet"], network="mainnet", vapor=False)
+    assert is_address(address=_["wallet"]["address"]["solonet"], vapor=False)
+    assert is_address(address=_["wallet"]["address"]["solonet"], network="solonet", vapor=False)
+    assert is_address(address=_["wallet"]["address"]["testnet"], vapor=False)
+    assert is_address(address=_["wallet"]["address"]["testnet"], network="testnet", vapor=False)
 
-    assert is_vapor_address(address=_["wallet"]["vapor_address"]["mainnet"])
-    assert is_vapor_address(address=_["wallet"]["vapor_address"]["mainnet"], network="mainnet")
-    assert is_vapor_address(address=_["wallet"]["vapor_address"]["solonet"])
-    assert is_vapor_address(address=_["wallet"]["vapor_address"]["solonet"], network="solonet")
-    assert is_vapor_address(address=_["wallet"]["vapor_address"]["testnet"])
-    assert is_vapor_address(address=_["wallet"]["vapor_address"]["testnet"], network="testnet")
+    assert is_address(address=_["wallet"]["vapor_address"]["mainnet"], vapor=True)
+    assert is_address(address=_["wallet"]["vapor_address"]["mainnet"], network="mainnet", vapor=True)
+    assert is_address(address=_["wallet"]["vapor_address"]["solonet"], vapor=True)
+    assert is_address(address=_["wallet"]["vapor_address"]["solonet"], network="solonet", vapor=True)
+    assert is_address(address=_["wallet"]["vapor_address"]["testnet"], vapor=True)
+    assert is_address(address=_["wallet"]["vapor_address"]["testnet"], network="testnet", vapor=True)

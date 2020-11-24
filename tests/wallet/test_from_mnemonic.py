@@ -41,12 +41,12 @@ def test_from_mnemonic():
     assert wallet.program() == _["wallet"]["program"]
     assert wallet.indexes() == _["wallet"]["indexes"]
     assert wallet.path() == _["wallet"]["path"]
-    assert wallet.address(network="mainnet") == _["wallet"]["address"]["mainnet"]
-    assert wallet.address(network="solonet") == _["wallet"]["address"]["solonet"]
-    assert wallet.address(network="testnet") == _["wallet"]["address"]["testnet"]
-    assert wallet.vapor_address(network="mainnet") == _["wallet"]["vapor_address"]["mainnet"]
-    assert wallet.vapor_address(network="solonet") == _["wallet"]["vapor_address"]["solonet"]
-    assert wallet.vapor_address(network="testnet") == _["wallet"]["vapor_address"]["testnet"]
+    assert wallet.address(network="mainnet", vapor=False) == _["wallet"]["address"]["mainnet"]
+    assert wallet.address(network="solonet", vapor=False) == _["wallet"]["address"]["solonet"]
+    assert wallet.address(network="testnet", vapor=False) == _["wallet"]["address"]["testnet"]
+    assert wallet.address(network="mainnet", vapor=True) == _["wallet"]["vapor_address"]["mainnet"]
+    assert wallet.address(network="solonet", vapor=True) == _["wallet"]["vapor_address"]["solonet"]
+    assert wallet.address(network="testnet", vapor=True) == _["wallet"]["vapor_address"]["testnet"]
 
     assert isinstance(wallet.dumps(guid=False), dict)
     # assert isinstance(wallet.balance(vapor=False), int)

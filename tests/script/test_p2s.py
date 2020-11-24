@@ -4,8 +4,7 @@ import json
 import os
 
 from pybytom.script import (
-    get_script_hash, get_p2sh_program, get_p2wsh_program,
-    get_p2wsh_address, get_p2wsh_vapor_address
+    get_script_hash, get_p2sh_program, get_p2wsh_program, get_p2wsh_address
 )
 
 # Test Values
@@ -30,21 +29,21 @@ def test_p2s():
     ) == _["script"]["p2s"]["program"]["p2wsh"]
 
     assert get_p2wsh_address(
-        script_hash=_["script"]["p2s"]["script_hash"], network="mainnet"
+        script_hash=_["script"]["p2s"]["script_hash"], network="mainnet", vapor=False
     ) == _["script"]["p2s"]["address"]["mainnet"]
     assert get_p2wsh_address(
-        script_hash=_["script"]["p2s"]["script_hash"], network="solonet"
+        script_hash=_["script"]["p2s"]["script_hash"], network="solonet", vapor=False
     ) == _["script"]["p2s"]["address"]["solonet"]
     assert get_p2wsh_address(
-        script_hash=_["script"]["p2s"]["script_hash"], network="testnet"
+        script_hash=_["script"]["p2s"]["script_hash"], network="testnet", vapor=False
     ) == _["script"]["p2s"]["address"]["testnet"]
 
-    assert get_p2wsh_vapor_address(
-        script_hash=_["script"]["p2s"]["script_hash"], network="mainnet"
+    assert get_p2wsh_address(
+        script_hash=_["script"]["p2s"]["script_hash"], network="mainnet", vapor=True
     ) == _["script"]["p2s"]["vapor_address"]["mainnet"]
-    assert get_p2wsh_vapor_address(
-        script_hash=_["script"]["p2s"]["script_hash"], network="solonet"
+    assert get_p2wsh_address(
+        script_hash=_["script"]["p2s"]["script_hash"], network="solonet", vapor=True
     ) == _["script"]["p2s"]["vapor_address"]["solonet"]
-    assert get_p2wsh_vapor_address(
-        script_hash=_["script"]["p2s"]["script_hash"], network="testnet"
+    assert get_p2wsh_address(
+        script_hash=_["script"]["p2s"]["script_hash"], network="testnet", vapor=True
     ) == _["script"]["p2s"]["vapor_address"]["testnet"]

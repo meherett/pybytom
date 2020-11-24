@@ -4,8 +4,7 @@ import json
 import os
 
 from pybytom.script import (
-    get_public_key_hash, get_p2pkh_program, get_p2wpkh_program,
-    get_p2wpkh_address, get_p2wpkh_vapor_address
+    get_public_key_hash, get_p2pkh_program, get_p2wpkh_program, get_p2wpkh_address
 )
 
 # Test Values
@@ -30,21 +29,21 @@ def test_p2pk():
     ) == _["script"]["p2pk"]["program"]["p2wpkh"]
 
     assert get_p2wpkh_address(
-        public_key_hash=_["script"]["p2pk"]["public_key_hash"], network="mainnet"
+        public_key_hash=_["script"]["p2pk"]["public_key_hash"], network="mainnet", vapor=False
     ) == _["script"]["p2pk"]["address"]["mainnet"]
     assert get_p2wpkh_address(
-        public_key_hash=_["script"]["p2pk"]["public_key_hash"], network="solonet"
+        public_key_hash=_["script"]["p2pk"]["public_key_hash"], network="solonet", vapor=False
     ) == _["script"]["p2pk"]["address"]["solonet"]
     assert get_p2wpkh_address(
-        public_key_hash=_["script"]["p2pk"]["public_key_hash"], network="testnet"
+        public_key_hash=_["script"]["p2pk"]["public_key_hash"], network="testnet", vapor=False
     ) == _["script"]["p2pk"]["address"]["testnet"]
 
-    assert get_p2wpkh_vapor_address(
-        public_key_hash=_["script"]["p2pk"]["public_key_hash"], network="mainnet"
+    assert get_p2wpkh_address(
+        public_key_hash=_["script"]["p2pk"]["public_key_hash"], network="mainnet", vapor=True
     ) == _["script"]["p2pk"]["vapor_address"]["mainnet"]
-    assert get_p2wpkh_vapor_address(
-        public_key_hash=_["script"]["p2pk"]["public_key_hash"], network="solonet"
+    assert get_p2wpkh_address(
+        public_key_hash=_["script"]["p2pk"]["public_key_hash"], network="solonet", vapor=True
     ) == _["script"]["p2pk"]["vapor_address"]["solonet"]
-    assert get_p2wpkh_vapor_address(
-        public_key_hash=_["script"]["p2pk"]["public_key_hash"], network="testnet"
+    assert get_p2wpkh_address(
+        public_key_hash=_["script"]["p2pk"]["public_key_hash"], network="testnet", vapor=True
     ) == _["script"]["p2pk"]["vapor_address"]["testnet"]
