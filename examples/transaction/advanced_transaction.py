@@ -36,7 +36,7 @@ unsigned_advanced_transaction: AdvancedTransaction = AdvancedTransaction(
 )
 # Build Bytom advanced transaction
 unsigned_advanced_transaction.build_transaction(
-    wallet.address(),  # address
+    wallet.address(vapor=VAPOR),  # address
     [
         spend_utxo(
             utxo=find_p2wsh_utxo(
@@ -83,7 +83,7 @@ print("Signed Advanced Transaction Signatures:", json.dumps(signed_advanced_tran
 
 # Submit advanced transaction raw
 # print("\nSubmitted Advanced Transaction Id:", submit_transaction_raw(
-#     address=wallet.address(),
+#     address=wallet.address(vapor=VAPOR),
 #     transaction_raw=signed_advanced_transaction.raw(),
 #     signatures=signed_advanced_transaction.signatures(),
 #     network=NETWORK,

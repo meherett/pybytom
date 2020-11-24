@@ -3,7 +3,7 @@
 from pybytom.wallet.tools import (
     path_to_indexes, indexes_to_path, get_xpublic_key, get_expand_xprivate_key,
     get_child_xprivate_key, get_child_xpublic_key, get_private_key,
-    get_public_key, get_program, get_address, get_vapor_address
+    get_public_key, get_program, get_address
 )
 from typing import List
 
@@ -33,6 +33,6 @@ print("Get Public Key:", get_public_key(xpublic_key=XPUBLIC_KEY))
 
 print("Get Program:", get_program(public_key=get_public_key(xpublic_key=XPUBLIC_KEY)))
 print("Get Address:", get_address(program=get_program(
-    public_key=get_public_key(xpublic_key=XPUBLIC_KEY)), network="mainnet"))
-print("Get Vapor Address:", get_vapor_address(program=get_program(
-    public_key=get_public_key(xpublic_key=XPUBLIC_KEY)), network="mainnet"))
+    public_key=get_public_key(xpublic_key=XPUBLIC_KEY)), network="mainnet", vapor=False))
+print("Get Vapor Address:", get_address(program=get_program(
+    public_key=get_public_key(xpublic_key=XPUBLIC_KEY)), network="mainnet", vapor=True))

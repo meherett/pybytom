@@ -36,7 +36,7 @@ unsigned_transaction: Transaction = Transaction(
 )
 # Build Bytom transaction
 unsigned_transaction.build_transaction(
-    address=wallet.address(),
+    address=wallet.address(vapor=VAPOR),
     inputs=[
         spend_utxo(
             utxo=find_p2wsh_utxo(
@@ -84,7 +84,7 @@ print("Signed Transaction Signatures:", json.dumps(signed_transaction.signatures
 
 # Submit transaction raw
 # print("\nSubmitted Transaction Id:", submit_transaction_raw(
-#     address=wallet.address(),
+#     address=wallet.address(vapor=VAPOR),
 #     transaction_raw=signed_transaction.raw(),
 #     signatures=signed_transaction.signatures(),
 #     network=NETWORK,

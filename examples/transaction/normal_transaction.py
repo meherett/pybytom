@@ -33,7 +33,7 @@ unsigned_normal_transaction: NormalTransaction = NormalTransaction(
 )
 # Build normal transaction
 unsigned_normal_transaction.build_transaction(
-    address=wallet.vapor_address(),
+    address=wallet.address(vapor=VAPOR),
     recipients={
         "vp1qzhm2ydkxcs242z2v6eca73zqrvjzw60gl0pt0w": amount_converter(0.01, "BTM2NEU")
     },
@@ -65,7 +65,7 @@ print("Signed Normal Transaction Signatures:", json.dumps(signed_normal_transact
 
 # Submit normal transaction raw
 # print("\nSubmitted Normal Transaction Id:", submit_transaction_raw(
-#     address=wallet.vapor_address(),
+#     address=wallet.address(vapor=VAPOR),
 #     transaction_raw=signed_normal_transaction.raw(),
 #     signatures=signed_normal_transaction.signatures(),
 #     network=NETWORK,

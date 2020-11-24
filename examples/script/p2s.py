@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
 from pybytom.script import (
-    get_script_hash, get_p2sh_program, get_p2wsh_program,
-    get_p2wsh_address, get_p2wsh_vapor_address
+    get_script_hash, get_p2sh_program, get_p2wsh_program, get_p2wsh_address
 )
 
 # Choose network mainnet, solonet or testnet
@@ -20,12 +19,12 @@ print("Script Hash:", script_hash)
 # Get Pay to Script Hash(P2SH) program
 p2sh_program = get_p2sh_program(script_hash=script_hash)
 print("P2SH Program:", p2sh_program)
-# Get Pay to Witness Script Hash(P2SH) program
+# Get Pay to Witness Script Hash(P2WSH) program
 p2wsh_program = get_p2wsh_program(script_hash=script_hash)
 print("P2WSH Program:", p2wsh_program)
-# Get Pay to Witness Script Hash(P2SH) address
-p2wsh_address = get_p2wsh_address(script_hash=script_hash, network=NETWORK)
+# Get Pay to Witness Script Hash(P2WSH) address
+p2wsh_address = get_p2wsh_address(script_hash=script_hash, network=NETWORK, vapor=False)
 print("P2WSH Address:", p2wsh_address)
-# Get Pay to Witness Script Hash(P2SH) vapor address
-p2wsh_vapor_address = get_p2wsh_vapor_address(script_hash=script_hash, network=NETWORK)
+# Get Pay to Witness Script Hash(P2WSH) vapor address
+p2wsh_vapor_address = get_p2wsh_address(script_hash=script_hash, network=NETWORK, vapor=True)
 print("P2WSH Vapor Address:", p2wsh_vapor_address)
