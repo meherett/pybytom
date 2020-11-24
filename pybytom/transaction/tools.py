@@ -11,7 +11,8 @@ from ..config import config
 config: dict = config()
 
 
-def find_smart_contract_utxo(transaction_id: str, network: str = config["network"], vapor: bool = False) -> str:
+def find_smart_contract_utxo(transaction_id: str, network: str = config["network"],
+                             vapor: bool = config["vapor"]) -> str:
     """
     Find Bytom smart contract UTXO id by transaction id/hash.
 
@@ -41,7 +42,8 @@ def find_smart_contract_utxo(transaction_id: str, network: str = config["network
     return utxo_id
 
 
-def find_p2wsh_utxo(transaction_id: str, network: str = config["network"], vapor: bool = False) -> str:
+def find_p2wsh_utxo(transaction_id: str, network: str = config["network"],
+                    vapor: bool = config["vapor"]) -> str:
     """
     Find Bytom segwit pay to script hash UTXO id by transaction id/hash.
 

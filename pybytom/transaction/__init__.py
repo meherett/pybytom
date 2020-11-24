@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 
-from .transaction import Transaction, NormalTransaction, AdvancedTransaction
+from typing import List
 
+from .transaction import (
+    Transaction, NormalTransaction, AdvancedTransaction
+)
 
-__all__ = [
+__all__: List[str] = [
     "Transaction",
     "NormalTransaction",
     "AdvancedTransaction"

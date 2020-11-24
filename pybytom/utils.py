@@ -10,7 +10,9 @@ import os
 import unicodedata
 
 from .libs.segwit import decode
-from .exceptions import SymbolError
+from .exceptions import (
+    SymbolError, NetworkError
+)
 from .config import config
 
 # Bytom config
@@ -23,6 +25,7 @@ def generate_entropy(strength: int = 128) -> str:
 
     :param strength: Entropy strength, default to 128.
     :type strength: int
+
     :returns: str -- Entropy hex string.
 
     >>> from pybytom.utils import generate_entropy
@@ -48,6 +51,7 @@ def generate_mnemonic(language: str = "english", strength: int = 128) -> str:
     :type language: str
     :param strength: Entropy strength, default to 128.
     :type strength: int
+
     :returns: str -- Mnemonic words.
 
     >>> from pybytom.utils import generate_mnemonic
@@ -75,6 +79,7 @@ def is_entropy(entropy: str) -> bool:
 
     :param entropy: Entropy hex string.
     :type entropy: str
+
     :returns: bool -- True/False.
 
     >>> from pybytom.utils import is_entropy
@@ -93,6 +98,7 @@ def is_mnemonic(mnemonic: str, language: Optional[str] = None) -> bool:
     :type mnemonic: str
     :param language: Mnemonic language, default to None.
     :type language: str
+
     :returns: bool -- True/False.
 
     >>> from pybytom.utils import is_mnemonic
@@ -125,6 +131,7 @@ def get_mnemonic_language(mnemonic: str) -> Optional[str]:
 
     :param mnemonic: Mnemonic words.
     :type mnemonic: str
+
     :returns: str -- Mnemonic language.
 
     >>> from pybytom.utils import get_mnemonic_language
@@ -150,6 +157,7 @@ def get_entropy_strength(entropy: str) -> int:
 
     :param entropy: Entropy hex string.
     :type entropy: str
+
     :returns: int -- strength.
 
     >>> from pybytom.utils import get_entropy_strength
@@ -179,6 +187,7 @@ def get_mnemonic_strength(mnemonic: str) -> int:
 
     :param mnemonic: Mnemonic words.
     :type mnemonic: str
+
     :returns: int -- strength.
 
     >>> from pybytom.utils import get_mnemonic_strength
@@ -210,6 +219,7 @@ def amount_converter(amount: float, symbol: str = "NEU2BTM") -> Union[int, float
     :type amount: float
     :param symbol: Bytom symbol, default to NEU2BTM
     :type symbol: str
+
     :returns: float -- BTM asset amount.
 
     >>> from pybytom.utils import amount_converter
@@ -248,6 +258,7 @@ def is_network(network: str) -> bool:
 
     :param network: Bytom network.
     :type network: str
+
     :returns: bool -- Checked network.
 
     >>> from pybytom.utils import is_network
@@ -260,7 +271,7 @@ def is_network(network: str) -> bool:
     raise TypeError("Network must be string format")
 
 
-def is_address(address: str, network: Optional[str] = None) -> bool:
+def is_address(address: str, network: Optional[str] = None, vapor: bool = config["vapor"]) -> bool:
     """
     Check Bytom address.
 
@@ -268,67 +279,55 @@ def is_address(address: str, network: Optional[str] = None) -> bool:
     :type address: str
     :param network: Bytom network, defaults to None.
     :type network: str
+    :param vapor: Bytom sidechain vapor, defaults to False.
+    :type vapor: bool
+
     :returns: bool -- Bytom valid/invalid address.
 
     >>> from pybytom.utils import is_address
-    >>> is_address("bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "mainnet")
+    >>> is_address("bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "mainnet", False)
     True
-    """
-
-    if isinstance(address, str):
-        if network is None:
-            for hrp in ["bm", "sm", "tm"]:
-                valid = False
-                if address.startswith(hrp) and \
-                        not decode(hrp, address) == (None, None):
-                    valid = True
-                    break
-            return valid
-        if not isinstance(network, str):
-            raise TypeError("network must be string format")
-        elif network == "mainnet":
-            return address.startswith("bm") and not decode("bm", address) == (None, None)
-        elif network == "solonet":
-            return address.startswith("sm") and not decode("sm", address) == (None, None)
-        elif network == "testnet":
-            return address.startswith("tm") and not decode("tm", address) == (None, None)
-        else:
-            raise ValueError("Invalid network, use only this options mainnet, solonet or testnet networks.")
-    raise TypeError("Address must be string format")
-
-
-def is_vapor_address(address: str, network: Optional[str] = None) -> bool:
-    """
-    Check Bytom vapor address.
-
-    :param address: Bytom vapor address.
-    :type address: str
-    :param network: Bytom network, defaults to None.
-    :type network: str
-    :returns: bool -- Bytom valid/invalid address.
-
-    >>> from pybytom.utils import is_vapor_address
-    >>> is_vapor_address("vp1q9ndylx02syfwd7npehfxz4lddhzqsve2za23ag", "mainnet")
+    >>> is_address("bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "mainnet", True)
+    False
+    >>> is_address("vp1q9ndylx02syfwd7npehfxz4lddhzqsve2za23ag", "mainnet", True)
     True
+    >>> is_address("vp1q9ndylx02syfwd7npehfxz4lddhzqsve2za23ag", "mainnet", False)
+    False
     """
 
-    if isinstance(address, str):
-        if network is None:
-            for hrp in ["vp", "sp", "tp"]:
-                valid = False
-                if address.startswith(hrp) and \
-                        not decode(hrp, address) == (None, None):
-                    valid = True
-                    break
-            return valid
-        if not isinstance(network, str):
-            raise TypeError("network must be string format")
-        elif network == "mainnet":
-            return address.startswith("vp") and not decode("vp", address) == (None, None)
-        elif network == "solonet":
-            return address.startswith("sp") and not decode("sp", address) == (None, None)
-        elif network == "testnet":
-            return address.startswith("tp") and not decode("tp", address) == (None, None)
-        else:
-            raise ValueError("Invalid network, use only this options mainnet, solonet or testnet networks.")
-    raise TypeError("Vapor address must be string format")
+    if not isinstance(address, str) and not vapor:
+        raise TypeError("Address must be string format")
+    elif not isinstance(address, str) and vapor:
+        raise TypeError("Vapor address must be string format")
+
+    if network is None and not vapor:
+        for hrp in ["bm", "sm", "tm"]:
+            valid = False
+            if address.startswith(hrp) and \
+                    not decode(hrp, address) == (None, None):
+                valid = True
+                break
+        return valid
+    if network is None and vapor:
+        for hrp in ["vp", "sp", "tp"]:
+            valid = False
+            if address.startswith(hrp) and \
+                    not decode(hrp, address) == (None, None):
+                valid = True
+                break
+        return valid
+    elif network == "mainnet" and not vapor:
+        return address.startswith("bm") and not decode("bm", address) == (None, None)
+    elif network == "solonet" and not vapor:
+        return address.startswith("sm") and not decode("sm", address) == (None, None)
+    elif network == "testnet" and not vapor:
+        return address.startswith("tm") and not decode("tm", address) == (None, None)
+    elif network == "mainnet" and vapor:
+        return address.startswith("vp") and not decode("vp", address) == (None, None)
+    elif network == "solonet" and vapor:
+        return address.startswith("sp") and not decode("sp", address) == (None, None)
+    elif network == "testnet" and vapor:
+        return address.startswith("tp") and not decode("tp", address) == (None, None)
+    else:
+        raise NetworkError(f"Invalid '{network}' network",
+                           "choose only 'mainnet', 'solonet' or 'testnet' networks.")

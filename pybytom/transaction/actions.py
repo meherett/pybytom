@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 
 from ..utils import (
-    amount_converter, is_address, is_vapor_address
+    amount_converter, is_address
 )
-from .. exceptions import (
+from ..exceptions import (
     SymbolError, AddressError
 )
+from ..config import config
+
+# Bytom config
+config: dict = config()
 
 
 def spend_utxo(utxo: str) -> dict:
@@ -96,7 +100,8 @@ def control_program(amount: float, asset: str, program: str, symbol: str = "NEU"
     )
 
 
-def control_address(amount: float, asset: str, address: str, vapor: bool = False, symbol: str = "NEU") -> dict:
+def control_address(amount: float, asset: str, address: str,
+                    vapor: bool = config["vapor"], symbol: str = "NEU") -> dict:
     """
     Get control address action.
 
@@ -118,9 +123,9 @@ def control_address(amount: float, asset: str, address: str, vapor: bool = False
     {'type': 'control_address', 'amount': '0.1', 'asset': '41536cf298d6f261c0a1ac169a45be47583f7240115c9059cd0d03e4d4fab70a', 'address': 'bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7'}
     """
 
-    if vapor and not is_vapor_address(address=address):
+    if vapor and not is_address(address=address, vapor=True):
         raise AddressError(f"Invalid recipient '{address}' vapor address.")
-    elif not vapor and not is_address(address=address):
+    elif not vapor and not is_address(address=address, vapor=False):
         raise AddressError(f"Invalid recipient '{address}' address.")
 
     if symbol.startswith("BTM"):

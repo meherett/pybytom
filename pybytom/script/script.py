@@ -100,7 +100,7 @@ def get_p2wpkh_program(public_key_hash: str) -> str:
     return builder.hex_digest()
 
 
-def get_p2wpkh_address(public_key_hash: str, network: str = config["network"]) -> str:
+def get_p2wpkh_address(public_key_hash: str, network: str = config["network"], vapor: bool = config["vapor"]) -> str:
     """
     Get Pay to Witness Public Key Hash (P2WPKH) address.
 
@@ -108,41 +108,15 @@ def get_p2wpkh_address(public_key_hash: str, network: str = config["network"]) -
     :type public_key_hash: str
     :param network: Bytom network, default to mainnet.
     :type network: str
+    :param vapor: Bytom sidechain vapor, defaults to False.
+    :type vapor: bool
 
     :return: str -- Bytom Pay to Witness Public Key Hash (P2WPKH) address.
 
     >>> from pybytom.script import get_p2wpkh_address
-    >>> get_p2wpkh_address(public_key_hash="875240ba66646d900c59dd20d843351c2fcbeedc")
+    >>> get_p2wpkh_address(public_key_hash="875240ba66646d900c59dd20d843351c2fcbeedc", vapor=False)
     "bm1qsafypwnxv3keqrzem5sdsse4rshuhmku7kpnxq"
-    """
-
-    if not is_network(network=network):
-        raise NetworkError(f"Invalid '{network}' network",
-                           "choose only 'mainnet', 'solonet' or 'testnet' networks.")
-    if len(unhexlify(public_key_hash)) != 20:
-        raise ValueError("Invalid script hash, witness program must be 20 bytes for p2wpkh.")
-
-    if network == "mainnet":
-        return encode("bm", 0x00, unhexlify(public_key_hash))
-    elif network == "solonet":
-        return encode("sm", 0x00, unhexlify(public_key_hash))
-    elif network == "testnet":
-        return encode("tm", 0x00, unhexlify(public_key_hash))
-
-
-def get_p2wpkh_vapor_address(public_key_hash: str, network: str = config["network"]) -> str:
-    """
-    Get Pay to Witness Public Key Hash (P2WPKH) vapor address.
-
-    :param public_key_hash: Bytom public key hash.
-    :type public_key_hash: str
-    :param network: Bytom network, default to mainnet.
-    :type network: str
-
-    :return: str -- Bytom Pay to Witness Public Key Hash (P2WPKH) vapor address.
-
-    >>> from pybytom.script import get_p2wpkh_vapor_address
-    >>> get_p2wpkh_vapor_address(public_key_hash="875240ba66646d900c59dd20d843351c2fcbeedc")
+    >>> get_p2wpkh_address(public_key_hash="875240ba66646d900c59dd20d843351c2fcbeedc", vapor=True)
     "vp1qsafypwnxv3keqrzem5sdsse4rshuhmku4h3wrk"
     """
 
@@ -152,11 +126,17 @@ def get_p2wpkh_vapor_address(public_key_hash: str, network: str = config["networ
     if len(unhexlify(public_key_hash)) != 20:
         raise ValueError("Invalid script hash, witness program must be 20 bytes for p2wpkh.")
 
-    if network == "mainnet":
+    if network == "mainnet" and not vapor:
+        return encode("bm", 0x00, unhexlify(public_key_hash))
+    elif network == "solonet" and not vapor:
+        return encode("sm", 0x00, unhexlify(public_key_hash))
+    elif network == "testnet" and not vapor:
+        return encode("tm", 0x00, unhexlify(public_key_hash))
+    elif network == "mainnet" and vapor:
         return encode("vp", 0x00, unhexlify(public_key_hash))
-    elif network == "solonet":
+    elif network == "solonet" and vapor:
         return encode("sp", 0x00, unhexlify(public_key_hash))
-    elif network == "testnet":
+    elif network == "testnet" and vapor:
         return encode("tp", 0x00, unhexlify(public_key_hash))
 
 
@@ -206,7 +186,7 @@ def get_p2wsh_program(script_hash: str) -> str:
     return builder.hex_digest()
 
 
-def get_p2wsh_address(script_hash: str, network: str = config["network"]) -> str:
+def get_p2wsh_address(script_hash: str, network: str = config["network"], vapor: bool = config["vapor"]) -> str:
     """
     Get Pay to Witness Script Hash (P2WSH) address.
 
@@ -214,41 +194,15 @@ def get_p2wsh_address(script_hash: str, network: str = config["network"]) -> str
     :type script_hash: str
     :param network: Bytom network, default to mainnet.
     :type network: str
+    :param vapor: Bytom sidechain vapor, defaults to False.
+    :type vapor: bool
 
     :return: str -- Bytom Pay to Witness Script Hash (P2WSH) address.
 
     >>> from pybytom.script import get_p2wsh_address
-    >>> get_p2wsh_address(script_hash="e47eaf5e3a7898197068e2dd7c0209331b36a1b7a73aeb8090df816a3ce5b7d3")
+    >>> get_p2wsh_address(script_hash="e47eaf5e3a7898197068e2dd7c0209331b36a1b7a73aeb8090df816a3ce5b7d3", vapor=False)
     "bm1qu3l27h360zvpjurgutwhcqsfxvdndgdh5uawhqysm7qk5089klfsrrlhez"
-    """
-
-    if not is_network(network=network):
-        raise NetworkError(f"Invalid '{network}' network",
-                           "choose only 'mainnet', 'solonet' or 'testnet' networks.")
-    if len(unhexlify(script_hash)) != 32:
-        raise ValueError("Invalid script hash, witness program must be 32 bytes for p2wsh.")
-
-    if network == "mainnet":
-        return encode("bm", 0x00, unhexlify(script_hash))
-    elif network == "solonet":
-        return encode("sm", 0x00, unhexlify(script_hash))
-    elif network == "testnet":
-        return encode("tm", 0x00, unhexlify(script_hash))
-
-
-def get_p2wsh_vapor_address(script_hash: str, network: str = config["network"]) -> str:
-    """
-    Get Pay to Witness Script Hash (P2WSH) vapor address.
-
-    :param script_hash: Bytom contract program(bytecode) script hash.
-    :type script_hash: str
-    :param network: Bytom network, default to mainnet.
-    :type network: str
-
-    :return: str -- Bytom Pay to Witness Script Hash (P2WSH) vapor address.
-
-    >>> from pybytom.script import get_p2wsh_vapor_address
-    >>> get_p2wsh_vapor_address(script_hash="e47eaf5e3a7898197068e2dd7c0209331b36a1b7a73aeb8090df816a3ce5b7d3")
+    >>> get_p2wsh_address(script_hash="e47eaf5e3a7898197068e2dd7c0209331b36a1b7a73aeb8090df816a3ce5b7d3", vapor=True)
     "vp1qu3l27h360zvpjurgutwhcqsfxvdndgdh5uawhqysm7qk5089klfs2r64gm"
     """
 
@@ -258,9 +212,15 @@ def get_p2wsh_vapor_address(script_hash: str, network: str = config["network"]) 
     if len(unhexlify(script_hash)) != 32:
         raise ValueError("Invalid script hash, witness program must be 32 bytes for p2wsh.")
 
-    if network == "mainnet":
+    if network == "mainnet" and not vapor:
+        return encode("bm", 0x00, unhexlify(script_hash))
+    elif network == "solonet" and not vapor:
+        return encode("sm", 0x00, unhexlify(script_hash))
+    elif network == "testnet" and not vapor:
+        return encode("tm", 0x00, unhexlify(script_hash))
+    elif network == "mainnet" and vapor:
         return encode("vp", 0x00, unhexlify(script_hash))
-    elif network == "solonet":
+    elif network == "solonet" and vapor:
         return encode("sp", 0x00, unhexlify(script_hash))
-    elif network == "testnet":
+    elif network == "testnet" and vapor:
         return encode("tp", 0x00, unhexlify(script_hash))

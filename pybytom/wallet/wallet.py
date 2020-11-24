@@ -20,8 +20,8 @@ from ..rpc import (
     account_create, get_balance, get_utxos
 )
 from .tools import (
-    get_xpublic_key, get_address, get_vapor_address, get_program, get_child_xpublic_key,
-    get_child_xprivate_key, get_private_key, get_public_key, get_expand_xprivate_key
+    get_xpublic_key, get_address, get_program, get_child_xpublic_key, get_child_xprivate_key,
+    get_private_key, get_public_key, get_expand_xprivate_key
 )
 from .utils import (
     prune_root_scalar, get_bytes, bad_seed_checker
@@ -46,7 +46,7 @@ class Wallet:
     def __init__(self, network: str = config["network"]):
 
         if not is_network(network=network):
-            raise NetworkError(f"Invalid '{network}' network/type",
+            raise NetworkError(f"Invalid '{network}' network",
                                "choose only 'mainnet', 'solonet' or 'testnet' networks.")
         self.network: str = network
 
@@ -578,49 +578,32 @@ class Wallet:
 
         return get_program(public_key=self.public_key())
 
-    def address(self, network: Optional[str] = None) -> str:
+    def address(self, network: Optional[str] = None, vapor: bool = config["vapor"]) -> str:
         """
         Get Bytom wallet address.
 
         :param network: Bytom network, defaults to solonet.
         :type network: str
+        :param vapor: Bytom sidechain vapor, defaults to False.
+        :type vapor: bool
         :return: str -- Bytom wallet address.
 
         >>> from pybytom.wallet import Wallet
         >>> wallet = Wallet(network="mainnet")
         >>> wallet.from_mnemonic("indicate warm sock mistake code spot acid ribbon sing over taxi toast")
         >>> wallet.from_indexes(["2c000000", "99000000", "01000000", "00000000", "01000000"])
-        >>> wallet.address(network="mainnet")
+        >>> wallet.address(network="mainnet", vapor=False)
         "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7"
-        """
-
-        if network is None:
-            network = self.network
-
-        return get_address(program=self.program(), network=network)
-
-    def vapor_address(self, network: Optional[str] = None) -> str:
-        """
-        Get Bytom wallet vapor address.
-
-        :param network: Bytom network, defaults to solonet.
-        :type network: str
-        :return: str -- Bytom wallet vapor address.
-
-        >>> from pybytom.wallet import Wallet
-        >>> wallet = Wallet(network="mainnet")
-        >>> wallet.from_mnemonic("indicate warm sock mistake code spot acid ribbon sing over taxi toast")
-        >>> wallet.from_indexes(["2c000000", "99000000", "01000000", "00000000", "01000000"])
-        >>> wallet.vapor_address(network="mainnet")
+        >>> wallet.address(network="mainnet", vapor=True)
         "vp1q9ndylx02syfwd7npehfxz4lddhzqsve2za23ag"
         """
 
         if network is None:
             network = self.network
 
-        return get_vapor_address(program=self.program(), network=network)
+        return get_address(program=self.program(), network=network, vapor=vapor)
 
-    def balance(self, asset: str = config["asset"], vapor: bool = False) -> int:
+    def balance(self, asset: str = config["asset"], vapor: bool = config["vapor"]) -> int:
         """
         Get Bytom wallet balance.
 
@@ -638,7 +621,7 @@ class Wallet:
         """
 
         return get_balance(
-            address=(self.vapor_address() if vapor else self.address()),
+            address=self.address(network=self.network, vapor=vapor),
             asset=asset, network=self.network, vapor=vapor
         )
 
@@ -739,13 +722,13 @@ class Wallet:
             public_key=self.public_key(),
             program=self.program(),
             address=dict(
-                mainnet=self.address(network="mainnet"),
-                solonet=self.address(network="solonet"),
-                testnet=self.address(network="testnet")
+                mainnet=self.address(network="mainnet", vapor=False),
+                solonet=self.address(network="solonet", vapor=False),
+                testnet=self.address(network="testnet", vapor=False)
             ),
             vapor_address=dict(
-                mainnet=self.vapor_address(network="mainnet"),
-                solonet=self.vapor_address(network="solonet"),
-                testnet=self.vapor_address(network="testnet")
+                mainnet=self.address(network="mainnet", vapor=True),
+                solonet=self.address(network="solonet", vapor=True),
+                testnet=self.address(network="testnet", vapor=True)
             )
         )

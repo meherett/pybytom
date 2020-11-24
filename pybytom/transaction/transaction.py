@@ -11,7 +11,7 @@ from ..exceptions import (
     ClientError, NetworkError, AddressError
 )
 from ..utils import (
-    amount_converter, is_network, is_address, is_vapor_address
+    amount_converter, is_network, is_address
 )
 from ..config import config
 from .actions import (
@@ -36,7 +36,7 @@ class Transaction:
         Bytom has only three networks, ``mainnet``. ``solonet`` and ``testnet``.
     """
 
-    def __init__(self, network: str = config["network"], vapor: bool = False):
+    def __init__(self, network: str = config["network"], vapor: bool = config["vapor"]):
         if not is_network(network=network):
             raise NetworkError(f"Invalid '{network}' network",
                                "choose only 'mainnet', 'solonet' or 'testnet' networks.")
@@ -75,9 +75,9 @@ class Transaction:
         if {"address", "inputs", "outputs"} - set(kwargs.keys()):
             raise ClientError("You can't build transaction without 'address', 'inputs' and 'outputs'",
                               "default fee is 10000000 and confirmations to 1.")
-        if self._vapor and not is_vapor_address(address=kwargs["address"], network=self._network):
+        if self._vapor and not is_address(address=kwargs["address"], network=self._network, vapor=True):
             raise AddressError(f"Invalid '{kwargs['address']}' {self._network} vapor address.")
-        if not self._vapor and not is_address(address=kwargs["address"], network=self._network):
+        if not self._vapor and not is_address(address=kwargs["address"], network=self._network, vapor=False):
             raise AddressError(f"Invalid '{kwargs['address']}' {self._network} address.")
         if not isinstance(kwargs["inputs"], list):
             raise TypeError("Invalid inputs instance, only takes list type.")
@@ -322,7 +322,7 @@ class NormalTransaction(Transaction):
     :returns:  NormalTransaction -- Bytom normal transaction instance.
     """
 
-    def __init__(self, network: str = config["network"], vapor: bool = False):
+    def __init__(self, network: str = config["network"], vapor: bool = config["vapor"]):
         super().__init__(network=network, vapor=vapor)
 
     def build_transaction(self, address: str, recipients: dict, asset: str = config["asset"],
@@ -352,9 +352,9 @@ class NormalTransaction(Transaction):
         <pybytom.transaction.transaction.NormalTransaction object at 0x0409DAF0>
         """
 
-        if self._vapor and not is_vapor_address(address=address, network=self._network):
+        if self._vapor and not is_address(address=address, network=self._network, vapor=True):
             raise AddressError(f"Invalid '{address}' {self._network} vapor address.")
-        elif not self._vapor and not is_address(address=address, network=self._network):
+        elif not self._vapor and not is_address(address=address, network=self._network, vapor=False):
             raise AddressError(f"Invalid '{address}' {self._network} address.")
 
         # Setting transaction fee and confirmations
@@ -406,7 +406,7 @@ class AdvancedTransaction(Transaction):
     :returns: AdvancedTransaction -- Bytom advanced transaction instance.
     """
 
-    def __init__(self, network: str = config["network"], vapor: bool = False):
+    def __init__(self, network: str = config["network"], vapor: bool = config["vapor"]):
         super().__init__(network=network, vapor=vapor)
 
     def build_transaction(self, address: str, inputs: list, outputs: list,
@@ -436,9 +436,9 @@ class AdvancedTransaction(Transaction):
         <pybytom.transaction.transaction.AdvancedTransaction object at 0x0409DAF0>
         """
 
-        if self._vapor and not is_vapor_address(address=address, network=self._network):
+        if self._vapor and not is_address(address=address, network=self._network, vapor=True):
             raise AddressError(f"Invalid '{address}' {self._network} vapor address.")
-        elif not self._vapor and not is_address(address=address, network=self._network):
+        elif not self._vapor and not is_address(address=address, network=self._network, vapor=False):
             raise AddressError(f"Invalid '{address}' {self._network} address.")
 
         # Setting transaction fee and confirmations

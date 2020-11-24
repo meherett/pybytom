@@ -16,21 +16,8 @@ from ..exceptions import NetworkError
 from ..utils import is_network
 from ..config import config
 
-
 # Bytom config
 config: dict = config()
-# Constant values
-HARDEN: int = 0x80000000
-# Derivation Path
-PATH: str = "m/44/153/1/0/1"
-# Derivation Indexes
-INDEXES: List[str] = [
-    # "2c000000",  # 44
-    # "99000000",  # 153
-    # "01000000",  # 1 Account
-    # "00000000",  # 0 Change
-    # "01000000"  # 1 Address
-]
 
 
 def get_xpublic_key(xprivate_key: str) -> str:
@@ -38,7 +25,7 @@ def get_xpublic_key(xprivate_key: str) -> str:
     Get Bytom xpublic key from xprivate key.
 
     :param xprivate_key: Bytom xprivate key.
-    :type xprivate_key: str.
+    :type xprivate_key: str
 
     :return: str -- Bytom xpublic key.
 
@@ -59,7 +46,7 @@ def get_expand_xprivate_key(xprivate_key: str) -> str:
     Get Bytom expand xprivate key from xprivate key.
 
     :param xprivate_key: Bytom xprivate key.
-    :type xprivate_key: str.
+    :type xprivate_key: str
 
     :return: str -- Bytom expand xprivate key.
 
@@ -82,7 +69,7 @@ def indexes_to_path(indexes: List[str]) -> str:
     Change derivation indexes to path.
 
     :param indexes: Bytom derivation indexes.
-    :type indexes: list.
+    :type indexes: list
 
     :return: str -- Bytom derivation path.
 
@@ -106,7 +93,7 @@ def path_to_indexes(path: str) -> List[str]:
     Change derivation path to indexes.
 
     :param path: Bytom derivation path.
-    :type path: str.
+    :type path: str
 
     :return: list -- Bytom derivation indexes.
 
@@ -121,7 +108,7 @@ def path_to_indexes(path: str) -> List[str]:
     indexes = list()
     for index in path.lstrip("m/").split("/"):
         if "'" in index:
-            index = int(int(index[:-1]) + HARDEN).to_bytes(4, byteorder="little").hex()
+            index = int(int(index[:-1]) + config["harden"]).to_bytes(4, byteorder="little").hex()
             indexes.append(index)
         else:
             index = int(int(index)).to_bytes(4, byteorder="little").hex()
@@ -135,11 +122,11 @@ def get_child_xprivate_key(xprivate_key: str, indexes: Optional[List[str]] = Non
     Get Bytom get child xprivate key.
 
     :param xprivate_key: Bytom xprivate key.
-    :type xprivate_key: str.
+    :type xprivate_key: str
     :param indexes: Bytom derivation indexes, default to ["2c000000", "99000000", "01000000", "00000000", "01000000"].
-    :type indexes: list.
+    :type indexes: list
     :param path: Bytom derivation path, default to None.
-    :type path: str.
+    :type path: str
 
     :return: str -- Bytom child xprivate key.
 
@@ -149,7 +136,7 @@ def get_child_xprivate_key(xprivate_key: str, indexes: Optional[List[str]] = Non
     """
 
     if indexes is None and path is None:
-        indexes = INDEXES
+        indexes = []
     elif path is not None:
         indexes = path_to_indexes(path=path)
 
@@ -186,11 +173,11 @@ def get_child_xpublic_key(xpublic_key, indexes: Optional[List[str]] = None,
     Get Bytom get child xpublic key.
 
     :param xpublic_key: Bytom xpublic key.
-    :type xpublic_key: str.
+    :type xpublic_key: str
     :param indexes: Bytom derivation indexes, default to ["2c000000", "99000000", "01000000", "00000000", "01000000"].
-    :type indexes: list.
+    :type indexes: list
     :param path: Bytom derivation path, default to None.
-    :type path: str.
+    :type path: str
 
     :return: str -- Bytom child xpublic key.
 
@@ -200,7 +187,7 @@ def get_child_xpublic_key(xpublic_key, indexes: Optional[List[str]] = None,
     """
 
     if indexes is None and path is None:
-        indexes = INDEXES
+        indexes = []
     elif path is not None:
         indexes = path_to_indexes(path=path)
 
@@ -235,11 +222,11 @@ def get_private_key(xprivate_key: str, indexes: Optional[List[str]] = None,
     Get Bytom private key from xprivate key. This is also the same with get_child_xprivate_key function.
 
     :param xprivate_key: Bytom xprivate key.
-    :type xprivate_key: str.
+    :type xprivate_key: str
     :param indexes: Bytom derivation indexes, default to ["2c000000", "99000000", "01000000", "00000000", "01000000"].
-    :type indexes: list.
+    :type indexes: list
     :param path: Bytom derivation path, default to None.
-    :type path: str.
+    :type path: str
 
     :return: str -- Bytom private key.
 
@@ -258,11 +245,11 @@ def get_public_key(xpublic_key: str, indexes: Optional[List[str]] = None,
     Get Bytom public key from xpublic key.
 
     :param xpublic_key: Bytom xpublic key.
-    :type xpublic_key: str.
+    :type xpublic_key: str
     :param indexes: Bytom derivation indexes, default to ["2c000000", "99000000", "01000000", "00000000", "01000000"].
-    :type indexes: list.
+    :type indexes: list
     :param path: Bytom derivation path, default to None.
-    :type path: str.
+    :type path: str
 
     :return: str -- Bytom public key.
 
@@ -280,7 +267,7 @@ def get_program(public_key: str) -> str:
     Get Bytom control program from public key.
 
     :param public_key: Bytom public key.
-    :type public_key: str.
+    :type public_key: str
     :return: str -- Bytom control program.
 
     >>> from pybytom.wallet.tools import get_program
@@ -296,55 +283,38 @@ def get_program(public_key: str) -> str:
     return control_program
 
 
-def get_address(program: str, network: str = config["network"]) -> str:
+def get_address(program: str, network: str = config["network"], vapor: bool = config["vapor"]) -> str:
     """
     Get Bytom address from program.
 
     :param program: Bytom control program.
-    :type program: str.
+    :type program: str
     :param network: Bytom network, default to mainnet.
-    :type network: str.
+    :type network: str
+    :param vapor: Bytom sidechain vapor, defaults to False.
+    :type vapor: bool
 
     :return: str -- Bytom address.
 
     >>> from pybytom.wallet.tools import get_address
-    >>> get_address("00142cda4f99ea8112e6fa61cdd26157ed6dc408332a", "mainnet")
+    >>> get_address("00142cda4f99ea8112e6fa61cdd26157ed6dc408332a", "mainnet", False)
     "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7"
-    """
-
-    if not is_network(network=network):
-        raise NetworkError(f"Invalid '{network}' network",
-                           "choose only 'mainnet', 'solonet' or 'testnet' networks.")
-    elif network == "mainnet":
-        return encode("bm", 0, get_bytes(program[4:]))
-    elif network == "solonet":
-        return encode("sm", 0, get_bytes(program[4:]))
-    elif network == "testnet":
-        return encode("tm", 0, get_bytes(program[4:]))
-
-
-def get_vapor_address(program: str, network: str = config["network"]) -> str:
-    """
-    Get Bytom vapor address from program.
-
-    :param program: Bytom control program.
-    :type program: str.
-    :param network: Bytom network, default to solonet.
-    :type network: str.
-
-    :return: str -- Bytom vapor address.
-
-    >>> from pybytom.wallet.tools import get_vapor_address
-    >>> get_vapor_address("00142cda4f99ea8112e6fa61cdd26157ed6dc408332a", "mainnet")
+    >>> get_address("00142cda4f99ea8112e6fa61cdd26157ed6dc408332a", "mainnet", True)
     "vp1q9ndylx02syfwd7npehfxz4lddhzqsve2za23ag"
     """
 
     if not is_network(network=network):
         raise NetworkError(f"Invalid '{network}' network",
                            "choose only 'mainnet', 'solonet' or 'testnet' networks.")
-    elif network == "mainnet":
+    elif network == "mainnet" and not vapor:
+        return encode("bm", 0, get_bytes(program[4:]))
+    elif network == "solonet" and not vapor:
+        return encode("sm", 0, get_bytes(program[4:]))
+    elif network == "testnet" and not vapor:
+        return encode("tm", 0, get_bytes(program[4:]))
+    elif network == "mainnet" and vapor:
         return encode("vp", 0, get_bytes(program[4:]))
-    elif network == "solonet":
+    elif network == "solonet" and vapor:
         return encode("sp", 0, get_bytes(program[4:]))
-    elif network == "testnet":
+    elif network == "testnet" and vapor:
         return encode("tp", 0, get_bytes(program[4:]))
