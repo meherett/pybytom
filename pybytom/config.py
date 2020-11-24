@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
+from .assets import BTM as ASSET
 
-# Bytom and Vapor configuration
+
+# Bytom mainchain & sidechain configuration
 def config():
     return {
-        "bytom": {
+        "mainchain": {
             "mainnet": {
                 "bytom": "http://localhost:9888",
                 "blockmeta": "https://blockmeta.com/api/v3",
@@ -24,7 +26,7 @@ def config():
                 "mov": None
             }
         },
-        "vapor": {
+        "sidechain": {
             "mainnet": {
                 "bytom": "http://localhost:9888",
                 "blockmeta": "https://vapor.blockmeta.com/api/v1",
@@ -44,14 +46,18 @@ def config():
                 "mov": None
             }
         },
+        "harden": 0x80000000,
+        "vapor": False,
         "network": "mainnet",
         "timeout": 60,
-        "asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "asset": ASSET,
         "symbols": {
             "BTM": 1,
             "mBTM": 1000,
             "NEU": 100_000_000
         },
+        "path": "m/44/153/1/0/1",
+        "indexes": ["2c000000", "99000000", "01000000", "00000000", "01000000"],
         "fee": 10_000_000,
         "confirmations": 1,
         "forbid_chain_tx": False,
