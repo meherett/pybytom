@@ -35,8 +35,11 @@ def get_balance(address: str, asset: str = config["asset"], network: str = confi
     :returns: int -- Bytom asset balance.
 
     >>> from pybytom.rpc import get_balance
-    >>> get_balance("bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "mainnet")
-    2580000000
+    >>> from pybytom.assets import BTM as ASSET
+    >>> get_balance(address="bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", asset=ASSET, network="mainnet", vapor=False)
+    71560900
+    >>> get_balance(address="vp1q9ndylx02syfwd7npehfxz4lddhzqsve2za23ag", asset=ASSET, network="mainnet", vapor=True)
+    126990000
     """
 
     if not is_network(network=network):
@@ -94,8 +97,8 @@ def get_utxos(program: str, network: str = config["network"], asset: str = confi
     :returns: list -- Bytom unspent transaction outputs (UTXO's).
 
     >>> from pybytom.rpc import get_utxos
-    >>> get_utxos(program="00142cda4f99ea8112e6fa61cdd26157ed6dc408332a", network="mainnet")
-    [...]
+    >>> get_utxos(program="00142cda4f99ea8112e6fa61cdd26157ed6dc408332a", network="mainnet", vapor=False)
+    [{'hash': 'e152f88d33c6659ad823d15c5c65b2ed946d207c42430022cba9bb9b9d70a7a4', 'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': 587639800}, {'hash': '88289fa4c7633574931be7ce4102aeb24def0de20e38e7d69a5ddd6efc116b95', 'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': 8160000}, {'hash': 'f71c68f921b434cc2bcd469d26e7927aa6db7500e4cdeef814884f11c10f5de2', 'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': 10000}, {'hash': 'e46cfecc1f1a26413172ce81c78affb19408e613915642fa5fb04d3b0a4ffa65', 'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': 100}]
     """
 
     if not is_network(network=network):
