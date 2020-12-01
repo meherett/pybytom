@@ -21,30 +21,28 @@ assert is_address(address=P2WSH_ADDRESS, network=NETWORK, vapor=False)
 assert is_address(address=VAPOR_P2WPKH_ADDRESS, network=NETWORK, vapor=True)
 assert is_address(address=VAPOR_P2WSH_ADDRESS, network=NETWORK, vapor=True)
 
-print(amount_converter(amount=1, symbol="NEU2BTM"))
-
-# # Get all address balances
-# print("P2WPKH Address Balance:", amount_converter(
-#     amount=get_balance(
-#         address=P2WPKH_ADDRESS, asset=ASSET, network=NETWORK, vapor=False
-#     ),
-#     symbol="NEU2BTM"
-# ), "BTM")
-# print("P2WSH Address Balance:", amount_converter(
-#     amount=get_balance(
-#         address=P2WSH_ADDRESS, asset=ASSET, network=NETWORK, vapor=False
-#     ),
-#     symbol="NEU2BTM"
-# ), "BTM")
-# print("Vapor P2WPKH Address Balance:", amount_converter(
-#     amount=get_balance(
-#         address=VAPOR_P2WPKH_ADDRESS, asset=ASSET, network=NETWORK, vapor=True
-#     ),
-#     symbol="NEU2BTM"
-# ), "BTM")
-# print("Vapor P2WSH Address Balance:", amount_converter(
-#     amount=get_balance(
-#         address=VAPOR_P2WSH_ADDRESS, asset=ASSET, network=NETWORK, vapor=True
-#     ),
-#     symbol="NEU2BTM"
-# ), "BTM")
+# Get all address balances
+print("P2WPKH Address Balance:", amount_converter(
+    amount=get_balance(
+        address=P2WPKH_ADDRESS, asset=ASSET, network=NETWORK, vapor=False
+    ),
+    symbol="NEU2BTM"
+), "BTM")
+print("P2WSH Address Balance:", amount_converter(
+    amount=get_balance(
+        address=P2WSH_ADDRESS, asset=ASSET, network=NETWORK, vapor=False
+    ),
+    symbol="NEU2BTM"
+), "BTM")
+print("Vapor P2WPKH Address Balance:", amount_converter(
+    amount=get_balance(
+        address=VAPOR_P2WPKH_ADDRESS, asset=ASSET, network=NETWORK, vapor=True
+    ),
+    symbol="NEU2BTM"
+), "BTM")
+print("Vapor P2WSH Address Balance:", amount_converter(
+    amount=get_balance(
+        address=VAPOR_P2WSH_ADDRESS, asset=ASSET, network=NETWORK, vapor=True
+    ),
+    symbol="NEU2BTM"
+), "BTM")
