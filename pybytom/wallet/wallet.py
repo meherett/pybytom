@@ -27,8 +27,10 @@ from .utils import (
     prune_root_scalar, get_bytes, bad_seed_checker
 )
 
-# Bytom config
-config: dict = config()
+# Default path and indexes derivation
+DEFAULT_PATH: str = config["path"]
+DEFAULT_INDEXES: List[str] = config["indexes"]
+DEFAULT_BIP44: str = config["BIP44"]
 
 
 class Wallet:
@@ -625,7 +627,7 @@ class Wallet:
             asset=asset, network=self.network, vapor=vapor
         )
 
-    def utxos(self, asset: str = config["asset"], limit: int = 15) -> list:
+    def utxos(self, asset: str = config["asset"], limit: int = 15, vapor: bool = config["vapor"]) -> list:
         """
         Get Bytom wallet unspent transaction output (UTXO's).
 
@@ -633,6 +635,8 @@ class Wallet:
         :type asset: str
         :param limit: Bytom balance, default is 15.
         :type limit: int
+        :param vapor: Bytom sidechain vapor, defaults to False.
+        :type vapor: bool
 
         :return: list -- Bytom unspent transaction outputs.
 
@@ -644,7 +648,7 @@ class Wallet:
         [{'hash': 'e152f88d33c6659ad823d15c5c65b2ed946d207c42430022cba9bb9b9d70a7a4', 'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': 587639800}, {'hash': '88289fa4c7633574931be7ce4102aeb24def0de20e38e7d69a5ddd6efc116b95', 'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': 8160000}, {'hash': 'f71c68f921b434cc2bcd469d26e7927aa6db7500e4cdeef814884f11c10f5de2', 'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': 10000}, {'hash': 'e46cfecc1f1a26413172ce81c78affb19408e613915642fa5fb04d3b0a4ffa65', 'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'amount': 100}]
         """
 
-        return get_utxos(program=self.program(), asset=asset, limit=limit)
+        return get_utxos(program=self.program(), asset=asset, limit=limit, vapor=vapor)
 
     def sign(self, message: str) -> str:
         """
