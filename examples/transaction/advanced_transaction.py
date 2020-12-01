@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 
-from pybytom.wallet import Wallet
+from pybytom.wallet import Wallet, DEFAULT_PATH
 from pybytom.assets import BTM as ASSET
 from pybytom.transaction import AdvancedTransaction
+from pybytom.transaction.actions import spend_utxo, control_address
 from pybytom.transaction.tools import find_p2wsh_utxo
-from pybytom.transaction.actions import (
-    spend_utxo, control_address
-)
-from pybytom.rpc import submit_transaction_raw
+from pybytom.rpc import submit_transaction_raw, estimate_transaction_fee
+from pybytom.utils import amount_converter
 from typing import Optional
 
 import json
@@ -20,20 +19,31 @@ VAPOR: bool = False  # Default is False
 MNEMONIC: str = "indicate warm sock mistake code spot acid ribbon sing over taxi toast"
 # Secret passphrase/password for mnemonic
 PASSPHRASE: Optional[str] = None  # str("meherett")
-# Wallet derivation path
-PATH: str = "m/44/153/1/0/1"
 
 # Initialize Bytom wallet
 wallet: Wallet = Wallet(network=NETWORK)
 # Get Bytom wallet from mnemonic
 wallet.from_mnemonic(mnemonic=MNEMONIC, passphrase=PASSPHRASE)
 # Derivation from path
-wallet.from_path(path=PATH)
+wallet.from_path(path=DEFAULT_PATH)
 
 # Initialize Bytom advanced transaction
 unsigned_advanced_transaction: AdvancedTransaction = AdvancedTransaction(
     network=NETWORK, vapor=VAPOR
 )
+
+# Estimate transaction fee (returned NEU amount)
+estimated_transaction_fee: int = estimate_transaction_fee(
+    address=wallet.address(vapor=VAPOR),
+    asset=ASSET,
+    amount=amount_converter(0.1, "BTM2NEU"),
+    confirmations=1,
+    network=NETWORK,
+    vapor=VAPOR
+)
+
+print("Estimated Transaction Fee:", estimated_transaction_fee)
+
 # Build Bytom advanced transaction
 unsigned_advanced_transaction.build_transaction(
     wallet.address(vapor=VAPOR),  # address
@@ -53,12 +63,12 @@ unsigned_advanced_transaction.build_transaction(
             symbol="BTM"
         )
     ],  # outputs
-    10_000_000,  # fee
+    estimated_transaction_fee,  # fee
     1,  # confirmations
     False,  # forbid_chain_tx
 )
 
-print("Unsigned Advanced Transaction Fee:", unsigned_advanced_transaction.fee())
+print("\nUnsigned Advanced Transaction Fee:", unsigned_advanced_transaction.fee())
 print("Unsigned Advanced Transaction Confirmations:", unsigned_advanced_transaction.confirmations())
 print("Unsigned Advanced Transaction Hash:", unsigned_advanced_transaction.hash())
 print("Unsigned Advanced Transaction Raw:", unsigned_advanced_transaction.raw())

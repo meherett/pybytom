@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 
-from pybytom.wallet import Wallet
+from pybytom.wallet import Wallet, DEFAULT_BIP44
 from pybytom.assets import BTM as ASSET
 from pybytom.transaction import Transaction
+from pybytom.transaction.actions import spend_utxo, control_address
 from pybytom.transaction.tools import find_p2wsh_utxo
-from pybytom.transaction.actions import (
-    spend_utxo, control_address
-)
-from pybytom.rpc import submit_transaction_raw
+from pybytom.rpc import submit_transaction_raw, estimate_transaction_fee
+from pybytom.utils import amount_converter
 from typing import Optional
 
 import json
@@ -20,20 +19,35 @@ VAPOR: bool = False  # Default is False
 MNEMONIC: str = "indicate warm sock mistake code spot acid ribbon sing over taxi toast"
 # Secret passphrase/password for mnemonic
 PASSPHRASE: Optional[str] = None  # str("meherett")
-# Wallet derivation path
-PATH: str = "m/44/153/1/0/1"
 
 # Initialize Bytom wallet
 wallet: Wallet = Wallet(network=NETWORK)
 # Get Bytom wallet from mnemonic
 wallet.from_mnemonic(mnemonic=MNEMONIC, passphrase=PASSPHRASE)
 # Derivation from path
-wallet.from_path(path=PATH)
+wallet.from_path(
+    path=DEFAULT_BIP44.format(
+        account=1, change=0, address=1
+    )
+)
 
 # Initialize Bytom transaction
 unsigned_transaction: Transaction = Transaction(
     network=NETWORK, vapor=VAPOR
 )
+
+# Estimate transaction fee (returned NEU amount)
+estimated_transaction_fee: int = estimate_transaction_fee(
+    address=wallet.address(vapor=VAPOR),
+    asset=ASSET,
+    amount=amount_converter(0.1, "BTM2NEU"),
+    confirmations=1,
+    network=NETWORK,
+    vapor=VAPOR
+)
+
+print("Estimated Transaction Fee:", estimated_transaction_fee)
+
 # Build Bytom transaction
 unsigned_transaction.build_transaction(
     address=wallet.address(vapor=VAPOR),
@@ -54,12 +68,11 @@ unsigned_transaction.build_transaction(
             vapor=VAPOR
         )
     ],
-    fee=10_000_000,
-    confirmations=1,
-    forbid_chain_tx=False
+    fee=estimated_transaction_fee,
+    confirmations=1
 )
 
-print("Unsigned Transaction Fee:", unsigned_transaction.fee())
+print("\nUnsigned Transaction Fee:", unsigned_transaction.fee())
 print("Unsigned Transaction Confirmations:", unsigned_transaction.confirmations())
 print("Unsigned Transaction Hash:", unsigned_transaction.hash())
 print("Unsigned Transaction Raw:", unsigned_transaction.raw())
@@ -70,7 +83,7 @@ print("Unsigned Transaction Signatures:", json.dumps(unsigned_transaction.signat
 
 # Sing unsigned transaction by xprivate key
 signed_transaction: Transaction = unsigned_transaction.sign(
-    xprivate_key=wallet.xprivate_key(), path=PATH
+    xprivate_key=wallet.xprivate_key(), path=wallet.path()
 )
 
 print("\nSigned Transaction Fee:", signed_transaction.fee())
