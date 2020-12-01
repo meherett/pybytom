@@ -48,7 +48,8 @@ print("Address:", wallet.address(vapor=False))
 print("Vapor Address:", wallet.address(vapor=True))
 print("Balance:", amount_converter(wallet.balance(asset=ASSET, vapor=False), "NEU2BTM"), "BTM")
 print("Vapor Balance:", amount_converter(wallet.balance(asset=ASSET, vapor=True), "NEU2BTM"), "BTM")
-print("UTXO's:", wallet.utxos(asset=ASSET))
+print("UTXO's:", wallet.utxos(asset=ASSET, vapor=False))
+print("Vapor UTXO's:", wallet.utxos(asset=ASSET, vapor=True))
 
 print("-------- Sign & Verify --------")
 

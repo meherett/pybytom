@@ -12,7 +12,7 @@ NETWORK: str = "mainnet"  # Default is mainnet
 # Choose strength 128, 160, 192, 224 or 256
 STRENGTH: int = 224  # Default is 128
 # Choose language english, french, italian, spanish, chinese_simplified, chinese_traditional, japanese or korean
-LANGUAGE: str = "japanese"  # Default is english
+LANGUAGE: str = "english"  # Default is english
 # Generate new entropy seed
 ENTROPY: str = generate_entropy(strength=STRENGTH)
 # Secret passphrase/password for mnemonic
@@ -62,7 +62,8 @@ print("Address:", wallet.address(vapor=False))
 print("Vapor Address:", wallet.address(vapor=True))
 print("Balance:", amount_converter(wallet.balance(asset=ASSET, vapor=False), "NEU2BTM"), "BTM")
 print("Vapor Balance:", amount_converter(wallet.balance(asset=ASSET, vapor=True), "NEU2BTM"), "BTM")
-print("UTXO's:", wallet.utxos(asset=ASSET))
+print("UTXO's:", wallet.utxos(asset=ASSET, vapor=False))
+print("Vapor UTXO's:", wallet.utxos(asset=ASSET, vapor=True))
 
 print("-------- Sign & Verify --------")
 
