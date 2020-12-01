@@ -13,12 +13,10 @@ from .exceptions import (
 )
 from .config import config
 
-# Bytom config
-config: dict = config()
-
 
 def get_balance(address: str, asset: str = config["asset"], network: str = config["network"],
-                vapor: bool = config["vapor"], timeout: int = config["timeout"]) -> int:
+                vapor: bool = config["vapor"], headers: dict = config["headers"],
+                timeout: int = config["timeout"]) -> int:
     """
     Get Bytom balance.
 
@@ -30,6 +28,8 @@ def get_balance(address: str, asset: str = config["asset"], network: str = confi
     :type network: str
     :param vapor: Bytom sidechain vapor, defaults to False.
     :type vapor: bool
+    :param headers: Request headers, default to common headers.
+    :type headers: dict
     :param timeout: request timeout, default to 15.
     :type timeout: int
     :returns: int -- Bytom asset balance.
@@ -38,7 +38,7 @@ def get_balance(address: str, asset: str = config["asset"], network: str = confi
     >>> get_balance("bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "mainnet")
     2580000000
     """
-    
+
     if not is_network(network=network):
         raise NetworkError(f"Invalid '{network}' network.",
                            "choose only 'mainnet', 'solonet' or 'testnet' networks.")
@@ -46,9 +46,9 @@ def get_balance(address: str, asset: str = config["asset"], network: str = confi
         if not is_address(address=address, network=network, vapor=True):
             raise AddressError(f"Invalid '{address}' {network} vapor address.")
         url = f"{config['sidechain'][network]['blockmeta']}/address/{address}"
-        response = requests.get(url=url, headers=config["headers"], timeout=timeout)
+        response = requests.get(url=url, headers=headers, timeout=timeout)
         if response.json() is None or response.json()["data"] is None:
-            return 0  # 该数据不存在 -> መረጃው የለም!
+            return 0
         for _asset in response.json()["data"]["address"]:
             if asset == _asset["asset_id"]:
                 return int(_asset["balance"])
@@ -57,7 +57,7 @@ def get_balance(address: str, asset: str = config["asset"], network: str = confi
         if not is_address(address=address, network=network, vapor=False):
             raise AddressError(f"Invalid '{address}' {network} address.")
         url = f"{config['mainchain'][network]['blockmeta']}/address/{address}/asset"
-        response = requests.get(url=url, headers=config["headers"], timeout=timeout)
+        response = requests.get(url=url, headers=headers, timeout=timeout)
         if response.json() is None:
             return 0
         for _asset in response.json():
@@ -67,7 +67,7 @@ def get_balance(address: str, asset: str = config["asset"], network: str = confi
 
 
 def get_utxos(program: str, network: str = config["network"], asset: str = config["asset"],
-              limit: int = 15, by: str = "amount", order: str = "desc",
+              limit: int = 15, by: str = "amount", order: str = "desc", vapor: bool = config["vapor"],
               headers: dict = config["headers"], timeout: int = config["timeout"]) -> list:
     """
     Get Bytom unspent transaction outputs (UTXO's).
@@ -84,6 +84,8 @@ def get_utxos(program: str, network: str = config["network"], asset: str = confi
     :type by: str
     :param order: Sort order, defaults to desc.
     :type order: str
+    :param vapor: Bytom sidechain vapor, defaults to False.
+    :type vapor: bool
     :param headers: Request headers, default to common headers.
     :type headers: dict
     :param timeout: Request timeout, default to 60.
@@ -99,8 +101,10 @@ def get_utxos(program: str, network: str = config["network"], asset: str = confi
     if not is_network(network=network):
         raise NetworkError(f"Invalid Bytom '{network}' network",
                            "choose only 'mainnet' or 'testnet' networks.")
-
-    url = f"{config['mainchain'][network]['blockcenter']}/q/utxos"
+    if vapor:
+        url = f"{config['sidechain'][network]['blockcenter']}/q/utxos"
+    else:
+        url = f"{config['mainchain'][network]['blockcenter']}/q/utxos"
     data = dict(filter=dict(script=program, asset=asset), sort=dict(by=by, order=order))
     params = dict(limit=limit)
     response = requests.post(
@@ -111,7 +115,8 @@ def get_utxos(program: str, network: str = config["network"], asset: str = confi
 
 
 def account_create(xpublic_key: str, label: str = "1st address", email: Optional[str] = None,
-                   network: str = config["network"], timeout: int = config["timeout"]) -> dict:
+                   network: str = config["network"], headers: dict = config["headers"],
+                   timeout: int = config["timeout"]) -> dict:
     """
     Create account in blockcenter.
 
@@ -123,6 +128,8 @@ def account_create(xpublic_key: str, label: str = "1st address", email: Optional
     :type email: str
     :param network: Bytom network, defaults to solonet.
     :type network: str
+    :param headers: Request headers, default to common headers.
+    :type headers: dict
     :param timeout: request timeout, default to 15.
     :type timeout: int
     :returns: dict -- Bytom blockcenter guid, address and label.
@@ -139,17 +146,18 @@ def account_create(xpublic_key: str, label: str = "1st address", email: Optional
     url = f"{config['mainchain'][network]['blockcenter']}/account/create"
     data = dict(pubkey=xpublic_key, label=label, email=email)
     response = requests.post(
-        url=url, data=json.dumps(data), headers=config["headers"], timeout=timeout
+        url=url, data=json.dumps(data), headers=headers, timeout=timeout
     )
     if response.status_code == 200 and response.json()["code"] == 200:
         return response.json()["data"]
     raise APIError(response.json()["msg"], response.json()["code"])
 
 
-def list_address(guid: str, limit: int = 10, network: str = config["network"],
-                 timeout: int = config["timeout"]) -> list:
+def addresses(guid: str, limit: int = 10, network: str = config["network"],
+              vapor: bool = config["vapor"], headers: dict = config["headers"],
+              timeout: int = config["timeout"]) -> list:
     """
-    Get list address from blockcenter.
+    List all addresses of a GUID.
 
     :param guid: Bytom blockcenter guid.
     :type guid: str
@@ -157,28 +165,38 @@ def list_address(guid: str, limit: int = 10, network: str = config["network"],
     :type limit: int
     :param network: Bytom network, defaults to solonet.
     :type network: str
+    :param vapor: Bytom sidechain vapor, defaults to False.
+    :type vapor: bool
+    :param headers: Request headers, default to common headers.
+    :type headers: dict
     :param timeout: request timeout, default to 15.
     :type timeout: int
     :returns: list -- Bytom blockcenter list of addresses.
 
-    >>> from pybytom.rpc import list_address
-    >>> list_address(guid, 5 "mainnet")
-    [{"guid": "f0ed6ddd-9d6b-49fd-8866-a52d1083a13b", "address": "bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", "label": "1st address", "balances": [{"asset": "f37dea62efd2965174b84bbb59a0bd0a671cf5fb2857303ffd77c1b482b84bdf", "balance": "100000000000", "total_received": "100000000000", "total_sent": "0", "decimals": 8, "alias": "Asset", "icon": "", "name": "f37dea62efd2965174b84bbb59a0bd0a671cf5fb2857303ffd77c1b482b84bdf", "symbol": "Asset", "in_usd": "0.00", "in_cny": "0.00", "in_btc": "0.000000"}, {"asset": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "balance": "2450000000", "total_received": "4950000000", "total_sent": "2500000000", "decimals": 8, "alias": "btm", "icon": "", "name": "BTM", "symbol": "BTM", "in_usd": "2.90", "in_cny": "20.58", "in_btc": "0.000283"}]}]
+    >>> from pybytom.rpc import addresses
+    >>> addresses(guid="f0ed6ddd-9d6b-49fd-8866-a52d1083a13b", limit=5, network="mainnet", vapor=False)
+    [{'address': 'bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7', 'label': '1st address', 'balances': [{'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'balance': '71560900', 'available_balance': '71560900', 'unconfirmed_balance': '0', 'total_received': '4968220000', 'total_sent': '4896659100', 'decimals': 8, 'alias': 'BTM', 'icon': 'https://cdn.blockmeta.com/resources/logo/btm.png', 'name': 'Bytom', 'symbol': 'BTM', 'type': '', 'in_usd': '0.05', 'in_cny': '0.32', 'in_btc': '0.000003'}, {'asset': 'f37dea62efd2965174b84bbb59a0bd0a671cf5fb2857303ffd77c1b482b84bdf', 'balance': '69999998100', 'available_balance': '69999998100', 'unconfirmed_balance': '0', 'total_received': '100000000200', 'total_sent': '30000002100', 'decimals': 8, 'alias': 'Asset', 'icon': '', 'name': 'f37dea62efd2965174b84bbb59a0bd0a671cf5fb2857303ffd77c1b482b84bdf', 'symbol': 'Asset', 'type': '', 'in_usd': '0.00', 'in_cny': '0.00', 'in_btc': '0.000000'}]}, {'address': 'bm1qr8nzcxudexul7hpyfvyn69qapwzlfv0ztlqszc', 'label': '', 'balances': [{'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'balance': '0', 'available_balance': '0', 'unconfirmed_balance': '0', 'total_received': '2498900000', 'total_sent': '2498900000', 'decimals': 8, 'alias': 'BTM', 'icon': 'https://cdn.blockmeta.com/resources/logo/btm.png', 'name': 'Bytom', 'symbol': 'BTM', 'type': '', 'in_usd': '0.00', 'in_cny': '0.00', 'in_btc': '0.000000'}]}, {'address': 'bm1q9dw3zz5f6xf74re0re2n4zfqsjd93e5f9l4jxl', 'label': '', 'balances': [{'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'balance': '0', 'available_balance': '0', 'unconfirmed_balance': '0', 'total_received': '48200000', 'total_sent': '48200000', 'decimals': 8, 'alias': 'BTM', 'icon': 'https://cdn.blockmeta.com/resources/logo/btm.png', 'name': 'Bytom', 'symbol': 'BTM', 'type': '', 'in_usd': '0.00', 'in_cny': '0.00', 'in_btc': '0.000000'}]}]
+    >>> addresses(guid="f0ed6ddd-9d6b-49fd-8866-a52d1083a13b", limit=5, network="mainnet", vapor=True)
+    [{'address': 'vp1q9ndylx02syfwd7npehfxz4lddhzqsve2za23ag', 'label': '1st address', 'balances': [{'asset': 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'balance': '126990000', 'available_balance': '126990000', 'unconfirmed_balance': '0', 'total_received': '190000000', 'total_sent': '63010000', 'decimals': 8, 'alias': 'BTM', 'icon': 'https://cdn.bystack.com/bystack/logo/btm_vapor.png', 'name': 'Bytom', 'symbol': 'BTM', 'type': 'BTM', 'in_usd': '0.09', 'in_cny': '0.58', 'in_btc': '0.000005'}, {'asset': 'bda946b3110fa46fd94346ce3f05f0760f1b9de72e238835bc4d19f9d64f1742', 'balance': '0', 'available_balance': '0', 'unconfirmed_balance': '0', 'total_received': '0', 'total_sent': '0', 'decimals': 8, 'alias': 'BTC', 'icon': 'https://cdn.blockmeta.com/resources/logo/btc_vapor.png', 'name': 'Bitcoin', 'symbol': 'BTC', 'type': 'BTC', 'in_usd': '0.00', 'in_cny': '0.00', 'in_btc': '0.000000'}, {'asset': '47fcd4d7c22d1d38931a6cd7767156babbd5f05bbbb3f7d3900635b56eb1b67e', 'balance': '0', 'available_balance': '0', 'unconfirmed_balance': '0', 'total_received': '0', 'total_sent': '0', 'decimals': 8, 'alias': 'SUP', 'icon': 'https://cdn.blockmeta.com/resources/logo/vapor/sup.png', 'name': 'SUP', 'symbol': 'SUP', 'type': 'BTM', 'in_usd': '0.00', 'in_cny': '0.00', 'in_btc': '0.000000'}, {'asset': '78de44ffa1bce37b757c9eae8925b5f199dc4621b412ef0f3f46168865284a93', 'balance': '0', 'available_balance': '0', 'unconfirmed_balance': '0', 'total_received': '0', 'total_sent': '0', 'decimals': 9, 'alias': 'ETH', 'icon': 'https://cdn.bystack.com/bystack/logo/eth_vapor.png', 'name': 'Ethereum', 'symbol': 'ETH', 'type': 'ETH', 'in_usd': '0.00', 'in_cny': '0.00', 'in_btc': '0.000000'}, {'asset': '184e1cc4ee4845023888810a79eed7a42c02c544cf2c61ceac05e176d575bd46', 'balance': '0', 'available_balance': '0', 'unconfirmed_balance': '0', 'total_received': '0', 'total_sent': '0', 'decimals': 6, 'alias': 'USDT', 'icon': 'https://cdn.bystack.com/bystack/logo/usdt_vapor.png', 'name': 'USDT-ERC20', 'symbol': 'USDT', 'type': 'ETH', 'in_usd': '0.00', 'in_cny': '0.00', 'in_btc': '0.000000'}, {'asset': '25f2069140fa3ff4d6e0dc1d0fcaa11ace01eb721f115f0f1a5a3782db597fb1', 'balance': '0', 'available_balance': '0', 'unconfirmed_balance': '0', 'total_received': '0', 'total_sent': '0', 'decimals': 6, 'alias': 'DAI', 'icon': '', 'name': 'Dai Stablecoin', 'symbol': 'DAI', 'type': 'ETH', 'in_usd': '0.00', 'in_cny': '0.00', 'in_btc': '0.000000'}, {'asset': 'c4644dd6643475d57ed624f63129ab815f282b61f4bb07646d73423a6e1a1563', 'balance': '0', 'available_balance': '0', 'unconfirmed_balance': '0', 'total_received': '0', 'total_sent': '0', 'decimals': 6, 'alias': 'USDC', 'icon': '', 'name': 'USDC-ERC20', 'symbol': 'USDC', 'type': 'ETH', 'in_usd': '0.00', 'in_cny': '0.00', 'in_btc': '0.000000'}, {'asset': '011a24f9da7551d4cd9ae0f194aa1d1691e22a173edf7d81aabd9a97ca386252', 'balance': '0', 'available_balance': '0', 'unconfirmed_balance': '0', 'total_received': '0', 'total_sent': '0', 'decimals': 8, 'alias': 'LTC', 'icon': '', 'name': 'Litecoin', 'symbol': 'LTC', 'type': 'LTC', 'in_usd': '0.00', 'in_cny': '0.00', 'in_btc': '0.000000'}], 'votes': []}]
     """
 
-    url = f"{config['mainchain'][network]['blockcenter']}/account/list-addresses"
+    if vapor:
+        url = f"{config['sidechain'][network]['blockcenter']}/account/addresses"
+    else:
+        url = f"{config['mainchain'][network]['blockcenter']}/account/addresses"
     data, params = dict(guid=guid), dict(limit=limit)
     response = requests.post(
-        url=url, data=json.dumps(data), params=params, headers=config["headers"], timeout=timeout
+        url=url, data=json.dumps(data), params=params, headers=headers, timeout=timeout
     )
     if response.status_code == 200 and response.json()["code"] == 200:
-        return response.json()
+        return response.json()["data"]
     raise APIError(response.json()["msg"], response.json()["code"])
 
 
 def estimate_transaction_fee(address: str, amount: int, asset: str = config["asset"],
-                             confirmations: int = config["confirmations"],
-                             network: str = config["network"], timeout: int = config["timeout"]) -> str:
+                             confirmations: int = config["confirmations"], network: str = config["network"],
+                             vapor: bool = config["vapor"], headers: dict = config["headers"],
+                             timeout: int = config["timeout"]) -> int:
     """
     Estimate transaction fee.
 
@@ -192,22 +210,34 @@ def estimate_transaction_fee(address: str, amount: int, asset: str = config["ass
     :type confirmations: int
     :param network: Bytom network, defaults to solonet.
     :type network: str
+    :param vapor: Bytom sidechain vapor, defaults to False.
+    :type vapor: bool
+    :param headers: Request headers, default to common headers.
+    :type headers: dict
     :param timeout: request timeout, default to 60.
     :type timeout: int
     :returns: str -- Estimated transaction fee.
 
     >>> from pybytom.rpc import estimate_transaction_fee
-    >>> estimate_transaction_fee(address="bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", asset="ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", amount=100_000_000, confirmations=6, network="mainnet")
+    >>> from pybytom.assets import BTM as ASSET
+    >>> estimate_transaction_fee(address="bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", asset=ASSET, amount=100_000, confirmations=6, network="mainnet", vapor=False)
     "0.0044900000"
+    >>> estimate_transaction_fee(address="vp1q9ndylx02syfwd7npehfxz4lddhzqsve2za23ag", asset=ASSET, amount=100_000_000, confirmations=100, network="mainnet", vapor=True)
+    "0.0089800000"
     """
 
     if not is_network(network=network):
         raise NetworkError(f"Invalid '{network}' network",
                            "choose only 'mainnet', 'solonet' or 'testnet' networks.")
-    if not is_address(address=address, network=network):
-        raise AddressError(f"Invalid '{address}' {network} address.")
+    if vapor:
+        if not is_address(address=address, network=network, vapor=True):
+            raise AddressError(f"Invalid Vapor '{address}' {network} address.")
+        url = f"{config['sidechain'][network]['mov']}/merchant/estimate-tx-fee"
+    else:
+        if not is_address(address=address, network=network, vapor=False):
+            raise AddressError(f"Invalid '{address}' {network} address.")
+        url = f"{config['mainchain'][network]['mov']}/merchant/estimate-tx-fee"
 
-    url = f"{config['mainchain'][network]['mov']}/merchant/estimate-tx-fee"
     data = dict(
         asset_amounts={
             asset: str(amount_converter(
@@ -218,15 +248,16 @@ def estimate_transaction_fee(address: str, amount: int, asset: str = config["ass
     )
     params = dict(address=address)
     response = requests.post(
-        url=url, data=json.dumps(data), params=params, headers=config["headers"], timeout=timeout
+        url=url, data=json.dumps(data), params=params, headers=headers, timeout=timeout
     )
     if response.status_code == 200 and response.json()["code"] == 200:
-        return response.json()["data"]["fee"]
+        return amount_converter(amount=float(response.json()["data"]["fee"]), symbol="BTM2NEU")
     raise APIError(response.json()["msg"], response.json()["code"])
 
 
 def build_transaction(address: str, transaction: dict, network: str = config["network"],
-                      vapor: bool = config["vapor"], timeout: int = config["timeout"]) -> dict:
+                      vapor: bool = config["vapor"], headers: dict = config["headers"],
+                      timeout: int = config["timeout"]) -> dict:
     """
     Build Bytom transaction in blockcenter.
 
@@ -238,6 +269,8 @@ def build_transaction(address: str, transaction: dict, network: str = config["ne
     :type network: str
     :param vapor: Bytom sidechain vapor, defaults to False.
     :type vapor: bool
+    :param headers: Request headers, default to common headers.
+    :type headers: dict
     :param timeout: request timeout, default to 60.
     :type timeout: int
     :returns: dict -- Bytom built transaction.
@@ -260,8 +293,7 @@ def build_transaction(address: str, transaction: dict, network: str = config["ne
         url = f"{config['mainchain'][network]['blockcenter']}/merchant/build-advanced-tx"
     params = dict(address=address)
     response = requests.post(
-        url=url, data=json.dumps(transaction),
-        params=params, headers=config["headers"], timeout=timeout
+        url=url, data=json.dumps(transaction), params=params, headers=headers, timeout=timeout
     )
     if response.status_code == 200 and response.json()["code"] == 300:
         raise APIError(response.json()["msg"], response.json()["code"])
@@ -276,8 +308,8 @@ def build_transaction(address: str, transaction: dict, network: str = config["ne
     return response.json()["data"][0]
 
 
-def get_transaction(transaction_id: str, network: str = config["network"],
-                    vapor: bool = config["vapor"], timeout: int = config["timeout"]) -> dict:
+def get_transaction(transaction_id: str, network: str = config["network"], vapor: bool = config["vapor"],
+                    headers: dict = config["headers"], timeout: int = config["timeout"]) -> dict:
     """
     Get Bytom transaction detail.
 
@@ -287,6 +319,8 @@ def get_transaction(transaction_id: str, network: str = config["network"],
     :type network: str
     :param vapor: Bytom sidechain vapor, defaults to False.
     :type vapor: bool
+    :param headers: Request headers, default to common headers.
+    :type headers: dict
     :param timeout: request timeout, default to 60.
     :type timeout: int
     :returns: dict -- Bytom transaction detail.
@@ -302,7 +336,7 @@ def get_transaction(transaction_id: str, network: str = config["network"],
     if vapor:
         url = f"{config['sidechain'][network]['blockmeta']}/tx/hash/{transaction_id}"
         response = requests.get(
-            url=url, headers=config["headers"], timeout=timeout
+            url=url, headers=headers, timeout=timeout
         )
         if response.status_code == 200 and response.json()["code"] == 200:
             return response.json()["data"]["transaction"]
@@ -310,15 +344,54 @@ def get_transaction(transaction_id: str, network: str = config["network"],
     else:
         url = f"{config['mainchain'][network]['blockmeta']}/transaction/{transaction_id}"
         response = requests.get(
-            url=url, headers=config["headers"], timeout=timeout
+            url=url, headers=headers, timeout=timeout
         )
         if response.status_code == 200 and response.json()["inputs"] is not None:
             return response.json()
         raise APIError(f"Not found this '{transaction_id}' transaction id.", 500)
 
 
-def submit_transaction_raw(address: str, transaction_raw: str, signatures: list, network: str = config["network"],
-                           vapor: bool = config["vapor"], timeout: int = config["timeout"]) -> str:
+def decode_transaction_raw(transaction_raw: str, network: str = config["network"], vapor: bool = config["vapor"],
+                           headers: dict = config["headers"], timeout: int = config["timeout"]) -> dict:
+    """
+    Get decode transaction raw.
+
+    :param transaction_raw: Bytom transaction raw.
+    :type transaction_raw: str
+    :param network: Bytom network, defaults to solonet.
+    :type network: str
+    :param vapor: Bytom sidechain vapor, defaults to False.
+    :type vapor: bool
+    :param headers: Request headers, default to common headers.
+    :type headers: dict
+    :param timeout: request timeout, default to 60.
+    :type timeout: int
+    :returns: dict -- Bytom decoded transaction raw.
+
+    >>> from pybytom.rpc import decode_transaction_raw
+    >>> decode_transaction_raw(transaction_raw, "testnet")
+    {...}
+    """
+
+    if not is_network(network=network):
+        raise NetworkError(f"Invalid '{network}' network",
+                           "choose only 'mainnet', 'solonet' or 'testnet' networks.")
+    if vapor:
+        url = f"{config['sidechain'][network]['vapor-core']}/decode-raw-transaction"
+    else:
+        url = f"{config['mainchain'][network]['bytom-core']}/decode-raw-transaction"
+    data = dict(raw_transaction=transaction_raw)
+    response = requests.post(
+        url=url, data=json.dumps(data), headers=headers, timeout=timeout
+    )
+    if response.status_code == 400:
+        raise APIError(response.json()["msg"], response.json()["code"])
+    return response.json()["data"]
+
+
+def submit_transaction_raw(address: str, transaction_raw: str, signatures: list,
+                           network: str = config["network"], vapor: bool = config["vapor"],
+                           headers: dict = config["headers"], timeout: int = config["timeout"]) -> str:
     """
      Submit transaction raw to Bytom blockchain.
 
@@ -332,6 +405,8 @@ def submit_transaction_raw(address: str, transaction_raw: str, signatures: list,
     :type network: str
     :param vapor: Bytom sidechain vapor, defaults to False.
     :type vapor: bool
+    :param headers: Request headers, default to common headers.
+    :type headers: dict
     :param timeout: request timeout, default to 60.
     :type timeout: int
     :returns: dict -- Bytom transaction id/hash.
@@ -340,7 +415,7 @@ def submit_transaction_raw(address: str, transaction_raw: str, signatures: list,
     >>> submit_transaction_raw("bm1q9ndylx02syfwd7npehfxz4lddhzqsve2fu6vc7", transaction_raw, [[...], [...]], "mainent")
     "2993414225f65390220730d0c1a356c14e91bca76db112d37366df93e364a492"
     """
-    
+
     if not is_network(network=network):
         raise NetworkError(f"Invalid '{network}' network",
                            "choose only 'mainnet', 'solonet' or 'testnet' networks.")
@@ -355,39 +430,8 @@ def submit_transaction_raw(address: str, transaction_raw: str, signatures: list,
     data = dict(raw_transaction=transaction_raw, signatures=signatures)
     params = dict(address=address)
     response = requests.post(
-        url=url, data=json.dumps(data), params=params, headers=config["headers"], timeout=timeout
+        url=url, data=json.dumps(data), params=params, headers=headers, timeout=timeout
     )
     if requests.status_codes == 200 and response.json()["code"] != 200:
         raise APIError(response.json()["msg"], response.json()["code"])
     return response.json()["data"]["tx_hash"]
-
-
-def decode_transaction_raw(transaction_raw: str, network: str = config["network"],
-                           timeout: int = config["timeout"]) -> dict:
-    """
-    Get decode transaction raw.
-
-    :param transaction_raw: Bytom transaction raw.
-    :type transaction_raw: str
-    :param network: Bytom network, defaults to solonet.
-    :type network: str
-    :param timeout: request timeout, default to 60.
-    :type timeout: int
-    :returns: dict -- Bytom decoded transaction raw.
-
-    >>> from pybytom.rpc import decode_transaction_raw
-    >>> decode_transaction_raw(transaction_raw, "testnet")
-    {...}
-    """
-
-    if not is_network(network=network):
-        raise NetworkError(f"Invalid '{network}' network",
-                           "choose only 'mainnet', 'solonet' or 'testnet' networks.")
-    url = f"{config[network]['bytom']}/decode-raw-transaction"
-    data = dict(raw_transaction=transaction_raw)
-    response = requests.post(
-        url=url, data=json.dumps(data), headers=config["headers"], timeout=timeout
-    )
-    if response.status_code == 400:
-        raise APIError(response.json()["msg"], response.json()["code"])
-    return response.json()["data"]
