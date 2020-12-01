@@ -7,9 +7,6 @@ from ..libs.segwit import decode
 from ..exceptions import NetworkError
 from ..config import config
 
-# Bytom config
-config: dict = config()
-
 
 def find_smart_contract_utxo(transaction_id: str, network: str = config["network"],
                              vapor: bool = config["vapor"]) -> str:

@@ -14,9 +14,6 @@ from .opcode import (
 )
 from .builder import Builder
 
-# Bytom config
-config: dict = config()
-
 
 def get_public_key_hash(public_key: str) -> str:
     """

@@ -18,9 +18,6 @@ from .actions import (
     spend_wallet, control_address
 )
 
-# Bytom config
-config: dict = config()
-
 
 class Transaction:
     """

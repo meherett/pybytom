@@ -8,9 +8,6 @@ from ..exceptions import (
 )
 from ..config import config
 
-# Bytom config
-config: dict = config()
-
 
 def spend_utxo(utxo: str) -> dict:
     """

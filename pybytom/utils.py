@@ -15,9 +15,6 @@ from .exceptions import (
 )
 from .config import config
 
-# Bytom config
-config: dict = config()
-
 
 def generate_entropy(strength: int = 128) -> str:
     """

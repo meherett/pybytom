@@ -16,9 +16,6 @@ from ..exceptions import NetworkError
 from ..utils import is_network
 from ..config import config
 
-# Bytom config
-config: dict = config()
-
 
 def get_xpublic_key(xprivate_key: str) -> str:
     """
