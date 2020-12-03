@@ -20,10 +20,10 @@ def spend_utxo(utxo: str) -> dict:
 
     >>> from pybytom.transaction.actions import spend_utxo
     >>> spend_utxo("169a45be47583f7240115c9059cd0d03e4d4fab70a41536cf298d6f261c0a1ac")
-    {'type': 'spend_utxo, 'output': '169a45be47583f7240115c9059cd0d03e4d4fab70a41536cf298d6f261c0a1ac'}
+    {'type': 'spend_utxo, 'output_id': '169a45be47583f7240115c9059cd0d03e4d4fab70a41536cf298d6f261c0a1ac'}
     """
 
-    return dict(type=str("spend_utxo"), output=utxo)
+    return dict(type=str("spend_utxo"), output_id=utxo)
 
 
 def spend_wallet(amount: float, asset: str, symbol: str = "NEU") -> dict:
