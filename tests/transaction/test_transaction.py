@@ -6,6 +6,8 @@ import os
 from pybytom.transaction import Transaction
 from pybytom.transaction.actions import spend_utxo, control_address
 from pybytom.transaction.tools import find_p2wsh_utxo
+from pybytom.rpc import estimate_transaction_fee
+from pybytom.utils import amount_converter
 from pybytom.assets import BTM as ASSET
 
 # Test Values
@@ -18,15 +20,28 @@ values.close()
 
 def test_transaction():
 
+    estimated_transaction_fee: int = estimate_transaction_fee(
+        address=_["wallet"]["vapor_address"]["mainnet"],
+        asset=ASSET,
+        amount=amount_converter(0.0001, "BTM2NEU"),
+        confirmations=1,
+        network=_["network"],
+        vapor=True
+    )
+
+    assert isinstance(estimated_transaction_fee, int)
+    assert estimated_transaction_fee == 449000
+
     unsigned_transaction: Transaction = Transaction(
-        network=_["network"], vapor=False
+        network=_["network"], vapor=True
     ).build_transaction(
-        address=_["wallet"]["address"]["mainnet"],
+        address=_["wallet"]["vapor_address"]["mainnet"],
         inputs=[
             spend_utxo(
                 utxo=find_p2wsh_utxo(
-                    transaction_id="049d4c26bb15885572c16e0eefac5b2f4d0fde50eaf90f002272d39507ff315b",
-                    network=_["network"]
+                    transaction_id="969d871257b53c067f473b3894c68bf7be11673e4f3905d432954d97dbf34751",
+                    network=_["network"],
+                    vapor=True
                 )
             )
         ],
@@ -34,12 +49,12 @@ def test_transaction():
             control_address(
                 asset=ASSET,
                 amount=10_000,
-                address="bm1qwk4kpx09ehccrna3enqqwhrj9xt7pwxd4sufkw",
+                address=_["wallet"]["vapor_address"]["mainnet"],
                 symbol="NEU",
-                vapor=False
+                vapor=True
             )
         ],
-        fee=10_000_000,
+        fee=estimated_transaction_fee,
         confirmations=1,
         forbid_chain_tx=False
     )
