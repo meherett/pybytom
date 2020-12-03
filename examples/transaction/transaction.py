@@ -7,23 +7,20 @@ from pybytom.transaction.actions import spend_utxo, control_address
 from pybytom.transaction.tools import find_p2wsh_utxo
 from pybytom.rpc import submit_transaction_raw, estimate_transaction_fee
 from pybytom.utils import amount_converter
-from typing import Optional
 
 import json
 
 # Choose network mainnet, solonet or testnet
 NETWORK: str = "mainnet"  # Default is mainnet
 # Bytom sidechain (Vapor protocol)
-VAPOR: bool = False  # Default is False
+VAPOR: bool = True  # Default is False
 # Wallet mnemonic words
-MNEMONIC: str = "indicate warm sock mistake code spot acid ribbon sing over taxi toast"
-# Secret passphrase/password for mnemonic
-PASSPHRASE: Optional[str] = None  # str("meherett")
+MNEMONIC: str = "announce clutch amazing animal casual liberty race estate language twenty crash regret"
 
 # Initialize Bytom wallet
 wallet: Wallet = Wallet(network=NETWORK)
 # Get Bytom wallet from mnemonic
-wallet.from_mnemonic(mnemonic=MNEMONIC, passphrase=PASSPHRASE)
+wallet.from_mnemonic(mnemonic=MNEMONIC)
 # Derivation from path
 wallet.from_path(
     path=DEFAULT_BIP44.format(
@@ -54,16 +51,17 @@ unsigned_transaction.build_transaction(
     inputs=[
         spend_utxo(
             utxo=find_p2wsh_utxo(
-                transaction_id="049d4c26bb15885572c16e0eefac5b2f4d0fde50eaf90f002272d39507ff315b",
-                network=NETWORK
+                transaction_id="969d871257b53c067f473b3894c68bf7be11673e4f3905d432954d97dbf34751",
+                network=NETWORK,
+                vapor=VAPOR
             )
         )
     ],
     outputs=[
         control_address(
             asset=ASSET,
-            amount=10_000_000,
-            address="bm1qwk4kpx09ehccrna3enqqwhrj9xt7pwxd4sufkw",
+            amount=10_000,
+            address=wallet.address(vapor=VAPOR),
             symbol="NEU",
             vapor=VAPOR
         )

@@ -7,7 +7,6 @@ from pybytom.transaction.actions import spend_utxo, control_address
 from pybytom.transaction.tools import find_p2wsh_utxo
 from pybytom.rpc import submit_transaction_raw, estimate_transaction_fee
 from pybytom.utils import amount_converter
-from typing import Optional
 
 import json
 
@@ -17,13 +16,11 @@ NETWORK: str = "mainnet"  # Default is mainnet
 VAPOR: bool = False  # Default is False
 # Wallet mnemonic words
 MNEMONIC: str = "indicate warm sock mistake code spot acid ribbon sing over taxi toast"
-# Secret passphrase/password for mnemonic
-PASSPHRASE: Optional[str] = None  # str("meherett")
 
 # Initialize Bytom wallet
 wallet: Wallet = Wallet(network=NETWORK)
 # Get Bytom wallet from mnemonic
-wallet.from_mnemonic(mnemonic=MNEMONIC, passphrase=PASSPHRASE)
+wallet.from_mnemonic(mnemonic=MNEMONIC)
 # Derivation from path
 wallet.from_path(path=DEFAULT_PATH)
 
@@ -36,7 +33,7 @@ unsigned_advanced_transaction: AdvancedTransaction = AdvancedTransaction(
 estimated_transaction_fee: int = estimate_transaction_fee(
     address=wallet.address(vapor=VAPOR),
     asset=ASSET,
-    amount=amount_converter(0.1, "BTM2NEU"),
+    amount=amount_converter(0.0001, "BTM2NEU"),
     confirmations=1,
     network=NETWORK,
     vapor=VAPOR
@@ -51,15 +48,16 @@ unsigned_advanced_transaction.build_transaction(
         spend_utxo(
             utxo=find_p2wsh_utxo(
                 transaction_id="049d4c26bb15885572c16e0eefac5b2f4d0fde50eaf90f002272d39507ff315b",
-                network=NETWORK
+                network=NETWORK,
+                vapor=VAPOR
             )
         )
     ],  # inputs
     [
         control_address(
             asset=ASSET,
-            amount=0.1,
-            address="bm1qwk4kpx09ehccrna3enqqwhrj9xt7pwxd4sufkw",
+            amount=0.0001,
+            address=wallet.address(vapor=VAPOR),
             symbol="BTM"
         )
     ],  # outputs
@@ -72,7 +70,7 @@ print("\nUnsigned Advanced Transaction Fee:", unsigned_advanced_transaction.fee(
 print("Unsigned Advanced Transaction Confirmations:", unsigned_advanced_transaction.confirmations())
 print("Unsigned Advanced Transaction Hash:", unsigned_advanced_transaction.hash())
 print("Unsigned Advanced Transaction Raw:", unsigned_advanced_transaction.raw())
-print("Unsigned Advanced Transaction Json:", json.dumps(unsigned_advanced_transaction.json(), indent=4))
+# print("Unsigned Advanced Transaction Json:", json.dumps(unsigned_advanced_transaction.json(), indent=4))
 print("Unsigned Advanced Transaction Unsigned Datas:",
       json.dumps(unsigned_advanced_transaction.unsigned_datas(detail=False), indent=4))
 print("Unsigned Advanced Transaction Signatures:", json.dumps(unsigned_advanced_transaction.signatures(), indent=4))

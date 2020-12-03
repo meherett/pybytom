@@ -5,7 +5,6 @@ from pybytom.transaction import NormalTransaction
 from pybytom.assets import BTM as ASSET
 from pybytom.utils import amount_converter
 from pybytom.rpc import submit_transaction_raw, estimate_transaction_fee
-from typing import Optional
 
 import json
 
@@ -15,13 +14,11 @@ NETWORK: str = "mainnet"  # Default is mainnet
 VAPOR: bool = True  # Default is False
 # Wallet entropy hex string
 ENTROPY: str = "72fee73846f2d1a5807dc8c953bf79f1"
-# Secret passphrase for mnemonic
-PASSPHRASE: Optional[str] = None  # str("meherett")
 
 # Initialize Bytom wallet
 wallet: Wallet = Wallet(network=NETWORK)
 # Get Bytom wallet from mnemonic
-wallet.from_entropy(entropy=ENTROPY, passphrase=PASSPHRASE)
+wallet.from_entropy(entropy=ENTROPY)
 # Derivation from default indexes
 wallet.from_indexes(indexes=DEFAULT_INDEXES)
 
