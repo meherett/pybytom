@@ -96,7 +96,7 @@ class Wallet:
         )
         self._strength = get_entropy_strength(entropy=hexlify(self._entropy).decode())
         mnemonic = Mnemonic(language=self._language).to_mnemonic(data=self._entropy)
-        self._mnemonic = unicodedata.normalize("NFKC", mnemonic)
+        self._mnemonic = unicodedata.normalize("NFKD", mnemonic)
         self._seed = Mnemonic.to_seed(mnemonic=self._mnemonic, passphrase=self._passphrase)
         self.from_seed(seed=hexlify(self._seed).decode())
         return self
@@ -127,7 +127,7 @@ class Wallet:
         if not is_mnemonic(mnemonic=mnemonic, language=language):
             raise ValueError("Invalid mnemonic words.")
 
-        self._mnemonic = unicodedata.normalize("NFKC", mnemonic)
+        self._mnemonic = unicodedata.normalize("NFKD", mnemonic)
         self._language, self._passphrase = (
             get_mnemonic_language(mnemonic=self._mnemonic),
             (passphrase if passphrase is not None else str())
