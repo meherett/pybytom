@@ -4,7 +4,9 @@ import json
 import os
 
 from pybytom.transaction import NormalTransaction
+from pybytom.rpc import estimate_transaction_fee
 from pybytom.assets import BTM as ASSET
+from pybytom.utils import amount_converter
 
 # Test Values
 base_path = os.path.dirname(__file__)
@@ -16,14 +18,29 @@ values.close()
 
 def test_normal_transaction():
 
+    estimated_transaction_fee: int = estimate_transaction_fee(
+        address=_["wallet"]["address"]["mainnet"],
+        asset=ASSET,
+        amount=amount_converter(0.0005, "BTM2NEU"),
+        confirmations=1,
+        network=_["network"],
+        vapor=False
+    )
+
+    assert isinstance(estimated_transaction_fee, int)
+    assert estimated_transaction_fee == 449000
+
     unsigned_normal_transaction: NormalTransaction = NormalTransaction(
         network=_["network"], vapor=False
     ).build_transaction(
         address=_["wallet"]["address"]["mainnet"],
         recipients={
-            "bm1qg83h7fddr70dsw6c2c3zhc25fved9mhydp6u8d": 50_000
+            "bm1qg83h7fddr70dsw6c2c3zhc25fved9mhydp6u8d": amount_converter(0.0005, "BTM2NEU")
         },
-        asset=ASSET
+        asset=ASSET,
+        fee=estimated_transaction_fee,
+        confirmations=1,
+        forbid_chain_tx=False
     )
 
     assert unsigned_normal_transaction.fee() == _["transaction"]["normal_transaction"]["unsigned"]["fee"]

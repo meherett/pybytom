@@ -39,7 +39,7 @@ def test_transaction():
         inputs=[
             spend_utxo(
                 utxo=find_p2wsh_utxo(
-                    transaction_id="969d871257b53c067f473b3894c68bf7be11673e4f3905d432954d97dbf34751",
+                    transaction_id="675392fcbc1867e247add457597611717229e5d2c46a53c44e3e61d6ce351474",
                     network=_["network"],
                     vapor=True
                 )
@@ -48,7 +48,7 @@ def test_transaction():
         outputs=[
             control_address(
                 asset=ASSET,
-                amount=10_000,
+                amount=amount_converter(0.0001, "BTM2NEU"),
                 address=_["wallet"]["vapor_address"]["mainnet"],
                 symbol="NEU",
                 vapor=True
