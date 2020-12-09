@@ -15,7 +15,7 @@ NETWORK: str = "mainnet"  # Default is mainnet
 # Bytom sidechain (Vapor protocol)
 VAPOR: bool = True  # Default is False
 # Wallet mnemonic words
-MNEMONIC: str = "announce clutch amazing animal casual liberty race estate language twenty crash regret"
+MNEMONIC: str = "indicate warm sock mistake code spot acid ribbon sing over taxi toast"
 
 # Initialize Bytom wallet
 wallet: Wallet = Wallet(network=NETWORK)
@@ -37,7 +37,7 @@ unsigned_transaction: Transaction = Transaction(
 estimated_transaction_fee: int = estimate_transaction_fee(
     address=wallet.address(vapor=VAPOR),
     asset=ASSET,
-    amount=amount_converter(0.1, "BTM2NEU"),
+    amount=amount_converter(0.0001, "BTM2NEU"),
     confirmations=1,
     network=NETWORK,
     vapor=VAPOR
@@ -51,7 +51,7 @@ unsigned_transaction.build_transaction(
     inputs=[
         spend_utxo(
             utxo=find_p2wsh_utxo(
-                transaction_id="969d871257b53c067f473b3894c68bf7be11673e4f3905d432954d97dbf34751",
+                transaction_id="675392fcbc1867e247add457597611717229e5d2c46a53c44e3e61d6ce351474",
                 network=NETWORK,
                 vapor=VAPOR
             )
@@ -60,7 +60,7 @@ unsigned_transaction.build_transaction(
     outputs=[
         control_address(
             asset=ASSET,
-            amount=10_000,
+            amount=amount_converter(0.0001, "BTM2NEU"),
             address=wallet.address(vapor=VAPOR),
             symbol="NEU",
             vapor=VAPOR
@@ -88,7 +88,7 @@ print("\nSigned Transaction Fee:", signed_transaction.fee())
 print("Signed Transaction Confirmations:", signed_transaction.confirmations())
 print("Signed Transaction Hash:", signed_transaction.hash())
 print("Signed Transaction Raw:", signed_transaction.raw())
-# print("Signed Transaction Json:", json.dumps(signed_transaction.json(), indent=4))
+print("Signed Transaction Json:", json.dumps(signed_transaction.json(), indent=4))
 print("Signed Transaction Unsigned Datas:",
       json.dumps(signed_transaction.unsigned_datas(detail=False), indent=4))
 print("Signed Transaction Signatures:", json.dumps(signed_transaction.signatures(), indent=4))
